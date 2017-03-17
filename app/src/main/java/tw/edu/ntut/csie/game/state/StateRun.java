@@ -62,7 +62,7 @@ public class StateRun extends GameState {
         if (pointers.size() == 1) {
             int touchX = pointers.get(0).getX();
             int touchY = pointers.get(0).getY();
-            _pocketMine.mMap.ResetBlock(touchX, touchY);
+            _pocketMine.GetGameMap().ResetBlock(touchX, touchY);
         }
         return true;
     }

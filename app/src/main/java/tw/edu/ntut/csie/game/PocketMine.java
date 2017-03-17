@@ -18,7 +18,7 @@ public class PocketMine implements GameObject {
     private MovingBitmap _door;
     private MovingBitmap _message;
 
-    public GameMap mMap = new GameMap();
+    private GameMap mMap = new GameMap();
 
 
 
@@ -117,6 +117,10 @@ public class PocketMine implements GameObject {
 
     public void resume() {
         _music.resume();
+    }
+
+    public GameMap GetGameMap() {
+        return mMap;
     }
 }
 
