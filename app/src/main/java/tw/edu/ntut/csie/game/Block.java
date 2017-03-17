@@ -7,31 +7,32 @@ import tw.edu.ntut.csie.game.core.MovingBitmap;
  */
 
 public class Block implements GameObject {
-    private MovingBitmap block1;
-    private MovingBitmap block2;
+    private MovingBitmap B_hit_once;
+    private MovingBitmap B_hit_twice;
     private int blockType;
     private int arrayX;
     private int arrayY;
+    private int viewHeight;
     private int x, y;
 
-    public Block(int blockType, int arrayX, int arrayY) {
-            block1 = new MovingBitmap(R.drawable.block1);
-            block2 = new MovingBitmap(R.drawable.block2);
-            this.blockType = blockType;
-            this.arrayX = arrayX;
-            this.arrayY = arrayY;
+    public Block(int blockType, int arrayX, int arrayY, int viewHeight) {
+        B_hit_once = new MovingBitmap(R.drawable.block_hit_once);
+        B_hit_twice = new MovingBitmap(R.drawable.block_hit_twice);
+        this.blockType = blockType;
+        this.arrayX = arrayX;
+        this.arrayY = arrayY;
+        this.viewHeight = viewHeight;
     }
 
     @Override
     public void release() {
-        block1.release();
-        block2.release();
-        block1 = null;
-        block2 = null;
+        B_hit_once.release();
+        B_hit_once.release();
+        B_hit_twice = null;
+        B_hit_twice = null;
     }
-
     @Override
-    public void move() {}
+    public void move() { }
 
     @Override
     public void show() {
@@ -41,12 +42,12 @@ public class Block implements GameObject {
            {
                if (blockType == 1) {
                    caculate();
-                   block1.setLocation(x, y);
-                   block1.show();
+                   B_hit_once.setLocation(x, y);
+                   B_hit_once.show();
                } else if (blockType == 2) {
                    caculate();
-                   block2.setLocation(x, y);
-                   block2.show();
+                   B_hit_twice.setLocation(x, y);
+                   B_hit_twice.show();
                }
            }
        }
@@ -54,6 +55,6 @@ public class Block implements GameObject {
 
     public void caculate() {
         y = 10 + 60 * arrayY;
-        x = 160 + 60 * arrayX;
+        x = 160 + 60 * arrayX - viewHeight;
     }
 }

@@ -20,8 +20,6 @@ public class PocketMine implements GameObject {
 
     private GameMap mMap = new GameMap();
 
-
-
     private Animation _flower;
 
     private Integer _scores;
@@ -35,7 +33,7 @@ public class PocketMine implements GameObject {
         _message = new MovingBitmap(R.drawable.message, 130, 150);
 
         _android = new MovingBitmap(R.drawable.android_green);
-        _android.setLocation(100, 200);
+        _android.setLocation(300, 200);
 
         _cloud = new MovingBitmap(R.drawable.cloud);
         _cx = 100;
