@@ -68,7 +68,6 @@ public class PocketMine implements GameObject {
 
     @Override
     public void show() {
-        // �I�s���Ǭ��K�϶���
         //_background.show();
         _scores.show();
         _flower.show();
