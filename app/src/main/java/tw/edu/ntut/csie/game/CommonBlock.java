@@ -13,10 +13,10 @@ public class CommonBlock extends Block {
         super(blockType, arrayX, arrayY, viewHeight);
     }
 
-    CommonBlock(int blockType, int arrayX, int arrayY, int viewHeight, int commonBlockType) {
-        super(blockType, arrayX, arrayY, viewHeight);
-        //this.commonBlocType = commonBlockType;
-    }
+//    CommonBlock(int blockType, int arrayX, int arrayY, int viewHeight, int commonBlockType) {
+//        super(blockType, arrayX, arrayY, viewHeight);
+//        //this.commonBlocType = commonBlockType;
+//    }
 
     public int GetPoints() {
        switch (blockType) {
