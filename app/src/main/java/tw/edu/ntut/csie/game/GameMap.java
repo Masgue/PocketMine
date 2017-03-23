@@ -13,7 +13,7 @@ public class GameMap implements GameObject {
     private static final int NUMBER_OF_BLOCK_TYPE = 8;
     private static final int BLOCK_ROW = 30;
     private static final int BLOCK_COLUMN = 6;
-    private static final int MOVING_VIEW_SPEED = 10;
+    private static final int MOVING_VIEW_SPEED = 5;
     private static final int DIGIT_LENGTH = 18;
     private static final int DEFAULT_SCORE = 0;
     private static final int DEFAULT_DURABILITY = 15;
@@ -82,7 +82,7 @@ public class GameMap implements GameObject {
 
     @Override
     public void show() {
-//        _background.show();
+        _background.show();
         showBlocks();
         showScores();
         showDurability();
@@ -108,7 +108,7 @@ public class GameMap implements GameObject {
                         Block blocks;
                         if (_blockArray[i][j] > 0 && _blockArray[i][j] < 9)
                         {
-                            blocks = new CommonBlock(_blockArray[i][j], i, j, _movingViewHeight, _MineList[4]);
+                            blocks = new CommonBlock(_blockArray[i][j], i, j, _movingViewHeight, _MineList[_blockArray[i][j] - 1]);
                             _score += blocks.GetPoints();
                         }
                         _blockArray[i][j] = 0;
@@ -128,18 +128,11 @@ public class GameMap implements GameObject {
         {
             for (int j = 0; j < BLOCK_COLUMN; j++)
             {
-                //Block blocks;
                 if (_blockArray[i][j] > 0 && _blockArray[i][j] < 9)
                 {
-                    CommonBlock commonBlock = new CommonBlock(_blockArray[i][j], i, j, _movingViewHeight, _MineList[4]);
+                    CommonBlock commonBlock = new CommonBlock(_blockArray[i][j], i, j, _movingViewHeight, _MineList[_blockArray[i][j] - 1]);
                     commonBlock.show();
-//                    commonBlock.CalculateXY(_movingViewHeight);
                 }
-                else
-                {
-                    //blocks = new Block(_blockArray[i][j], i, j, _movingViewHeight);
-                }
-                //blocks.show();
             }
         }
     }
@@ -261,4 +254,3 @@ public class GameMap implements GameObject {
         }
     }
 }
-//System.currentTimeMillis()
