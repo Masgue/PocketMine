@@ -1,4 +1,7 @@
-package tw.edu.ntut.csie.game;
+package tw.edu.ntut.csie.game.block.character;
+
+import tw.edu.ntut.csie.game.block.Block;
+import tw.edu.ntut.csie.game.core.MovingBitmap;
 
 /**
  * Created by ChenKeng on 2017/3/22.
@@ -6,8 +9,8 @@ package tw.edu.ntut.csie.game;
 
 public class CharacterBlock extends Block {
 
-    public CharacterBlock(int blockType, int arrayX, int arrayY, int viewHeight) {
-        super(blockType, arrayX, arrayY, viewHeight);
+    public CharacterBlock(int blockType, int arrayX, int arrayY, int viewHeight, MovingBitmap picture) {
+        super(blockType, arrayX, arrayY, viewHeight, picture);
     }
     @Override
     public void release() {

@@ -1,5 +1,7 @@
 package tw.edu.ntut.csie.game;
 
+import tw.edu.ntut.csie.game.block.Block;
+import tw.edu.ntut.csie.game.block.mine.CommonBlock;
 import tw.edu.ntut.csie.game.core.MovingBitmap;
 import java.util.Random;
 
@@ -65,11 +67,11 @@ public class GameMap implements GameObject {
     public void release() {
         _background.release();
         _background = null;
-        for (int i = 0; i < _digitNumberList.length; i++) {
-            _digitNumberList[i].release();
+        for (MovingBitmap movingBitmap : _digitNumberList) {
+            movingBitmap.release();
         }
-        for (int i = 0; i < _MineList.length; i++) {
-            _MineList[i].release();
+        for (MovingBitmap movingBitmap : _MineList) {
+            movingBitmap.release();
         }
     }
 
@@ -84,7 +86,6 @@ public class GameMap implements GameObject {
         showBlocks();
         showScores();
         showDurability();
-
     }
 
     public void ResetBlock(int touchX, int touchY) {
@@ -107,7 +108,7 @@ public class GameMap implements GameObject {
                         Block blocks;
                         if (_blockArray[i][j] > 0 && _blockArray[i][j] < 9)
                         {
-                            blocks = new CommonBlock(_blockArray[i][j], i, j, _movingViewHeight);
+                            blocks = new CommonBlock(_blockArray[i][j], i, j, _movingViewHeight, _MineList[4]);
                             _score += blocks.GetPoints();
                         }
                         _blockArray[i][j] = 0;
@@ -130,8 +131,9 @@ public class GameMap implements GameObject {
                 //Block blocks;
                 if (_blockArray[i][j] > 0 && _blockArray[i][j] < 9)
                 {
-                    CommonBlock blocks = new CommonBlock(_blockArray[i][j], i, j, _movingViewHeight);
-                    blocks.show();
+                    CommonBlock commonBlock = new CommonBlock(_blockArray[i][j], i, j, _movingViewHeight, _MineList[4]);
+                    commonBlock.show();
+//                    commonBlock.CalculateXY(_movingViewHeight);
                 }
                 else
                 {

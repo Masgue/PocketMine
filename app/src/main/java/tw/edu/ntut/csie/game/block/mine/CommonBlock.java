@@ -1,6 +1,7 @@
-package tw.edu.ntut.csie.game;
+package tw.edu.ntut.csie.game.block.mine;
 
-import javax.sql.CommonDataSource;
+import tw.edu.ntut.csie.game.block.Block;
+import tw.edu.ntut.csie.game.core.MovingBitmap;
 
 /**
  * Created by ChenKeng on 2017/3/19.
@@ -9,17 +10,16 @@ import javax.sql.CommonDataSource;
 public class CommonBlock extends Block {
     //private int commonBlocType;
 
-    public CommonBlock(int blockType, int arrayX, int arrayY, int viewHeight) {
-        super(blockType, arrayX, arrayY, viewHeight);
-    }
-
-//    CommonBlock(int blockType, int arrayX, int arrayY, int viewHeight, int commonBlockType) {
+//    public CommonBlock(int blockType, int arrayX, int arrayY, int viewHeight) {
 //        super(blockType, arrayX, arrayY, viewHeight);
-//        //this.commonBlocType = commonBlockType;
 //    }
 
+    public CommonBlock(int blockType, int arrayX, int arrayY, int viewHeight, MovingBitmap picture) {
+        super(blockType, arrayX, arrayY, viewHeight, picture);
+    }
+
     public int GetPoints() {
-       switch (blockType) {
+       switch (_blockType) {
            case 4:
                return 1;
            case 5:
@@ -36,7 +36,7 @@ public class CommonBlock extends Block {
     }
 
     public int GetHitLoss() {
-        switch (blockType) {
+        switch (_blockType) {
             case 4:
                 return 1;
             case 5:
