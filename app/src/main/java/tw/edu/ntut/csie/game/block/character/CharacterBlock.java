@@ -12,20 +12,7 @@ public class CharacterBlock extends Block {
     public CharacterBlock(int blockType, int arrayX, int arrayY, int viewHeight, MovingBitmap picture) {
         super(blockType, arrayX, arrayY, viewHeight, picture);
     }
-    @Override
-    public void release() {
 
-    }
-
-    @Override
-    public void move() {
-
-    }
-
-    @Override
-    public void show() {
-
-    }
     @Override
     public int GetPoints() {
         return -1;

@@ -30,7 +30,7 @@ public class CommonBlock extends Block {
        }
     }
 
-    public int GetHitLoss() {
+    public int GetDurability() {
         switch (_blockType) {
             case 4:
                 return 1;

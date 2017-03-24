@@ -1,6 +1,7 @@
 package tw.edu.ntut.csie.game;
 
 import tw.edu.ntut.csie.game.block.Block;
+import tw.edu.ntut.csie.game.block.character.CharacterBlock;
 import tw.edu.ntut.csie.game.block.mine.CommonBlock;
 import tw.edu.ntut.csie.game.core.MovingBitmap;
 import java.util.Random;
@@ -17,6 +18,7 @@ public class GameMap implements GameObject {
     private static final int DIGIT_LENGTH = 18;
     private static final int DEFAULT_SCORE = 0;
     private static final int DEFAULT_DURABILITY = 15;
+    private static final int DEFAULT_CHARACTER_TYPE = 100;
 
     private MovingBitmap[] _digitNumberList;
     private MovingBitmap[] _MineList;
@@ -26,6 +28,8 @@ public class GameMap implements GameObject {
     private int _movingViewHeight;
     private int _score;
     private int _durability;
+    private MovingBitmap _firstCharacter;
+    private int firstCharacterX, firstCharacterY;
     //private int [][] _blockArray = {{1,2,3,4,5,6}, {7,8,7,6,5,4}, {3,2,1,2,1,2}, {2,1,2,1,2,1},
      //                            {1,2,1,2,1,2}, {2,1,2,1,2,1}, {1,2,1,2,1,2}, {2,1,2,1,2,1} };
 
@@ -34,6 +38,7 @@ public class GameMap implements GameObject {
         LoadMovingBitMap();
         _background = new MovingBitmap(R.drawable.background);
         _blockArray = new int [BLOCK_ROW][BLOCK_COLUMN];
+        _firstCharacter = new MovingBitmap(R.drawable.android_green_60x60);
         _blockSpawningRate = new int[]{30, 25, 10, 25,  20, 15, 10, 5};
         _movingViewHeight = 0;
         _score = DEFAULT_SCORE;
@@ -102,7 +107,8 @@ public class GameMap implements GameObject {
                         breakpoint = 1;
                         break;
                     }
-                    _durability--;
+                    if (_blockArray[i][j] != 0 && _blockArray[i][j] != DEFAULT_CHARACTER_TYPE)
+                        _durability--;
                     if (_blockArray[i][j] != 3)      //unbreakable block
                     {
                         Block blocks;
@@ -111,7 +117,8 @@ public class GameMap implements GameObject {
                             blocks = new CommonBlock(_blockArray[i][j], i, j, _movingViewHeight, _MineList[_blockArray[i][j] - 1]);
                             _score += blocks.GetPoints();
                         }
-                        _blockArray[i][j] = 0;
+                        _blockArray[firstCharacterX][firstCharacterY] = 0;
+                        _blockArray[i][j] = DEFAULT_CHARACTER_TYPE;
                         breakpoint = 1;
                         break;
                     }
@@ -132,6 +139,13 @@ public class GameMap implements GameObject {
                 {
                     CommonBlock commonBlock = new CommonBlock(_blockArray[i][j], i, j, _movingViewHeight, _MineList[_blockArray[i][j] - 1]);
                     commonBlock.show();
+                }
+                else if (_blockArray[i][j] == DEFAULT_CHARACTER_TYPE)
+                {
+                    CharacterBlock characterBlock = new CharacterBlock(_blockArray[i][j], i, j, _movingViewHeight, _firstCharacter);
+                    characterBlock.show();
+                    firstCharacterX = i;
+                    firstCharacterY = j;
                 }
             }
         }
@@ -252,5 +266,6 @@ public class GameMap implements GameObject {
                 _blockArray[blockType][count] = blockSpawningArray[rnd.nextInt(sum)];
             }
         }
+        _blockArray[0][0] = 100;
     }
 }
