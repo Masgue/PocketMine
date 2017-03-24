@@ -15,10 +15,12 @@ public class StateReady extends AbstractGameState {
 //    private MovingBitmap _aboutInfo;
 //    private MovingBitmap _background;
     private MovingBitmap _background;
+    private MovingBitmap _menuInfo;
     private MovingBitmap _cardInfo;
     private MovingBitmap _gearInfo;
     private MovingBitmap _shopInfo;
     private MovingBitmap _museumInfo;
+    private MovingBitmap _digInfo;
 
     private BitmapButton _menuButton;
     private BitmapButton _cardButton;
@@ -27,9 +29,16 @@ public class StateReady extends AbstractGameState {
     private BitmapButton _museumButton;
     private BitmapButton _playButton;
     private BitmapButton _digButton;
+    private BitmapButton _settingButton;
 
-    private boolean _showHelp;
-    private boolean _showAbout;
+    private boolean _showCard;
+    private boolean _showGear;
+    private boolean _showShop;
+    private boolean _showmuseum;
+    private boolean _showDig;
+    private boolean _showSetting;
+//    private boolean _showHelp;
+//    private boolean _showAbout;
 
     public StateReady(GameEngine engine) {
         super(engine);
@@ -40,17 +49,17 @@ public class StateReady extends AbstractGameState {
 //        addGameObject(_helpInfo = new MovingBitmap(R.drawable.help_info));
 ////        addGameObject(_background = new MovingBitmap(R.drawable.state_ready));
 //        addGameObject(_aboutInfo = new MovingBitmap(R.drawable.about_info));
-        addGameObject(_background = new MovingBitmap(R.drawable.digit_0));
-        addGameObject(_cardInfo = new MovingBitmap(R.drawable.digit_0));
-        addGameObject(_gearInfo = new MovingBitmap(R.drawable.digit_0));
-        addGameObject(_shopInfo = new MovingBitmap(R.drawable.digit_0));
-        addGameObject(_museumInfo = new MovingBitmap(R.drawable.digit_0));
+//        addGameObject(_background = new MovingBitmap(R.drawable.digit_0));
+//        addGameObject(_cardInfo = new MovingBitmap(R.drawable.digit_0));
+//        addGameObject(_gearInfo = new MovingBitmap(R.drawable.digit_0));
+//        addGameObject(_shopInfo = new MovingBitmap(R.drawable.digit_0));
+//        addGameObject(_museumInfo = new MovingBitmap(R.drawable.digit_0));
         initializePlayButton();
         initializeCardButton();
         initializeShopButton();
         initializeGearButton();
         initializeMuseumButton();
-        setVisibility(false, false);
+//        setVisibility(false, false);
     }
 
     /**
@@ -62,7 +71,7 @@ public class StateReady extends AbstractGameState {
         _museumButton.addButtonEventHandler(new ButtonEventHandler() {
             @Override
             public void perform(BitmapButton button) {
-                setVisibility(false, true);
+//                setVisibility(false, true);
             }
         });
         addPointerEventHandler(_museumButton);
@@ -77,7 +86,7 @@ public class StateReady extends AbstractGameState {
         _gearButton.addButtonEventHandler(new ButtonEventHandler() {
             @Override
             public void perform(BitmapButton button) {
-                setVisibility(true, false);
+//                setVisibility(true, false);
             }
         });
         addPointerEventHandler(_gearButton);
@@ -91,7 +100,7 @@ public class StateReady extends AbstractGameState {
         _shopButton.addButtonEventHandler(new ButtonEventHandler() {
             @Override
             public void perform(BitmapButton button) {
-                setVisibility(false, false);
+//                setVisibility(false, false);
             }
         });
         addPointerEventHandler(_shopButton);
@@ -115,7 +124,7 @@ public class StateReady extends AbstractGameState {
      * ��l�ơyStart�z�����s�C
      */
     private void initializePlayButton() {
-        addGameObject(_playButton = new BitmapButton(R.drawable.digit_5, R.drawable.digit_0, 100, 120));
+        addGameObject(_playButton = new BitmapButton(R.drawable.play, R.drawable.digit_0, 500, 120));
         _playButton.addButtonEventHandler(new ButtonEventHandler() {
             @Override
             public void perform(BitmapButton button) {
@@ -136,13 +145,13 @@ public class StateReady extends AbstractGameState {
     /**
      * �]�w�e���W���ǹϤ�����ܡA���ǹϤ������áC
      *
-     * @param showHelp  ���Help�e��
-     * @param showAbout ���About�e��
+//     * @param showHelp  ���Help�e��
+//     * @param showAbout ���About�e��
      */
-    private void setVisibility(boolean showHelp, boolean showAbout) {
-        _showHelp = showHelp;
-        _showAbout = showAbout;
-        boolean showMenu = !_showAbout && !_showHelp;
+    private void setVisibility() {
+//        _showHelp = showHelp;
+//        _showAbout = showAbout;
+        boolean showMenu = true;//!_showAbout && !_showHelp;
 //        _helpInfo.setVisible(_showHelp);
 //        _aboutInfo.setVisible(_showAbout);
         _background.setVisible(showMenu);

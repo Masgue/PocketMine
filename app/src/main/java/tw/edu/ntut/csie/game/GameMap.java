@@ -36,7 +36,7 @@ public class GameMap implements GameObject {
 
     public GameMap() {
         LoadMovingBitMap();
-        _background = new MovingBitmap(R.drawable.background);
+//        _background = new MovingBitmap(R.drawable.background);
         _blockArray = new int [BLOCK_ROW][BLOCK_COLUMN];
         _firstCharacter = new MovingBitmap(R.drawable.android_green_60x60);
         _blockSpawningRate = new int[]{30, 25, 10, 25,  20, 15, 10, 5};
@@ -87,7 +87,7 @@ public class GameMap implements GameObject {
 
     @Override
     public void show() {
-        _background.show();
+//        _background.show();
         showBlocks();
         showScores();
         showDurability();
