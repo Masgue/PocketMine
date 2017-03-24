@@ -20,11 +20,13 @@ public class StateReady extends AbstractGameState {
     private MovingBitmap _shopInfo;
     private MovingBitmap _museumInfo;
 
+    private BitmapButton _menuButton;
     private BitmapButton _cardButton;
     private BitmapButton _gearButton;
     private BitmapButton _shopButton;
     private BitmapButton _museumButton;
     private BitmapButton _playButton;
+    private BitmapButton _digButton;
 
     private boolean _showHelp;
     private boolean _showAbout;
