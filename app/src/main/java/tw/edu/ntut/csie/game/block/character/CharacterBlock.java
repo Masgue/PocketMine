@@ -9,8 +9,8 @@ import tw.edu.ntut.csie.game.core.MovingBitmap;
 
 public class CharacterBlock extends Block {
 
-    public CharacterBlock(int blockType, int arrayX, int arrayY, int viewHeight, MovingBitmap picture, int ArrayChangeTimes, int blockRow) {
-        super(blockType, arrayX, arrayY, viewHeight, picture, ArrayChangeTimes, blockRow);
+    public CharacterBlock(int blockType, int arrayX, int arrayY, int viewHeight, MovingBitmap picture) {
+        super(blockType, arrayX, arrayY, viewHeight, picture);
     }
 
     @Override
