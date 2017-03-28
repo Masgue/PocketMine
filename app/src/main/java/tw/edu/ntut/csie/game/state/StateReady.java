@@ -10,17 +10,13 @@ import tw.edu.ntut.csie.game.extend.BitmapButton;
 import tw.edu.ntut.csie.game.extend.ButtonEventHandler;
 
 public class StateReady extends AbstractGameState {
-
-//    private MovingBitmap _helpInfo;
-//    private MovingBitmap _aboutInfo;
-//    private MovingBitmap _background;
-    private MovingBitmap _background;
     private MovingBitmap _menuInfo;
     private MovingBitmap _cardInfo;
     private MovingBitmap _gearInfo;
     private MovingBitmap _shopInfo;
     private MovingBitmap _museumInfo;
     private MovingBitmap _digInfo;
+    private MovingBitmap _settingInfo;
 
     private BitmapButton _menuButton;
     private BitmapButton _cardButton;
@@ -30,15 +26,16 @@ public class StateReady extends AbstractGameState {
     private BitmapButton _playButton;
     private BitmapButton _digButton;
     private BitmapButton _settingButton;
+    private BitmapButton _backButton;
+    private BitmapButton _exitButton;
 
+    private boolean _showMenu;
     private boolean _showCard;
     private boolean _showGear;
     private boolean _showShop;
-    private boolean _showmuseum;
+    private boolean _showMuseum;
     private boolean _showDig;
     private boolean _showSetting;
-//    private boolean _showHelp;
-//    private boolean _showAbout;
 
     public StateReady(GameEngine engine) {
         super(engine);
@@ -46,92 +43,197 @@ public class StateReady extends AbstractGameState {
 
     @Override
     public void initialize(Map<String, Object> data) {
-//        addGameObject(_helpInfo = new MovingBitmap(R.drawable.help_info));
-////        addGameObject(_background = new MovingBitmap(R.drawable.state_ready));
-//        addGameObject(_aboutInfo = new MovingBitmap(R.drawable.about_info));
-//        addGameObject(_background = new MovingBitmap(R.drawable.digit_0));
-//        addGameObject(_cardInfo = new MovingBitmap(R.drawable.digit_0));
-//        addGameObject(_gearInfo = new MovingBitmap(R.drawable.digit_0));
-//        addGameObject(_shopInfo = new MovingBitmap(R.drawable.digit_0));
-//        addGameObject(_museumInfo = new MovingBitmap(R.drawable.digit_0));
-        initializePlayButton();
+        addGameObject(_menuInfo = new MovingBitmap(R.drawable.menubackground));
+        addGameObject(_cardInfo = new MovingBitmap(R.drawable.cardbackground));
+        addGameObject(_gearInfo = new MovingBitmap(R.drawable.gearbackground));
+        addGameObject(_shopInfo = new MovingBitmap(R.drawable.shopbackground));
+        addGameObject(_museumInfo = new MovingBitmap(R.drawable.museumbackground));
+        addGameObject(_digInfo = new MovingBitmap(R.drawable.digbackground));
+        addGameObject(_settingInfo = new MovingBitmap(R.drawable.settingbackground));
+        InitializeMenuButton();
         initializeCardButton();
         initializeShopButton();
         initializeGearButton();
         initializeMuseumButton();
-//        setVisibility(false, false);
+        initializePlayButton();
+        InitializeDigButton();
+        InitializeSettingButton();
+        InitializeBackButton();
+        InitializeExitButton();
+        _showMenu = true;
+        _showCard = false;
+        _showGear = false;
+        _showShop = false;
+        _showMuseum = false;
+        _showDig = false;
+        _showSetting = false;
+        setVisibility();
     }
 
-    /**
-     * ��l�ơyAbout�z�����s�C
-     */
-    // �}�o²��
-    private void initializeMuseumButton() {
-        addGameObject(_museumButton = new BitmapButton(R.drawable.digit_4, R.drawable.digit_0, 100, 170));
-        _museumButton.addButtonEventHandler(new ButtonEventHandler() {
+    private void InitializeMenuButton() {
+        addGameObject(_menuButton = new BitmapButton(R.drawable.menu, 65, 290));
+        _menuButton.addButtonEventHandler(new ButtonEventHandler() {
             @Override
             public void perform(BitmapButton button) {
-//                setVisibility(false, true);
+                _showMenu = true;
+                _showCard = false;
+                _showGear = false;
+                _showShop = false;
+                _showMuseum = false;
+                _showDig = false;
+                _showSetting = false;
+                setVisibility();
             }
         });
-        addPointerEventHandler(_museumButton);
+        addPointerEventHandler(_menuButton);
     }
 
-    /**
-     * ��l�ơyHelp�z�����s�C
-     */
-    // �C������
-    private void initializeGearButton() {
-        addGameObject(_gearButton = new BitmapButton(R.drawable.digit_2, R.drawable.digit_0, 100, 270));
-        _gearButton.addButtonEventHandler(new ButtonEventHandler() {
-            @Override
-            public void perform(BitmapButton button) {
-//                setVisibility(true, false);
-            }
-        });
-        addPointerEventHandler(_gearButton);
-    }
-
-    /**
-     * ��l�ơyMenu�z�����s�C
-     */
-    private void initializeShopButton() {
-        addGameObject(_shopButton = new BitmapButton(R.drawable.digit_3, R.drawable.digit_0, 100, 220));
-        _shopButton.addButtonEventHandler(new ButtonEventHandler() {
-            @Override
-            public void perform(BitmapButton button) {
-//                setVisibility(false, false);
-            }
-        });
-        addPointerEventHandler(_shopButton);
-    }
-
-    /**
-     * ��l�ơyExit�z�����s�C
-     */
     private void initializeCardButton() {
-        addGameObject(_cardButton = new BitmapButton(R.drawable.digit_1, R.drawable.digit_0, 100, 320));
+        addGameObject(_cardButton = new BitmapButton(R.drawable.card, 65, 225));
         _cardButton.addButtonEventHandler(new ButtonEventHandler() {
             @Override
             public void perform(BitmapButton button) {
-                _engine.exit();
+                _showMenu = false;
+                _showCard = true;
+                _showGear = false;
+                _showShop = false;
+                _showMuseum = false;
+                _showDig = false;
+                _showSetting = false;
+                setVisibility();
             }
         });
         addPointerEventHandler(_cardButton);
     }
 
-    /**
-     * ��l�ơyStart�z�����s�C
-     */
+    private void initializeGearButton() {
+        addGameObject(_gearButton = new BitmapButton(R.drawable.gear, 65, 160));
+        _gearButton.addButtonEventHandler(new ButtonEventHandler() {
+            @Override
+            public void perform(BitmapButton button) {
+                _showMenu = false;
+                _showCard = false;
+                _showGear = true;
+                _showShop = false;
+                _showMuseum = false;
+                _showDig = false;
+                _showSetting = false;
+                setVisibility();
+            }
+        });
+        addPointerEventHandler(_gearButton);
+    }
+
+    private void initializeMuseumButton() {
+        addGameObject(_museumButton = new BitmapButton(R.drawable.museum, 65, 95));
+        _museumButton.addButtonEventHandler(new ButtonEventHandler() {
+            @Override
+            public void perform(BitmapButton button) {
+                _showMenu = false;
+                _showCard = false;
+                _showGear = false;
+                _showShop = false;
+                _showMuseum = true;
+                _showDig = false;
+                _showSetting = false;
+                setVisibility();
+            }
+        });
+        addPointerEventHandler(_museumButton);
+    }
+
+    private void initializeShopButton() {
+        addGameObject(_shopButton = new BitmapButton(R.drawable.shop, 65, 30));
+        _shopButton.addButtonEventHandler(new ButtonEventHandler() {
+            @Override
+            public void perform(BitmapButton button) {
+                _showMenu = false;
+                _showCard = false;
+                _showGear = false;
+                _showShop = true;
+                _showMuseum = false;
+                _showDig = false;
+                _showSetting = false;
+                setVisibility();
+            }
+        });
+        addPointerEventHandler(_shopButton);
+    }
+
     private void initializePlayButton() {
-        addGameObject(_playButton = new BitmapButton(R.drawable.play, R.drawable.digit_0, 500, 120));
+        addGameObject(_playButton = new BitmapButton(R.drawable.play, 500, 120));
         _playButton.addButtonEventHandler(new ButtonEventHandler() {
+            @Override
+            public void perform(BitmapButton button) {
+                _showMenu = false;
+                _showCard = false;
+                _showGear = false;
+                _showShop = false;
+                _showMuseum = false;
+                _showDig = true;
+                _showSetting = false;
+                setVisibility();
+            }
+        });
+        addPointerEventHandler(_playButton);
+    }
+
+    private void InitializeDigButton() {
+        addGameObject(_digButton = new BitmapButton(R.drawable.dig, 500, 120));
+        _digButton.addButtonEventHandler(new ButtonEventHandler() {
             @Override
             public void perform(BitmapButton button) {
                 changeState(Game.RUNNING_STATE);
             }
         });
-        addPointerEventHandler(_playButton);
+        addPointerEventHandler(_digButton);
+    }
+
+    private void InitializeSettingButton() {
+        addGameObject(_settingButton = new BitmapButton(R.drawable.setting, 0, 0));
+        _settingButton.addButtonEventHandler(new ButtonEventHandler() {
+            @Override
+            public void perform(BitmapButton button) {
+                _showMenu = false;
+                _showCard = false;
+                _showGear = false;
+                _showShop = false;
+                _showMuseum = false;
+                _showDig = false;
+                _showSetting = true;
+                setVisibility();
+            }
+        });
+        addPointerEventHandler(_settingButton);
+    }
+
+    private void InitializeBackButton() {
+        addGameObject(_backButton = new BitmapButton(R.drawable.back, 0, 0));
+        _backButton.addButtonEventHandler(new ButtonEventHandler() {
+            @Override
+            public void perform(BitmapButton button) {
+                _showMenu = true;
+                _showCard = false;
+                _showGear = false;
+                _showShop = false;
+                _showMuseum = false;
+                _showDig = false;
+                _showSetting = false;
+                setVisibility();
+            }
+        });
+        addPointerEventHandler(_backButton);
+    }
+
+    private void InitializeExitButton() {
+        addGameObject(_exitButton = new BitmapButton(R.drawable.exit, 500, 120));
+        _exitButton.addButtonEventHandler(new ButtonEventHandler() {
+            @Override
+            public void perform(BitmapButton button) {
+                _engine.exit();
+            }
+        });
+        addPointerEventHandler(_exitButton);
     }
 
     @Override
@@ -142,25 +244,27 @@ public class StateReady extends AbstractGameState {
     public void resume() {
     }
 
-    /**
-     * �]�w�e���W���ǹϤ�����ܡA���ǹϤ������áC
-     *
-//     * @param showHelp  ���Help�e��
-//     * @param showAbout ���About�e��
-     */
     private void setVisibility() {
-//        _showHelp = showHelp;
-//        _showAbout = showAbout;
-        boolean showMenu = true;//!_showAbout && !_showHelp;
-//        _helpInfo.setVisible(_showHelp);
-//        _aboutInfo.setVisible(_showAbout);
-        _background.setVisible(showMenu);
+        boolean showOther = !_showDig && !_showSetting;
 
-        _cardButton.setVisible(showMenu);
-        _gearButton.setVisible(showMenu);
-        _museumButton.setVisible(showMenu);
-        _playButton.setVisible(showMenu);
-        _shopButton.setVisible(!showMenu);
+        _menuInfo.setVisible(_showMenu);
+        _cardInfo.setVisible(_showCard);
+        _gearInfo.setVisible(_showGear);
+        _museumInfo.setVisible(_showMuseum);
+        _shopInfo.setVisible(_showShop);
+        _digInfo.setVisible(_showDig);
+        _settingInfo.setVisible(_showSetting);
+
+        _menuButton.setVisible(showOther);
+        _cardButton.setVisible(showOther);
+        _gearButton.setVisible(showOther);
+        _museumButton.setVisible(showOther);
+        _shopButton.setVisible(showOther);
+        _playButton.setVisible(_showMenu);
+        _digButton.setVisible(_showDig);
+        _settingButton.setVisible(showOther);
+        _backButton.setVisible(_showSetting || _showDig);
+        _exitButton.setVisible(_showSetting);
     }
 }
 

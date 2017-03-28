@@ -94,7 +94,7 @@ public class GameMap implements GameObject {
 
     @Override
     public void show() {
-       //_background.show();
+       _background.show();
         showBlocks();
         showScores();
         showDurability();
