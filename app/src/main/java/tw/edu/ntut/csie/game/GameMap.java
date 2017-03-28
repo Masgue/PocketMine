@@ -12,7 +12,7 @@ import java.util.Random;
 
 public class GameMap implements GameObject {
     private static final int NUMBER_OF_BLOCK_TYPE = 8;
-    private static final int BLOCK_ROW = 30;
+    private static final int BLOCK_ROW = 3;
     private static final int BLOCK_COLUMN = 6;
     private static final int MOVING_VIEW_SPEED = 5;
     private static final int DIGIT_LENGTH = 18;
@@ -23,13 +23,15 @@ public class GameMap implements GameObject {
     private MovingBitmap[] _digitNumberList;
     private MovingBitmap[] _MineList;
     private MovingBitmap _background;
-    private int [][] _blockArray;
+    private int [][][] _blockArray;
     private int [] _blockSpawningRate;
     private int _movingViewHeight;
     private int _score;
     private int _durability;
     private MovingBitmap _firstCharacter;
     private int firstCharacterX, firstCharacterY;
+    private int currentArray, firstGenerate, ArrayChangeTimes;
+    private int detectFirstCall;
     //private int [][] _blockArray = {{1,2,3,4,5,6}, {7,8,7,6,5,4}, {3,2,1,2,1,2}, {2,1,2,1,2,1},
      //                            {1,2,1,2,1,2}, {2,1,2,1,2,1}, {1,2,1,2,1,2}, {2,1,2,1,2,1} };
 
@@ -37,12 +39,15 @@ public class GameMap implements GameObject {
     public GameMap() {
         LoadMovingBitMap();
 //        _background = new MovingBitmap(R.drawable.background);
-        _blockArray = new int [BLOCK_ROW][BLOCK_COLUMN];
+        _blockArray = new int [2][BLOCK_ROW][BLOCK_COLUMN];
         _firstCharacter = new MovingBitmap(R.drawable.android_green_60x60);
         _blockSpawningRate = new int[]{30, 25, 10, 25,  20, 15, 10, 5};
         _movingViewHeight = 0;
         _score = DEFAULT_SCORE;
         _durability = DEFAULT_DURABILITY;
+        currentArray = ArrayChangeTimes = 0;
+        firstGenerate = 1;
+        detectFirstCall = 0;
         ChangeBlockAppearingRate();
         GenerateRandomBlockArray();
     }
@@ -107,18 +112,18 @@ public class GameMap implements GameObject {
                         breakpoint = 1;
                         break;
                     }
-                    if (_blockArray[i][j] != 0 && _blockArray[i][j] != DEFAULT_CHARACTER_TYPE)
+                    if (_blockArray[currentArray][i][j] != 0 && _blockArray[currentArray][i][j] != DEFAULT_CHARACTER_TYPE)
                         _durability--;
-                    if (_blockArray[i][j] != 3)      //unbreakable block
+                    if (_blockArray[currentArray][i][j] != 3)      //unbreakable block
                     {
                         Block blocks;
-                        if (_blockArray[i][j] > 0 && _blockArray[i][j] < 9)
+                        if (_blockArray[currentArray][i][j] > 0 && _blockArray[currentArray][i][j] < 9)
                         {
-                            blocks = new CommonBlock(_blockArray[i][j], i, j, _movingViewHeight, _MineList[_blockArray[i][j] - 1]);
+                            blocks = new CommonBlock(_blockArray[currentArray][i][j], i, j, _movingViewHeight, _MineList[_blockArray[currentArray][i][j] - 1], ArrayChangeTimes, BLOCK_ROW);
                             _score += blocks.GetPoints();
                         }
-                        _blockArray[firstCharacterX][firstCharacterY] = 0;
-                        _blockArray[i][j] = DEFAULT_CHARACTER_TYPE;
+                        _blockArray[currentArray][firstCharacterX][firstCharacterY] = 0;
+                        _blockArray[currentArray][i][j] = DEFAULT_CHARACTER_TYPE;
                         breakpoint = 1;
                         break;
                     }
@@ -131,18 +136,39 @@ public class GameMap implements GameObject {
 
     private void showBlocks()
     {
+        if ((_movingViewHeight) % (BLOCK_ROW * 60) == 0)
+        {
+            ArrayChangeTimes = 1;
+            /*if (detectFirstCall == 0)
+            {
+                if (currentArray == 0)
+                {
+                    currentArray = 1;
+                }
+                else
+                {
+                    currentArray = 0;
+                }
+                GenerateRandomBlockArray();
+                ArrayChangeTimes++;
+                detectFirstCall = 1;
+            }*/
+        }
+        else
+            detectFirstCall = 0;
+
         for (int i = 0; i < BLOCK_ROW; i++)
         {
             for (int j = 0; j < BLOCK_COLUMN; j++)
             {
-                if (_blockArray[i][j] > 0 && _blockArray[i][j] < 9)
+                if (_blockArray[currentArray][i][j] > 0 && _blockArray[currentArray][i][j] < 9)
                 {
-                    CommonBlock commonBlock = new CommonBlock(_blockArray[i][j], i, j, _movingViewHeight, _MineList[_blockArray[i][j] - 1]);
+                    CommonBlock commonBlock = new CommonBlock(_blockArray[currentArray][i][j], i, j, _movingViewHeight, _MineList[_blockArray[currentArray][i][j] - 1], ArrayChangeTimes, BLOCK_ROW);
                     commonBlock.show();
                 }
-                else if (_blockArray[i][j] == DEFAULT_CHARACTER_TYPE)
+                else if (_blockArray[currentArray][i][j] == DEFAULT_CHARACTER_TYPE)
                 {
-                    CharacterBlock characterBlock = new CharacterBlock(_blockArray[i][j], i, j, _movingViewHeight, _firstCharacter);
+                    CharacterBlock characterBlock = new CharacterBlock(_blockArray[currentArray][i][j], i, j, _movingViewHeight, _firstCharacter, ArrayChangeTimes, BLOCK_ROW);
                     characterBlock.show();
                     firstCharacterX = i;
                     firstCharacterY = j;
@@ -263,9 +289,19 @@ public class GameMap implements GameObject {
         {
             for (count = 0; count < BLOCK_COLUMN; count++)
             {
-                _blockArray[blockType][count] = blockSpawningArray[rnd.nextInt(sum)];
+                _blockArray[currentArray][blockType][count] = blockSpawningArray[rnd.nextInt(sum)];
             }
         }
-        _blockArray[0][0] = 100;
+
+        if (firstGenerate == 1)
+        {
+            _blockArray[currentArray][0][0] = 100;
+            firstGenerate = 0;
+        }
+    }
+
+    private void CheckAround()
+    {
+
     }
 }
