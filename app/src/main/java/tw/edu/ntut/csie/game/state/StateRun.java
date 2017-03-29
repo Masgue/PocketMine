@@ -1,10 +1,7 @@
 package tw.edu.ntut.csie.game.state;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
 
 import tw.edu.ntut.csie.game.Game;
 import tw.edu.ntut.csie.game.GameMap;
@@ -17,10 +14,12 @@ import tw.edu.ntut.csie.game.MapObserver;
 public class StateRun extends GameState {
     private static final int DEFAULT_SCORE = 0;
 
-    
+    private MovingBitmap _background;
+    private MovingBitmap _pause;
     private GameMap _map;
     private int _score;
     private int _durabiility;
+    private boolean _isPaused;
 
     private tw.edu.ntut.csie.game.MapObserver _observer;
 
@@ -30,8 +29,11 @@ public class StateRun extends GameState {
 
     @Override
     public void initialize(Map<String, Object> data) {
+        _background = new MovingBitmap(R.drawable.background);
+        _pause = new MovingBitmap(R.drawable.pause, 0, 0);
         _map = new GameMap();
         _score = DEFAULT_SCORE;
+        _isPaused = false;
 
         _observer = new MapObserver(_map) {
             @Override
@@ -49,13 +51,19 @@ public class StateRun extends GameState {
 
     @Override
     public void show() {
+        _background.show();
         _map.show();
+        _pause.show();
     }
 
     @Override
     public void release() {
+        _background.release();
+        _background = null;
         _map.release();
         _map = null;
+        _pause.release();
+        _pause = null;
     }
 
     @Override
@@ -83,7 +91,16 @@ public class StateRun extends GameState {
         if (pointers.size() == 1) {
             int touchX = pointers.get(0).getX();
             int touchY = pointers.get(0).getY();
-            _map.ResetBlock(touchX, touchY);
+            if (touchX >= 0 && touchX <= 60) {
+                if (touchY >= 0 && touchY <= 60) {
+                    if(!_isPaused)
+                        pause();
+                    else
+                        resume();
+                }
+            }
+            else if (!_isPaused)
+                _map.ResetBlock(touchX, touchY);
         }
 
         return true;
@@ -101,11 +118,15 @@ public class StateRun extends GameState {
 
     @Override
     public void pause() {
-        _map.SetPause(true);
+        _isPaused = true;
+        _pause = new MovingBitmap(R.drawable.resume, 0, 0);
+        _map.SetPause(_isPaused);
     }
 
     @Override
     public void resume() {
-        _map.SetPause(false);
+        _isPaused = false;
+        _pause = new MovingBitmap(R.drawable.pause, 0, 0);
+        _map.SetPause(_isPaused);
     }
 }

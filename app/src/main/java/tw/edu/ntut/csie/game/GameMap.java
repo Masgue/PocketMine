@@ -7,8 +7,6 @@ import tw.edu.ntut.csie.game.core.MovingBitmap;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Random;
 
 /**
@@ -28,7 +26,6 @@ public class GameMap implements GameObject {
 
     private MovingBitmap[] _digitNumberList;
     private MovingBitmap[] _MineList;
-    private MovingBitmap _background;
     private int [][] _blockArray;
     private int [] _blockSpawningRate;
     private int _movingViewHeight;
@@ -38,13 +35,12 @@ public class GameMap implements GameObject {
     private MovingBitmap _unvisableBlock;
     private int firstCharacterX, firstCharacterY;
     private int _floor;
-    private boolean _isPause;
+    private boolean _isPaused;
 
     private List<tw.edu.ntut.csie.game.Observer> _observers;
 
     public GameMap() {
         LoadMovingBitMap();
-        _background = new MovingBitmap(R.drawable.background);
         _blockArray = new int [BLOCK_ROW][BLOCK_COLUMN];
         _firstCharacter = new MovingBitmap(R.drawable.android_green_60x60);
         _unvisableBlock = new MovingBitmap(R.drawable.block_unvisable);
@@ -55,7 +51,7 @@ public class GameMap implements GameObject {
         ChangeBlockAppearingRate();
         GenerateRandomBlockArray();
         _floor = 0;
-        _isPause = false;
+        _isPaused = false;
 
         _observers = new ArrayList<tw.edu.ntut.csie.game.Observer>();
     }
@@ -84,8 +80,6 @@ public class GameMap implements GameObject {
 
     @Override
     public void release() {
-        _background.release();
-        _background = null;
         for (MovingBitmap movingBitmap : _digitNumberList) {
             movingBitmap.release();
         }
@@ -96,68 +90,71 @@ public class GameMap implements GameObject {
 
     @Override
     public void move() {
-        if (_durability == 0)
-            _movingViewHeight += 3 * MOVING_VIEW_SPEED;
-        else
-            _movingViewHeight += MOVING_VIEW_SPEED;
+        if (!_isPaused) {
+            if (_durability == 0)
+                _movingViewHeight += 3 * MOVING_VIEW_SPEED;
+            else
+                _movingViewHeight += MOVING_VIEW_SPEED;
+        }
     }
 
     @Override
     public void show() {
         if ( _movingViewHeight >= 60 * (_floor + 3) + 160)
             notifyAllObservers();
-       _background.show();
         showBlocks();
         showScores();
         showDurability();
     }
 
     public void ResetBlock(int touchX, int touchY) {
-        int breakpoint = 0;
-        for (int i = 0; i < BLOCK_ROW; i++)
-        {
-            for (int j = 0; j < BLOCK_COLUMN; j++)
+        if (!_isPaused) {
+            int breakpoint = 0;
+            for (int i = 0; i < BLOCK_ROW; i++)
             {
-                if ((touchX > 160 + 60 * i - _movingViewHeight) && (touchX < 160 + 60 * (i + 1) - _movingViewHeight)
-                        && (touchY > 10 + 60 * j) && (touchY < 10 + 60 * (j + 1)))
+                for (int j = 0; j < BLOCK_COLUMN; j++)
                 {
-                    if (_durability == 0)
+                    if ((touchX > 160 + 60 * i - _movingViewHeight) && (touchX < 160 + 60 * (i + 1) - _movingViewHeight)
+                            && (touchY > 10 + 60 * j) && (touchY < 10 + 60 * (j + 1)))
                     {
-                        breakpoint = 1;
-                        break;
-                    }
-
-                    if (checkVisible(i, j))
-                    {
-                        if (_blockArray[i][j] == 0)      //unbreakable block
+                        if (_durability == 0)
                         {
-                            _durability--;
-                        }
-                        else
-                        {
-                            Block blocks;
-                            if (_blockArray[i][j] >= 0 && _blockArray[i][j] < 8)
-                            {
-                                blocks = new CommonBlock(_blockArray[i][j], i, j, _movingViewHeight, _MineList[_blockArray[i][j]]);
-                                _score += blocks.GetPoints();
-                                _durability -= blocks.GetDurability();
-                                if (_durability < 0)
-                                    _durability = 0;
-                            }
-                            _blockArray[firstCharacterX][firstCharacterY] = DEFAULT_NONE_BLOCK_TYPE;
-                            _blockArray[i][j] = DEFAULT_CHARACTER_TYPE;
-                            if (i >= _floor)
-                            {
-                                _floor = i;
-                            }
                             breakpoint = 1;
                             break;
                         }
+
+                        if (checkVisible(i, j))
+                        {
+                            if (_blockArray[i][j] == 0)      //unbreakable block
+                            {
+                                _durability--;
+                            }
+                            else
+                            {
+                                Block blocks;
+                                if (_blockArray[i][j] >= 0 && _blockArray[i][j] < 8)
+                                {
+                                    blocks = new CommonBlock(_blockArray[i][j], i, j, _movingViewHeight, _MineList[_blockArray[i][j]]);
+                                    _score += blocks.GetPoints();
+                                    _durability -= blocks.GetDurability();
+                                    if (_durability < 0)
+                                        _durability = 0;
+                                }
+                                _blockArray[firstCharacterX][firstCharacterY] = DEFAULT_NONE_BLOCK_TYPE;
+                                _blockArray[i][j] = DEFAULT_CHARACTER_TYPE;
+                                if (i >= _floor)
+                                {
+                                    _floor = i;
+                                }
+                                breakpoint = 1;
+                                break;
+                            }
+                        }
                     }
                 }
+                if (breakpoint == 1)
+                    break;
             }
-            if (breakpoint == 1)
-                break;
         }
     }
 
@@ -203,30 +200,30 @@ public class GameMap implements GameObject {
         int units = _score % 10;
         if (_score > 10000)
         {
-            _digitNumberList[9].setLocation(0,0);
+            _digitNumberList[9].setLocation(0,190 - 2 * DIGIT_LENGTH);
             _digitNumberList[9].show();
-            _digitNumberList[9].setLocation(0, DIGIT_LENGTH);
+            _digitNumberList[9].setLocation(0, 190 - 1 * DIGIT_LENGTH);
             _digitNumberList[9].show();
-            _digitNumberList[9].setLocation(0, 2 * DIGIT_LENGTH);
+            _digitNumberList[9].setLocation(0, 190 + 1 * DIGIT_LENGTH);
             _digitNumberList[9].show();
-            _digitNumberList[9].setLocation(0, 3 * DIGIT_LENGTH);
+            _digitNumberList[9].setLocation(0, 190 + 2 * DIGIT_LENGTH);
             _digitNumberList[9].show();
         }
         else
         {
-            _digitNumberList[units].setLocation(0, 0);
+            _digitNumberList[units].setLocation(0, 190 - 2 * DIGIT_LENGTH);
             _digitNumberList[units].show();
             if (_score >= 10)
             {
-                _digitNumberList[tens].setLocation(0,DIGIT_LENGTH);
+                _digitNumberList[tens].setLocation(0,190 - 1 * DIGIT_LENGTH);
                 _digitNumberList[tens].show();
                 if (_score >= 100)
                 {
-                    _digitNumberList[hundreds].setLocation(0, 2 * DIGIT_LENGTH);
+                    _digitNumberList[hundreds].setLocation(0, 190 + 1 * DIGIT_LENGTH);
                     _digitNumberList[hundreds].show();
                     if (_score >= 1000)
                     {
-                        _digitNumberList[thousands].setLocation(0, 3 * DIGIT_LENGTH);
+                        _digitNumberList[thousands].setLocation(0, 190 + 2 * DIGIT_LENGTH);
                         _digitNumberList[thousands].show();
                     }
                 }
@@ -342,8 +339,8 @@ public class GameMap implements GameObject {
         }
     }
 
-    public void SetPause(boolean isPause) {
-        _isPause = isPause;
+    public void SetPause(boolean isPaused) {
+        _isPaused = isPaused;
     }
 
     private boolean checkVisible(int i, int j) {
