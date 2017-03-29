@@ -3,6 +3,8 @@ package tw.edu.ntut.csie.game.state;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
 import tw.edu.ntut.csie.game.Game;
 import tw.edu.ntut.csie.game.GameMap;
@@ -10,6 +12,7 @@ import tw.edu.ntut.csie.game.Pointer;
 import tw.edu.ntut.csie.game.R;
 import tw.edu.ntut.csie.game.core.MovingBitmap;
 import tw.edu.ntut.csie.game.engine.GameEngine;
+import tw.edu.ntut.csie.game.MapObserver;
 
 public class StateRun extends GameState {
     private static final int DEFAULT_SCORE = 0;
@@ -17,6 +20,8 @@ public class StateRun extends GameState {
     private GameMap _map;
     private int _score;
     private int _durabiility;
+
+    private tw.edu.ntut.csie.game.MapObserver _observer;
 
     public StateRun(GameEngine engine) {
         super(engine);
@@ -26,6 +31,14 @@ public class StateRun extends GameState {
     public void initialize(Map<String, Object> data) {
         _map = new GameMap();
         _score = DEFAULT_SCORE;
+
+        _observer = new MapObserver(_map) {
+            @Override
+            public void update() {
+                _score = _map.GetScore();
+                changeState(Game.OVER_STATE);
+            }
+        };
     }
 
     @Override
@@ -82,11 +95,11 @@ public class StateRun extends GameState {
 
     @Override
     public boolean pointerReleased(List<Pointer> pointers) {
-        if (_map.gameOver())
-        {
-            _score = _map.GetScore();
-            changeState(Game.OVER_STATE);
-        }
+//        if (_map.gameOver())
+//        {
+//            _score = _map.GetScore();
+//            changeState(Game.OVER_STATE);
+//        }
         return false;
     }
 

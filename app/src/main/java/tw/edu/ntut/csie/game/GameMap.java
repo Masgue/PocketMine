@@ -5,6 +5,9 @@ import tw.edu.ntut.csie.game.block.character.CharacterBlock;
 import tw.edu.ntut.csie.game.block.mine.CommonBlock;
 import tw.edu.ntut.csie.game.core.MovingBitmap;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Observable;
 import java.util.Observer;
 import java.util.Random;
 
@@ -35,9 +38,8 @@ public class GameMap implements GameObject {
     private MovingBitmap _unvisableBlock;
     private int firstCharacterX, firstCharacterY;
     private int _floor;
-    //private int [][] _blockArray = {{1,2,3,4,5,6}, {7,8,7,6,5,4}, {3,2,1,2,1,2}, {2,1,2,1,2,1},
-     //                            {1,2,1,2,1,2}, {2,1,2,1,2,1}, {1,2,1,2,1,2}, {2,1,2,1,2,1} };
 
+    private List<tw.edu.ntut.csie.game.Observer> _observers;
 
     public GameMap() {
         LoadMovingBitMap();
@@ -52,6 +54,8 @@ public class GameMap implements GameObject {
         ChangeBlockAppearingRate();
         GenerateRandomBlockArray();
         _floor = 0;
+
+        _observers = new ArrayList<tw.edu.ntut.csie.game.Observer>();
     }
 
     private void LoadMovingBitMap() {
@@ -98,6 +102,8 @@ public class GameMap implements GameObject {
 
     @Override
     public void show() {
+        if ( _movingViewHeight >= 60 * (_floor + 3) + 160)
+            notifyAllObservers();
        _background.show();
         showBlocks();
         showScores();
@@ -153,12 +159,12 @@ public class GameMap implements GameObject {
         }
     }
 
-    public boolean gameOver()
-    {
-        if ( _movingViewHeight >= 60 * (_floor + 3) + 160)
-            return true;
-        return false;
-    }
+//    public boolean gameOver()
+//    {
+//        if ( _movingViewHeight >= 60 * (_floor + 3) + 160)
+//            return true;
+//        return false;
+//    }
 
     public int GetScore()
     {
@@ -345,5 +351,15 @@ public class GameMap implements GameObject {
             return true;
         else
             return false;
+    }
+
+    public void attach(tw.edu.ntut.csie.game.Observer observer){
+        _observers.add(observer);
+    }
+
+    public void notifyAllObservers(){
+        for (tw.edu.ntut.csie.game.Observer observer : _observers) {
+            observer.update();
+        }
     }
 }
