@@ -22,7 +22,7 @@ public class GameMap implements GameObject {
     private static final int MOVING_VIEW_SPEED = 3;
     private static final int DIGIT_LENGTH = 18;
     private static final int DEFAULT_SCORE = 0;
-    private static final int DEFAULT_DURABILITY = 30;
+    private static final int DEFAULT_DURABILITY = 10;
     private static final int DEFAULT_CHARACTER_TYPE = 100;
     private static final int DEFAULT_NONE_BLOCK_TYPE = 10;
 
@@ -38,6 +38,7 @@ public class GameMap implements GameObject {
     private MovingBitmap _unvisableBlock;
     private int firstCharacterX, firstCharacterY;
     private int _floor;
+    private boolean _isPause;
 
     private List<tw.edu.ntut.csie.game.Observer> _observers;
 
@@ -54,6 +55,7 @@ public class GameMap implements GameObject {
         ChangeBlockAppearingRate();
         GenerateRandomBlockArray();
         _floor = 0;
+        _isPause = false;
 
         _observers = new ArrayList<tw.edu.ntut.csie.game.Observer>();
     }
@@ -338,6 +340,10 @@ public class GameMap implements GameObject {
             CommonBlock commonBlock = new CommonBlock(_blockArray[i][j], i, j, _movingViewHeight, _unvisableBlock);
             commonBlock.show();
         }
+    }
+
+    public void SetPause(boolean isPause) {
+        _isPause = isPause;
     }
 
     private boolean checkVisible(int i, int j) {

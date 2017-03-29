@@ -17,6 +17,7 @@ import tw.edu.ntut.csie.game.MapObserver;
 public class StateRun extends GameState {
     private static final int DEFAULT_SCORE = 0;
 
+    
     private GameMap _map;
     private int _score;
     private int _durabiility;
@@ -95,21 +96,16 @@ public class StateRun extends GameState {
 
     @Override
     public boolean pointerReleased(List<Pointer> pointers) {
-//        if (_map.gameOver())
-//        {
-//            _score = _map.GetScore();
-//            changeState(Game.OVER_STATE);
-//        }
         return false;
     }
 
     @Override
     public void pause() {
-
+        _map.SetPause(true);
     }
 
     @Override
     public void resume() {
-
+        _map.SetPause(false);
     }
 }
