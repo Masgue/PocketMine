@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import tw.edu.ntut.csie.game.Game;
 import tw.edu.ntut.csie.game.GameMap;
 import tw.edu.ntut.csie.game.Pointer;
 import tw.edu.ntut.csie.game.R;
@@ -15,6 +16,7 @@ public class StateRun extends GameState {
 
     private GameMap _map;
     private int _score;
+    private int _durabiility;
 
     public StateRun(GameEngine engine) {
         super(engine);
@@ -69,6 +71,7 @@ public class StateRun extends GameState {
             int touchY = pointers.get(0).getY();
             _map.ResetBlock(touchX, touchY);
         }
+
         return true;
     }
 
@@ -79,6 +82,11 @@ public class StateRun extends GameState {
 
     @Override
     public boolean pointerReleased(List<Pointer> pointers) {
+        if (_map.gameOver())
+        {
+            _score = _map.GetScore();
+            changeState(Game.OVER_STATE);
+        }
         return false;
     }
 

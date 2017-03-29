@@ -4,6 +4,8 @@ import tw.edu.ntut.csie.game.block.Block;
 import tw.edu.ntut.csie.game.block.character.CharacterBlock;
 import tw.edu.ntut.csie.game.block.mine.CommonBlock;
 import tw.edu.ntut.csie.game.core.MovingBitmap;
+
+import java.util.Observer;
 import java.util.Random;
 
 /**
@@ -12,7 +14,7 @@ import java.util.Random;
 
 public class GameMap implements GameObject {
     private static final int NUMBER_OF_BLOCK_TYPE = 8;
-    private static final int BLOCK_ROW = 100;
+    private static final int BLOCK_ROW = 50;
     private static final int BLOCK_COLUMN = 6;
     private static final int MOVING_VIEW_SPEED = 3;
     private static final int DIGIT_LENGTH = 18;
@@ -32,6 +34,7 @@ public class GameMap implements GameObject {
     private MovingBitmap _firstCharacter;
     private MovingBitmap _unvisableBlock;
     private int firstCharacterX, firstCharacterY;
+    private int _floor;
     //private int [][] _blockArray = {{1,2,3,4,5,6}, {7,8,7,6,5,4}, {3,2,1,2,1,2}, {2,1,2,1,2,1},
      //                            {1,2,1,2,1,2}, {2,1,2,1,2,1}, {1,2,1,2,1,2}, {2,1,2,1,2,1} };
 
@@ -48,6 +51,7 @@ public class GameMap implements GameObject {
         _durability = DEFAULT_DURABILITY;
         ChangeBlockAppearingRate();
         GenerateRandomBlockArray();
+        _floor = 0;
     }
 
     private void LoadMovingBitMap() {
@@ -134,17 +138,31 @@ public class GameMap implements GameObject {
                             }
                             _blockArray[firstCharacterX][firstCharacterY] = DEFAULT_NONE_BLOCK_TYPE;
                             _blockArray[i][j] = DEFAULT_CHARACTER_TYPE;
+                            if (i >= _floor)
+                            {
+                                _floor = i;
+                            }
                             breakpoint = 1;
                             break;
                         }
                     }
-
-
                 }
             }
             if (breakpoint == 1)
                 break;
         }
+    }
+
+    public boolean gameOver()
+    {
+        if ( _movingViewHeight >= 60 * (_floor + 3) + 160)
+            return true;
+        return false;
+    }
+
+    public int GetScore()
+    {
+        return _score;
     }
 
     private void showBlocks()
