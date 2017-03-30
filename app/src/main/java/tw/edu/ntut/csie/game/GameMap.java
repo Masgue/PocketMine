@@ -20,7 +20,7 @@ public class GameMap implements GameObject {
     private static final int MOVING_VIEW_SPEED = 3;
     private static final int DIGIT_LENGTH = 18;
     private static final int DEFAULT_SCORE = 0;
-    private static final int DEFAULT_DURABILITY = 10;
+    private static final int DEFAULT_DURABILITY = 40;
     private static final int DEFAULT_CHARACTER_TYPE = 100;
     private static final int DEFAULT_NONE_BLOCK_TYPE = 10;
 
@@ -32,7 +32,7 @@ public class GameMap implements GameObject {
     private int _score;
     private int _durability;
     private MovingBitmap _firstCharacter;
-    private MovingBitmap _unvisableBlock;
+    private MovingBitmap _unvisibleBlock;
     private int firstCharacterX, firstCharacterY;
     private int _floor;
     private boolean _isPaused;
@@ -43,8 +43,8 @@ public class GameMap implements GameObject {
         LoadMovingBitMap();
         _blockArray = new int [BLOCK_ROW][BLOCK_COLUMN];
         _firstCharacter = new MovingBitmap(R.drawable.android_green_60x60);
-        _unvisableBlock = new MovingBitmap(R.drawable.block_unvisable);
-        _blockSpawningRate = new int[]{30, 25, 10, 25,  20, 15, 10, 5};
+        _unvisibleBlock = new MovingBitmap(R.drawable.block_unvisable);
+        _blockSpawningRate = new int[]{15, 25, 10, 25,  20, 15, 10, 5};
         _movingViewHeight = 0;
         _score = DEFAULT_SCORE;
         _durability = DEFAULT_DURABILITY;
@@ -308,7 +308,7 @@ public class GameMap implements GameObject {
                 _blockArray[blockType][count] = blockSpawningArray[rnd.nextInt(sum)];
             }
         }
-        _blockArray[0][0] = DEFAULT_CHARACTER_TYPE;
+        _blockArray[0][3] = DEFAULT_CHARACTER_TYPE;
     }
 
     private void changeAroundVisible(int i, int j) {
@@ -334,7 +334,7 @@ public class GameMap implements GameObject {
         }
         else
         {
-            CommonBlock commonBlock = new CommonBlock(_blockArray[i][j], i, j, _movingViewHeight, _unvisableBlock);
+            CommonBlock commonBlock = new CommonBlock(_blockArray[i][j], i, j, _movingViewHeight, _unvisibleBlock);
             commonBlock.show();
         }
     }
