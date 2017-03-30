@@ -91,13 +91,11 @@ public class StateRun extends GameState {
         if (pointers.size() == 1) {
             int touchX = pointers.get(0).getX();
             int touchY = pointers.get(0).getY();
-            if (touchX >= 0 && touchX <= 60) {
-                if (touchY >= 0 && touchY <= 60) {
-                    if(!_isPaused)
-                        pause();
-                    else
-                        resume();
-                }
+            if (touchX >= 0 && touchX <= 60 && touchY >= 0 && touchY <= 60) {
+                if(!_isPaused)
+                    pause();
+                else
+                    resume();
             }
             else if (!_isPaused)
                 _map.ResetBlock(touchX, touchY);

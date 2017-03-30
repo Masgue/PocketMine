@@ -20,7 +20,7 @@ public class GameMap implements GameObject {
     private static final int MOVING_VIEW_SPEED = 3;
     private static final int DIGIT_LENGTH = 18;
     private static final int DEFAULT_SCORE = 0;
-    private static final int DEFAULT_DURABILITY = 40;
+    private static final int DEFAULT_DURABILITY = 50;
     private static final int DEFAULT_CHARACTER_TYPE = 100;
     private static final int DEFAULT_NONE_BLOCK_TYPE = 10;
 
@@ -44,7 +44,7 @@ public class GameMap implements GameObject {
         _blockArray = new int [BLOCK_ROW][BLOCK_COLUMN];
         _firstCharacter = new MovingBitmap(R.drawable.android_green_60x60);
         _unvisibleBlock = new MovingBitmap(R.drawable.block_unvisable);
-        _blockSpawningRate = new int[]{15, 25, 10, 25,  20, 15, 10, 5};
+        _blockSpawningRate = new int[]{1, 25, 10, 25,  20, 15, 10, 5};
         _movingViewHeight = 0;
         _score = DEFAULT_SCORE;
         _durability = DEFAULT_DURABILITY;
@@ -279,7 +279,7 @@ public class GameMap implements GameObject {
     }
 
     private void GenerateRandomBlockArray() {
-        Random rnd = new Random();
+        Random rnd = new Random(System.currentTimeMillis());
         int blockType;
         int count;
         int sum = 0;
@@ -308,7 +308,13 @@ public class GameMap implements GameObject {
                 _blockArray[blockType][count] = blockSpawningArray[rnd.nextInt(sum)];
             }
         }
-        _blockArray[0][3] = DEFAULT_CHARACTER_TYPE;
+        for (int i = 0; i < BLOCK_COLUMN; i++)
+        {
+            _blockArray[0][i] = DEFAULT_NONE_BLOCK_TYPE;
+        }
+
+        _blockArray[0][5] = DEFAULT_CHARACTER_TYPE;
+
     }
 
     private void changeAroundVisible(int i, int j) {

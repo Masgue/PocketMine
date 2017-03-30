@@ -161,7 +161,7 @@ public class StateReady extends AbstractGameState {
     }
 
     private void initializePlayButton() {
-        addGameObject(_playButton = new BitmapButton(R.drawable.play, 500, 120));
+        addGameObject(_playButton = new BitmapButton(R.drawable.play, 500, 10));
         _playButton.addButtonEventHandler(new ButtonEventHandler() {
             @Override
             public void perform(BitmapButton button) {
@@ -179,7 +179,7 @@ public class StateReady extends AbstractGameState {
     }
 
     private void InitializeDigButton() {
-        addGameObject(_digButton = new BitmapButton(R.drawable.dig, 500, 120));
+        addGameObject(_digButton = new BitmapButton(R.drawable.dig, 500, 10));
         _digButton.addButtonEventHandler(new ButtonEventHandler() {
             @Override
             public void perform(BitmapButton button) {
@@ -190,7 +190,7 @@ public class StateReady extends AbstractGameState {
     }
 
     private void InitializeSettingButton() {
-        addGameObject(_settingButton = new BitmapButton(R.drawable.setting, 0, 0));
+        addGameObject(_settingButton = new BitmapButton(R.drawable.setting_pressed, 0, 0));
         _settingButton.addButtonEventHandler(new ButtonEventHandler() {
             @Override
             public void perform(BitmapButton button) {
@@ -247,6 +247,8 @@ public class StateReady extends AbstractGameState {
     private void setVisibility() {
         boolean showOther = !_showDig && !_showSetting;
 
+        SetButtonVisibility();
+
         _menuInfo.setVisible(_showMenu);
         _cardInfo.setVisible(_showCard);
         _gearInfo.setVisible(_showGear);
@@ -265,6 +267,29 @@ public class StateReady extends AbstractGameState {
         _settingButton.setVisible(showOther);
         _backButton.setVisible(_showSetting || _showDig);
         _exitButton.setVisible(_showSetting);
+    }
+
+    private void SetButtonVisibility() {
+        if (_showMenu)
+            _menuButton.loadBitmap(R.drawable.menu_pressed);
+        else
+            _menuButton.loadBitmap(R.drawable.menu);
+        if (_showCard)
+            _cardButton.loadBitmap(R.drawable.card_pressed);
+        else
+            _cardButton.loadBitmap(R.drawable.card);
+        if (_showGear)
+            _gearButton.loadBitmap(R.drawable.gear_pressed);
+        else
+            _gearButton.loadBitmap(R.drawable.gear);
+        if (_showMuseum)
+            _museumButton.loadBitmap(R.drawable.museum_pressed);
+        else
+            _museumButton.loadBitmap(R.drawable.museum);
+        if (_showShop)
+            _shopButton.loadBitmap(R.drawable.shop_pressed);
+        else
+            _shopButton.loadBitmap(R.drawable.shop);
     }
 }
 
