@@ -15,7 +15,7 @@ import java.util.Random;
 
 public class GameMap implements GameObject {
     private static final int NUMBER_OF_BLOCK_TYPE = 8;
-    private static final int BLOCK_ROW = 50;
+    private static final int BLOCK_ROW = 10;
     private static final int BLOCK_COLUMN = 6;
     private static final int MOVING_VIEW_SPEED = 3;
     private static final int DIGIT_LENGTH = 18;
@@ -26,7 +26,7 @@ public class GameMap implements GameObject {
 
     private MovingBitmap[] _digitNumberList;
     private MovingBitmap[] _MineList;
-    private int [][] _blockArray;
+    private int [][][] _blockArray;
     private int [] _blockSpawningRate;
     private int _movingViewHeight;
     private int _score;
@@ -36,15 +36,17 @@ public class GameMap implements GameObject {
     private int firstCharacterX, firstCharacterY;
     private int _floor;
     private boolean _isPaused;
+    private int _currentArrayState;
+    private int _multiArrayNum;
 
     private List<tw.edu.ntut.csie.game.Observer> _observers;
 
     public GameMap() {
         LoadMovingBitMap();
-        _blockArray = new int [BLOCK_ROW][BLOCK_COLUMN];
+        _blockArray = new int [2][BLOCK_ROW][BLOCK_COLUMN];
         _firstCharacter = new MovingBitmap(R.drawable.android_green_60x60);
         _unvisibleBlock = new MovingBitmap(R.drawable.block_unvisable);
-        _blockSpawningRate = new int[]{1, 25, 10, 25,  20, 15, 10, 5};
+        _blockSpawningRate = new int[]{15, 25, 10, 25,  20, 15, 10, 5};
         _movingViewHeight = 0;
         _score = DEFAULT_SCORE;
         _durability = DEFAULT_DURABILITY;
@@ -52,6 +54,7 @@ public class GameMap implements GameObject {
         GenerateRandomBlockArray();
         _floor = 0;
         _isPaused = false;
+        _currentArrayState = _multiArrayNum = 0;
 
         _observers = new ArrayList<tw.edu.ntut.csie.game.Observer>();
     }
@@ -125,23 +128,23 @@ public class GameMap implements GameObject {
 
                         if (checkVisible(i, j))
                         {
-                            if (_blockArray[i][j] == 0)      //unbreakable block
+                            if (_blockArray[_currentArrayState][i][j] == 0)      //unbreakable block
                             {
                                 _durability--;
                             }
                             else
                             {
                                 Block blocks;
-                                if (_blockArray[i][j] >= 0 && _blockArray[i][j] < 8)
+                                if (_blockArray[_currentArrayState][i][j] >= 0 && _blockArray[_currentArrayState][i][j] < 8)
                                 {
-                                    blocks = new CommonBlock(_blockArray[i][j], i, j, _movingViewHeight, _MineList[_blockArray[i][j]]);
+                                    blocks = new CommonBlock(_blockArray[_currentArrayState][i][j], i, j, _movingViewHeight, _MineList[_blockArray[_currentArrayState][i][j]], _multiArrayNum);
                                     _score += blocks.GetPoints();
                                     _durability -= blocks.GetDurability();
                                     if (_durability < 0)
                                         _durability = 0;
                                 }
-                                _blockArray[firstCharacterX][firstCharacterY] = DEFAULT_NONE_BLOCK_TYPE;
-                                _blockArray[i][j] = DEFAULT_CHARACTER_TYPE;
+                                _blockArray[_currentArrayState][firstCharacterX][firstCharacterY] = DEFAULT_NONE_BLOCK_TYPE;
+                                _blockArray[_currentArrayState][i][j] = DEFAULT_CHARACTER_TYPE;
                                 if (i >= _floor)
                                 {
                                     _floor = i;
@@ -158,13 +161,6 @@ public class GameMap implements GameObject {
         }
     }
 
-//    public boolean gameOver()
-//    {
-//        if ( _movingViewHeight >= 60 * (_floor + 3) + 160)
-//            return true;
-//        return false;
-//    }
-
     public int GetScore()
     {
         return _score;
@@ -176,19 +172,30 @@ public class GameMap implements GameObject {
         {
             for (int j = 0; j < BLOCK_COLUMN; j++)
             {
-                if (_blockArray[i][j] >= 0 && _blockArray[i][j] < 8)
+                if (_blockArray[_currentArrayState][i][j] >= 0 && _blockArray[_currentArrayState][i][j] < 8)
                 {
-                    changeAroundVisible(i, j);
-                    //CommonBlock commonBlock = new CommonBlock(_blockArray[i][j], i, j, _movingViewHeight, _MineList[_blockArray[i][j]]);
-                    //commonBlock.show();
+                    changeAroundVisible(i, j, 0);
                 }
-                else if (_blockArray[i][j] == DEFAULT_CHARACTER_TYPE)
+                else if (_blockArray[_currentArrayState][i][j] == DEFAULT_CHARACTER_TYPE)
                 {
-                    CharacterBlock characterBlock = new CharacterBlock(_blockArray[i][j], i, j, _movingViewHeight, _firstCharacter);
+                    CharacterBlock characterBlock = new CharacterBlock(_blockArray[_currentArrayState][i][j], i, j, _movingViewHeight, _firstCharacter, _multiArrayNum);
                     characterBlock.show();
                     firstCharacterX = i;
                     firstCharacterY = j;
                 }
+
+                /*
+                if (_blockArray[_currentArrayState + 1][i][j] >= 0 && _blockArray[_currentArrayState + 1][i][j] < 8)
+                {
+                    changeAroundVisible(i, j, 1);
+                }
+                else if (_blockArray[_currentArrayState + 1][i][j] == DEFAULT_CHARACTER_TYPE)
+                {
+                    CharacterBlock characterBlock = new CharacterBlock(_blockArray[_currentArrayState + 1][i][j], i, j, _movingViewHeight, _firstCharacter, _multiArrayNum + 1);
+                    characterBlock.show();
+                    firstCharacterX = i;
+                    firstCharacterY = j;
+                }*/
             }
         }
     }
@@ -200,26 +207,26 @@ public class GameMap implements GameObject {
         int units = _score % 10;
         if (_score > 10000)
         {
-            _digitNumberList[9].setLocation(0,190 - 2 * DIGIT_LENGTH);
+            _digitNumberList[9].setLocation(0,190 - DIGIT_LENGTH);
             _digitNumberList[9].show();
-            _digitNumberList[9].setLocation(0, 190 - 1 * DIGIT_LENGTH);
+            _digitNumberList[9].setLocation(0, 190);
             _digitNumberList[9].show();
-            _digitNumberList[9].setLocation(0, 190 + 1 * DIGIT_LENGTH);
+            _digitNumberList[9].setLocation(0, 190 + DIGIT_LENGTH);
             _digitNumberList[9].show();
             _digitNumberList[9].setLocation(0, 190 + 2 * DIGIT_LENGTH);
             _digitNumberList[9].show();
         }
         else
         {
-            _digitNumberList[units].setLocation(0, 190 - 2 * DIGIT_LENGTH);
+            _digitNumberList[units].setLocation(0, 190 - DIGIT_LENGTH);
             _digitNumberList[units].show();
             if (_score >= 10)
             {
-                _digitNumberList[tens].setLocation(0,190 - 1 * DIGIT_LENGTH);
+                _digitNumberList[tens].setLocation(0,190);
                 _digitNumberList[tens].show();
                 if (_score >= 100)
                 {
-                    _digitNumberList[hundreds].setLocation(0, 190 + 1 * DIGIT_LENGTH);
+                    _digitNumberList[hundreds].setLocation(0, 190 + DIGIT_LENGTH);
                     _digitNumberList[hundreds].show();
                     if (_score >= 1000)
                     {
@@ -230,10 +237,6 @@ public class GameMap implements GameObject {
             }
         }
     }
-
-//    private int GetTotalHits() {
-//        return 15;
-//    }
 
     private void showDurability()
     {
@@ -275,7 +278,7 @@ public class GameMap implements GameObject {
     }
 
     private void ChangeBlockAppearingRate() {
-        _blockSpawningRate[0] = 40;
+        _blockSpawningRate[1] = 40;
     }
 
     private void GenerateRandomBlockArray() {
@@ -305,42 +308,44 @@ public class GameMap implements GameObject {
         {
             for (count = 0; count < BLOCK_COLUMN; count++)
             {
-                _blockArray[blockType][count] = blockSpawningArray[rnd.nextInt(sum)];
+                _blockArray[_currentArrayState][blockType][count] = blockSpawningArray[rnd.nextInt(sum)];
+                _blockArray[_currentArrayState + 1][blockType][count] = _blockArray[_currentArrayState][blockType][count];
             }
         }
         for (int i = 0; i < BLOCK_COLUMN; i++)
         {
-            _blockArray[0][i] = DEFAULT_NONE_BLOCK_TYPE;
+            _blockArray[_currentArrayState][0][i] = DEFAULT_NONE_BLOCK_TYPE;
+            _blockArray[_currentArrayState + 1][0][i] = DEFAULT_NONE_BLOCK_TYPE;
         }
 
-        _blockArray[0][5] = DEFAULT_CHARACTER_TYPE;
+        _blockArray[_currentArrayState][0][5] = DEFAULT_CHARACTER_TYPE;
 
     }
 
-    private void changeAroundVisible(int i, int j) {
-        if (i < BLOCK_ROW - 1 && (_blockArray[i + 1][j] == DEFAULT_NONE_BLOCK_TYPE || _blockArray[i + 1][j] == DEFAULT_CHARACTER_TYPE))
+    private void changeAroundVisible(int i, int j, int multiArrayNum) {
+        if (i < BLOCK_ROW - 1 && (_blockArray[_currentArrayState][i + 1][j] == DEFAULT_NONE_BLOCK_TYPE || _blockArray[_currentArrayState][i + 1][j] == DEFAULT_CHARACTER_TYPE))
         {
-            CommonBlock commonBlock = new CommonBlock(_blockArray[i][j], i, j, _movingViewHeight, _MineList[_blockArray[i][j]]);
+            CommonBlock commonBlock = new CommonBlock(_blockArray[_currentArrayState][i][j], i, j, _movingViewHeight, _MineList[_blockArray[_currentArrayState][i][j]], multiArrayNum);
             commonBlock.show();
         }
-        else if (i > 0 && (_blockArray[i - 1][j] == DEFAULT_NONE_BLOCK_TYPE || _blockArray[i - 1][j] == DEFAULT_CHARACTER_TYPE))
+        else if (i > 0 && (_blockArray[_currentArrayState][i - 1][j] == DEFAULT_NONE_BLOCK_TYPE || _blockArray[_currentArrayState][i - 1][j] == DEFAULT_CHARACTER_TYPE))
         {
-            CommonBlock commonBlock = new CommonBlock(_blockArray[i][j], i, j, _movingViewHeight, _MineList[_blockArray[i][j]]);
+            CommonBlock commonBlock = new CommonBlock(_blockArray[_currentArrayState][i][j], i, j, _movingViewHeight, _MineList[_blockArray[_currentArrayState][i][j]], multiArrayNum);
             commonBlock.show();
         }
-        else if (j < BLOCK_COLUMN - 1 && (_blockArray[i][j + 1] == DEFAULT_NONE_BLOCK_TYPE || _blockArray[i][j + 1] == DEFAULT_CHARACTER_TYPE))
+        else if (j < BLOCK_COLUMN - 1 && (_blockArray[_currentArrayState][i][j + 1] == DEFAULT_NONE_BLOCK_TYPE || _blockArray[_currentArrayState][i][j + 1] == DEFAULT_CHARACTER_TYPE))
         {
-            CommonBlock commonBlock = new CommonBlock(_blockArray[i][j], i, j, _movingViewHeight, _MineList[_blockArray[i][j]]);
+            CommonBlock commonBlock = new CommonBlock(_blockArray[_currentArrayState][i][j], i, j, _movingViewHeight, _MineList[_blockArray[_currentArrayState][i][j]], multiArrayNum);
             commonBlock.show();
         }
-        else if (j > 0 && (_blockArray[i][j - 1] == DEFAULT_NONE_BLOCK_TYPE || _blockArray[i][j - 1] == DEFAULT_CHARACTER_TYPE))
+        else if (j > 0 && (_blockArray[_currentArrayState][i][j - 1] == DEFAULT_NONE_BLOCK_TYPE || _blockArray[_currentArrayState][i][j - 1] == DEFAULT_CHARACTER_TYPE))
         {
-            CommonBlock commonBlock = new CommonBlock(_blockArray[i][j], i, j, _movingViewHeight, _MineList[_blockArray[i][j]]);
+            CommonBlock commonBlock = new CommonBlock(_blockArray[_currentArrayState][i][j], i, j, _movingViewHeight, _MineList[_blockArray[_currentArrayState][i][j]], multiArrayNum);
             commonBlock.show();
         }
         else
         {
-            CommonBlock commonBlock = new CommonBlock(_blockArray[i][j], i, j, _movingViewHeight, _unvisibleBlock);
+            CommonBlock commonBlock = new CommonBlock(_blockArray[_currentArrayState][i][j], i, j, _movingViewHeight, _unvisibleBlock, _multiArrayNum);
             commonBlock.show();
         }
     }
@@ -350,13 +355,13 @@ public class GameMap implements GameObject {
     }
 
     private boolean checkVisible(int i, int j) {
-        if (i < BLOCK_ROW - 1 && (_blockArray[i + 1][j] == DEFAULT_NONE_BLOCK_TYPE || _blockArray[i + 1][j] == DEFAULT_CHARACTER_TYPE))
+        if (i < BLOCK_ROW - 1 && (_blockArray[_currentArrayState][i + 1][j] == DEFAULT_NONE_BLOCK_TYPE || _blockArray[_currentArrayState][i + 1][j] == DEFAULT_CHARACTER_TYPE))
             return true;
-        else if (i > 0 && (_blockArray[i - 1][j] == DEFAULT_NONE_BLOCK_TYPE || _blockArray[i - 1][j] == DEFAULT_CHARACTER_TYPE))
+        else if (i > 0 && (_blockArray[_currentArrayState][i - 1][j] == DEFAULT_NONE_BLOCK_TYPE || _blockArray[_currentArrayState][i - 1][j] == DEFAULT_CHARACTER_TYPE))
             return true;
-        else if (j < BLOCK_COLUMN - 1 && (_blockArray[i][j + 1] == DEFAULT_NONE_BLOCK_TYPE || _blockArray[i][j + 1] == DEFAULT_CHARACTER_TYPE))
+        else if (j < BLOCK_COLUMN - 1 && (_blockArray[_currentArrayState][i][j + 1] == DEFAULT_NONE_BLOCK_TYPE || _blockArray[_currentArrayState][i][j + 1] == DEFAULT_CHARACTER_TYPE))
             return true;
-        else if (j > 0 && (_blockArray[i][j - 1] == DEFAULT_NONE_BLOCK_TYPE || _blockArray[i][j - 1] == DEFAULT_CHARACTER_TYPE))
+        else if (j > 0 && (_blockArray[_currentArrayState][i][j - 1] == DEFAULT_NONE_BLOCK_TYPE || _blockArray[_currentArrayState][i][j - 1] == DEFAULT_CHARACTER_TYPE))
             return true;
         else
             return false;
