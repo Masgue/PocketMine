@@ -27,6 +27,7 @@ public class GameMap implements GameObject {
     private MovingBitmap[] _digitNumberList;
     private MovingBitmap[] _MineList;
     private int [][] _blockArray;
+    private int [][] _blockArrayTwo;
     private int [] _blockSpawningRate;
     private int _movingViewHeight;
     private int _score;
