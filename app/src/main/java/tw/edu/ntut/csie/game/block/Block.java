@@ -18,16 +18,15 @@ public abstract class Block implements GameObject {
     protected int _arrayY;
     protected int _actualX;
     protected int _actualY;
-    protected int _multiArrayNum;
+    protected boolean _isVisible;
 
     public Block() { }
 
-    public Block(int blockType, int arrayX, int arrayY, int viewHeight, MovingBitmap picture, int multiArrayNum) {
+    public Block(int blockType, int arrayX, int arrayY, int viewHeight, MovingBitmap picture) {
         _blockType = blockType;
         _arrayX = arrayX;
         _arrayY = arrayY;
         _picture = picture;
-        _multiArrayNum = multiArrayNum;
         CalculateXY(viewHeight);
     }
 
@@ -47,7 +46,7 @@ public abstract class Block implements GameObject {
 
     protected void CalculateXY(int viewHeight) {
         _actualY = 10 + BLOCK_HEIGHT * _arrayY;
-        _actualX = 160 + BLOCK_HEIGHT * (_arrayX + 10 * _multiArrayNum) - viewHeight;
+        _actualX = 160 + BLOCK_HEIGHT * _arrayX - viewHeight;
     }
 
     public int GetPoints() {
