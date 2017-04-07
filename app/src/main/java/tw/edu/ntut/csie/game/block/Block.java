@@ -9,6 +9,7 @@ import tw.edu.ntut.csie.game.core.MovingBitmap;
 
 public abstract class Block implements GameObject {
     protected static final int BLOCK_HEIGHT = 60;
+    protected static final int BLOCK_ROW = 10;
 
     protected MovingBitmap _picture;
     protected int _blockType;

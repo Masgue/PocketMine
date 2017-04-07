@@ -98,7 +98,7 @@ public class StateRun extends GameState {
                     resume();
             }
             else if (!_isPaused)
-                _map.ResetBlock(touchX, touchY);
+                _map.ResetAllBlock(touchX, touchY);
         }
 
         return true;
