@@ -8,8 +8,9 @@ import tw.edu.ntut.csie.game.core.MovingBitmap;
  */
 
 public abstract class Block implements GameObject {
+    protected static final int DEFAULT_NUMBER = -1;
     protected static final int BLOCK_HEIGHT = 60;
-    protected static final int BLOCK_ROW = 10;
+    protected static final int BLOCK_ROW = 15;
 
     protected MovingBitmap _picture;
     protected int _blockType;
@@ -17,17 +18,23 @@ public abstract class Block implements GameObject {
     protected int _points;
     protected int _arrayX;
     protected int _arrayY;
+    protected int _viewHeight;
     protected int _actualX;
     protected int _actualY;
+    protected int _multiArrayNumber;
     protected boolean _isVisible;
 
     public Block() { }
 
-    public Block(int blockType, int arrayX, int arrayY, int viewHeight, MovingBitmap picture) {
+    public Block(int blockType, int arrayX, int arrayY, int viewHeight, MovingBitmap picture, int multiArrayNumber) {
+        _durability = DEFAULT_NUMBER;
+        _points = DEFAULT_NUMBER;
         _blockType = blockType;
         _arrayX = arrayX;
         _arrayY = arrayY;
+        _viewHeight = viewHeight;
         _picture = picture;
+        _multiArrayNumber = multiArrayNumber;
         CalculateXY(viewHeight);
     }
 
@@ -47,7 +54,7 @@ public abstract class Block implements GameObject {
 
     protected void CalculateXY(int viewHeight) {
         _actualY = 10 + BLOCK_HEIGHT * _arrayY;
-        _actualX = 160 + BLOCK_HEIGHT * _arrayX - viewHeight;
+        _actualX = 160 + BLOCK_HEIGHT * (_arrayX + _multiArrayNumber * BLOCK_ROW) - _viewHeight;
     }
 
     public int GetPoints() {

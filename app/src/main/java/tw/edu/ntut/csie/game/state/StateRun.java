@@ -38,7 +38,7 @@ public class StateRun extends GameState {
         _observer = new MapObserver(_map) {
             @Override
             public void update() {
-                _score = _map.GetScore();
+//                _score = _map.GetScore();
                 changeState(Game.OVER_STATE);
             }
         };
@@ -97,8 +97,10 @@ public class StateRun extends GameState {
                 else
                     resume();
             }
-            else if (!_isPaused)
-                _map.ResetAllBlock(touchX, touchY);
+            else if (!_isPaused) {
+                if (touchY >= 10 && touchY <= 370)
+                    _map.ResetAllBlock(touchX, touchY);
+            }
         }
 
         return true;

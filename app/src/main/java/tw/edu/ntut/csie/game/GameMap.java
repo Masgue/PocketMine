@@ -4,7 +4,6 @@ import tw.edu.ntut.csie.game.block.Block;
 import tw.edu.ntut.csie.game.block.character.CharacterBlock;
 import tw.edu.ntut.csie.game.block.mine.CommonBlock;
 import tw.edu.ntut.csie.game.core.MovingBitmap;
-import tw.edu.ntut.csie.game.extend.Integer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,17 +14,19 @@ import java.util.Random;
  */
 
 public class GameMap implements GameObject {
-    private static final int NUMBER_OF_BLOCK_TYPE = 8;
     private static final int BLOCK_ROW = 15;
     private static final int BLOCK_COLUMN = 6;
-    private static final int MOVING_VIEW_SPEED = 3;
+    private static final int MOVING_VIEW_SPEED = 10;
     private static final int DIGIT_LENGTH = 18;
     private static final int DEFAULT_SCORE = 0;
     private static final int DEFAULT_DURABILITY = 50;
-    private static final int DEFAULT_CHARACTER_TYPE = 100;
-    private static final int DEFAULT_NONE_BLOCK_TYPE = 10;
+    private static final int DEFAULT_CHARACTER_TYPE = -10;
+    private static final int DEFAULT_NONE_BLOCK_TYPE = -1;
+    private static final int DEFAULT_TOOL_TYPE = -200;
+    private static final int INVISIBLE = 0;
 
     private MovingBitmap[] _digitNumberList;
+    private MovingBitmap[] _characterList;
     private MovingBitmap[] _MineList;
     private int [][] _blockArray;
     private int [][] _blockArrayTwo;
@@ -33,9 +34,7 @@ public class GameMap implements GameObject {
     private int _movingViewHeight;
     private int _score;
     private int _durability;
-    private MovingBitmap _firstCharacter;
-    private MovingBitmap _unvisibleBlock;
-    private int firstCharacterX, firstCharacterY;
+    private int CharacterX, CharacterY;
     private int _floor;
     private boolean _isPaused;
     private int _multiArrayNumber;
@@ -46,14 +45,11 @@ public class GameMap implements GameObject {
         LoadMovingBitMap();
         _blockArray = new int [BLOCK_ROW][BLOCK_COLUMN];
         _blockArrayTwo = new int [BLOCK_ROW][BLOCK_COLUMN];
-        _firstCharacter = new MovingBitmap(R.drawable.android_green_60x60);
-        _unvisibleBlock = new MovingBitmap(R.drawable.block_unvisable);
-        _blockSpawningRate = new int[]{1, 25, 10, 25,  20, 15, 10, 5};
+        _blockSpawningRate = new int[]{0, 1, 25, 10, 25,  20, 15, 10, 5};
         _movingViewHeight = 0;
         _score = DEFAULT_SCORE;
         _durability = DEFAULT_DURABILITY;
         GenerateRandomBlockArray(_blockArray, _blockSpawningRate);
-        ChangeBlockAppearingRate();
 
         _floor = 0;
         _isPaused = false;
@@ -73,15 +69,16 @@ public class GameMap implements GameObject {
                 new MovingBitmap(R.drawable.digit_7),
                 new MovingBitmap(R.drawable.digit_8),
                 new MovingBitmap(R.drawable.digit_9)};
-        _MineList = new MovingBitmap[]{
-                new MovingBitmap(R.drawable.block0_unbreakable),
-                new MovingBitmap(R.drawable.block1_hit_once),
-                new MovingBitmap(R.drawable.block2_hit_twice),
-                new MovingBitmap(R.drawable.block3_coal),
-                new MovingBitmap(R.drawable.block4_gold),
-                new MovingBitmap(R.drawable.block5_iron),
-                new MovingBitmap(R.drawable.block6_diamond),
-                new MovingBitmap(R.drawable.block7_ruby)};
+        _characterList = new MovingBitmap[]{new MovingBitmap(R.drawable.android_green_60x60)};
+        _MineList = new MovingBitmap[]{new MovingBitmap(R.drawable.block0_invisible),
+                new MovingBitmap(R.drawable.block1_unbreakable),
+                new MovingBitmap(R.drawable.block2_dirt),
+                new MovingBitmap(R.drawable.block3_stone),
+                new MovingBitmap(R.drawable.block4_coal),
+                new MovingBitmap(R.drawable.block5_gold),
+                new MovingBitmap(R.drawable.block6_iron),
+                new MovingBitmap(R.drawable.block7_diamond),
+                new MovingBitmap(R.drawable.block8_ruby)};
     }
 
     @Override
@@ -108,114 +105,118 @@ public class GameMap implements GameObject {
     public void show() {
         if ( _movingViewHeight >= 60 * (_floor + 3) + 160)
             notifyAllObservers();
-        showBlocks(_blockArray, _multiArrayNumber);
-        showBlocks(_blockArrayTwo, _multiArrayNumber + 1);
+        ShowMap(_multiArrayNumber);
         showScores();
         showDurability();
     }
 
     public void ResetAllBlock(int touchX, int touchY) {
-        ResetBlock(touchX, touchY, _blockArray);
-        ResetBlock(touchX, touchY, _blockArrayTwo);
+        ResetBlock(touchX, touchY, _blockArray, _multiArrayNumber);
+//        ResetBlock(touchX, touchY, _blockArrayTwo, _multiArrayNumber + 1);
     }
 
-    private void ResetBlock(int touchX, int touchY, int[][] blockArray) {
+    private void ResetBlock(int touchX, int touchY, int[][] blockArray, int multiArrayNumber) {
         if (!_isPaused) {
-            int breakpoint = 0;
-            for (int i = 0; i < BLOCK_ROW; i++)
-            {
-                for (int j = 0; j < BLOCK_COLUMN; j++)
-                {
-                    if ((touchX > 160 + 60 * i - _movingViewHeight) && (touchX < 160 + 60 * (i + 1) - _movingViewHeight)
-                            && (touchY > 10 + 60 * j) && (touchY < 10 + 60 * (j + 1)))
-                    {
-                        if (_durability == 0)
-                        {
-                            breakpoint = 1;
-                            break;
-                        }
+            if (_durability != 0) {
+                if (touchX > (160 - _movingViewHeight)) {
+                    int x = touchX, y = touchY;
+                    int arrayX = 0, arrayY = 0;
 
-                        if (checkVisible(i, j, blockArray))
-                        {
-                            if (blockArray[i][j] == 0)      //unbreakable block
-                            {
-                                _durability--;
-                            }
-                            else
-                            {
-                                CommonBlock blocks;
-                                if (blockArray[i][j] >= 0 && blockArray[i][j] < 8)
-                                {
-                                    blocks = new CommonBlock(blockArray[i][j], (i + _multiArrayNumber * BLOCK_ROW), j, _movingViewHeight, _MineList[blockArray[i][j]]);
-                                    _score += blocks.GetPoints();
-                                    _durability -= blocks.GetDurability();
-                                    if (_durability < 0)
-                                        _durability = 0;
-                                }
-                                blockArray[firstCharacterX][firstCharacterY] = DEFAULT_NONE_BLOCK_TYPE;
-                                blockArray[i][j] = DEFAULT_CHARACTER_TYPE;
-                                if (i >= _floor)
-                                {
-                                    _floor = i;
-                                }
-                                breakpoint = 1;
-                                break;
-                            }
-                        }
+                    while ((x - 160 + _movingViewHeight) > 60) {
+                        arrayX++;
+                        x -= 60;
+                    }
+
+                    while (y > 70) {
+                        arrayY++;
+                        y -= 60;
+                    }
+
+                    DigBlock(arrayX, arrayY, blockArray, multiArrayNumber);
+
+                    if (arrayX >= _floor) {
+                        _floor = arrayX;
                     }
                 }
-                if (breakpoint == 1)
-                    break;
             }
         }
     }
 
-//    public boolean gameOver()
-//    {
-//        if ( _movingViewHeight >= 60 * (_floor + 3) + 160)
-//            return true;
-//        return false;
-//    }
+    private void DigBlock(int arrayX, int arrayY, int[][] blockArray, int multiArrayNumber) {
+        if(blockArray[arrayX][arrayY] == DEFAULT_NONE_BLOCK_TYPE) {
+            blockArray[CharacterX][CharacterY] = DEFAULT_NONE_BLOCK_TYPE;
+            blockArray[arrayX][arrayY] = DEFAULT_CHARACTER_TYPE;
+        }
+        else if (blockArray[arrayX][arrayY] > 0) {
+            CommonBlock blocks = new CommonBlock(blockArray[arrayX][arrayY], arrayX, arrayY, _movingViewHeight, _MineList[blockArray[arrayX][arrayY]], multiArrayNumber);
+            _score += blocks.GetPoints();
+            _durability -= blocks.GetDurability();
 
-    public int GetScore()
-    {
-        return _score;
+            if (_durability < 0)
+                _durability = 0;
+
+            if (blockArray[arrayX][arrayY] > 1) {
+                blockArray[CharacterX][CharacterY] = DEFAULT_NONE_BLOCK_TYPE;
+                blockArray[arrayX][arrayY] = DEFAULT_CHARACTER_TYPE;
+            }
+        }
+    }
+    private void ShowMap(int multiArrayNumber) {
+        SwapArray(multiArrayNumber);
+        ShowArray(_blockArray, multiArrayNumber);
+        ShowArray(_blockArrayTwo, multiArrayNumber + 1);
     }
 
-    private void showBlocks(int[][] blockArray, int multiArrayNumber)
-    {
-        if ((BLOCK_ROW * 60 * (multiArrayNumber + 1) + 160) - _movingViewHeight < 3)
-        {
-            if (multiArrayNumber % 2 == 0)
-            {
+    private void ShowArray(int[][] blockArray, int multiArrayNumber) {
+        ShowBlocks(blockArray, multiArrayNumber);
+    }
+
+    private void ShowBlocks(int[][] blockArray, int multiArrayNumber) {
+        int amount = _MineList.length;
+        Block block;
+
+        for (int i = 0; i < BLOCK_ROW; i++) {
+            for (int j = 0; j < BLOCK_COLUMN; j++) {
+                if (isVisible(i, j, blockArray)) {
+                    if (blockArray[i][j] >= 0 && blockArray[i][j] < amount) {
+                        block = new CommonBlock(_blockArray[i][j], i, j, _movingViewHeight, _MineList[_blockArray[i][j]], multiArrayNumber);
+                        block.show();
+                    }
+                    else if (blockArray[i][j] == DEFAULT_CHARACTER_TYPE) {
+                        block = new CharacterBlock(blockArray[i][j], i, j, _movingViewHeight, _characterList[0], multiArrayNumber);
+                        block.show();
+                        CharacterX = i;
+                        CharacterY = j;
+                    }
+                }
+                else {
+                    block = new CommonBlock(_blockArray[i][j], i, j, _movingViewHeight, _MineList[INVISIBLE], multiArrayNumber);
+                    block.show();
+                }
+            }
+        }
+
+//        //用來看陣列有沒有互換，但是第三格不能挖
+//        for (int i = 1; i < BLOCK_ROW; i += 2) {
+//            block = new CommonBlock(_blockArray[i][3], i, 3, _movingViewHeight, _MineList[_blockArray[i][3]], multiArrayNumber);
+//            block.show();
+//        }
+    }
+
+    private void SwapArray(int multiArrayNumber) {
+        if ((BLOCK_ROW * 60 * (multiArrayNumber + 1) + 160) - _movingViewHeight < 3) {
+//            _blockArray = _blockArrayTwo;
+//            _blockArrayTwo = new int[BLOCK_ROW][BLOCK_COLUMN];
+//            GenerateRandomBlockArray(_blockArrayTwo, _blockSpawningRate);
+            if (multiArrayNumber % 2 == 0) {
+                ChangeBlockAppearingRate(400);
                 GenerateRandomBlockArray(_blockArrayTwo, _blockSpawningRate);
             }
-            else
-            {
+            else {
+                ChangeBlockAppearingRate(1);
                 GenerateRandomBlockArray(_blockArray, _blockSpawningRate);
             }
-            multiArrayNumber++;
-            _multiArrayNumber = multiArrayNumber;
-        }
-
-        for (int i = 0; i < BLOCK_ROW; i++)
-        {
-            for (int j = 0; j < BLOCK_COLUMN; j++)
-            {
-                if (blockArray[i][j] >= 0 && blockArray[i][j] < 8)
-                {
-                    changeAroundVisible(i, j, multiArrayNumber, blockArray);
-                    //CommonBlock commonBlock = new CommonBlock(_blockArray[i][j], i, j, _movingViewHeight, _MineList[_blockArray[i][j]]);
-                    //commonBlock.show();
-                }
-                else if (blockArray[i][j] == DEFAULT_CHARACTER_TYPE)
-                {
-                    CharacterBlock characterBlock = new CharacterBlock(blockArray[i][j], (i + multiArrayNumber * BLOCK_ROW), j, _movingViewHeight, _firstCharacter, 0);
-                    characterBlock.show();
-                    firstCharacterX = i;
-                    firstCharacterY = j;
-                }
-            }
+            _multiArrayNumber++;
         }
     }
 
@@ -226,9 +227,9 @@ public class GameMap implements GameObject {
         int units = _score % 10;
         if (_score > 10000)
         {
-            _digitNumberList[9].setLocation(0,190 - 2 * DIGIT_LENGTH);
+            _digitNumberList[9].setLocation(0,190 - 1 * DIGIT_LENGTH);
             _digitNumberList[9].show();
-            _digitNumberList[9].setLocation(0, 190 - 1 * DIGIT_LENGTH);
+            _digitNumberList[9].setLocation(0, 190);
             _digitNumberList[9].show();
             _digitNumberList[9].setLocation(0, 190 + 1 * DIGIT_LENGTH);
             _digitNumberList[9].show();
@@ -237,11 +238,11 @@ public class GameMap implements GameObject {
         }
         else
         {
-            _digitNumberList[units].setLocation(0, 190 - 2 * DIGIT_LENGTH);
+            _digitNumberList[units].setLocation(0, 190 - 1 * DIGIT_LENGTH);
             _digitNumberList[units].show();
             if (_score >= 10)
             {
-                _digitNumberList[tens].setLocation(0,190 - 1 * DIGIT_LENGTH);
+                _digitNumberList[tens].setLocation(0,190);
                 _digitNumberList[tens].show();
                 if (_score >= 100)
                 {
@@ -256,10 +257,6 @@ public class GameMap implements GameObject {
             }
         }
     }
-
-//    private int GetTotalHits() {
-//        return 15;
-//    }
 
     private void showDurability()
     {
@@ -300,26 +297,26 @@ public class GameMap implements GameObject {
         }
     }
 
-    private void ChangeBlockAppearingRate() {
-        _blockSpawningRate[1] = 400;
+    private void ChangeBlockAppearingRate(int demo) {
+        _blockSpawningRate[1] = demo;
     }
 
     private void GenerateRandomBlockArray(int[][] blockArray, int[] blockSpawningRate) {
         Random rnd = new Random(System.currentTimeMillis());
+        int[] blockSpawningArray;
+        int amount = _MineList.length;
         int blockType;
         int count;
         int sum = 0;
 
-        for (blockType = 0; blockType < NUMBER_OF_BLOCK_TYPE; blockType++)
-        {
+        for (blockType = 0; blockType < amount; blockType++) {
             sum += blockSpawningRate[blockType];
         }
 
-        int blockSpawningArray[] = new int[sum];
+        blockSpawningArray = new int[sum];
         sum = 0;
 
-        for (blockType = 0; blockType < NUMBER_OF_BLOCK_TYPE; blockType++)
-        {
+        for (blockType = 0; blockType < amount; blockType++) {
             for (count = 0; count < blockSpawningRate[blockType]; count++)
             {
                 blockSpawningArray[sum] = blockType;
@@ -327,8 +324,7 @@ public class GameMap implements GameObject {
             }
         }
 
-        for (blockType = 0; blockType < BLOCK_ROW; blockType++)
-        {
+        for (blockType = 0; blockType < BLOCK_ROW; blockType++) {
             for (count = 0; count < BLOCK_COLUMN; count++)
             {
                 blockArray[blockType][count] = blockSpawningArray[rnd.nextInt(sum)];
@@ -345,39 +341,11 @@ public class GameMap implements GameObject {
 
     }
 
-    private void changeAroundVisible(int i, int j, int multiArrayNumber, int[][] blockArray) {
-        if (i < BLOCK_ROW - 1 && (blockArray[i + 1][j] == DEFAULT_NONE_BLOCK_TYPE || blockArray[i + 1][j] == DEFAULT_CHARACTER_TYPE))
-        {
-            CommonBlock commonBlock = new CommonBlock(blockArray[i][j], (i + multiArrayNumber * BLOCK_ROW), j, _movingViewHeight, _MineList[blockArray[i][j]]);
-            commonBlock.show();
-        }
-        else if (i > 0 && (blockArray[i - 1][j] == DEFAULT_NONE_BLOCK_TYPE || blockArray[i - 1][j] == DEFAULT_CHARACTER_TYPE))
-        {
-            CommonBlock commonBlock = new CommonBlock(blockArray[i][j], (i + multiArrayNumber * BLOCK_ROW), j, _movingViewHeight, _MineList[blockArray[i][j]]);
-            commonBlock.show();
-        }
-        else if (j < BLOCK_COLUMN - 1 && (blockArray[i][j + 1] == DEFAULT_NONE_BLOCK_TYPE || blockArray[i][j + 1] == DEFAULT_CHARACTER_TYPE))
-        {
-            CommonBlock commonBlock = new CommonBlock(blockArray[i][j], (i + multiArrayNumber * BLOCK_ROW), j, _movingViewHeight, _MineList[blockArray[i][j]]);
-            commonBlock.show();
-        }
-        else if (j > 0 && (blockArray[i][j - 1] == DEFAULT_NONE_BLOCK_TYPE || blockArray[i][j - 1] == DEFAULT_CHARACTER_TYPE))
-        {
-            CommonBlock commonBlock = new CommonBlock(blockArray[i][j], (i + multiArrayNumber * BLOCK_ROW), j, _movingViewHeight, _MineList[blockArray[i][j]]);
-            commonBlock.show();
-        }
-        else
-        {
-            CommonBlock commonBlock = new CommonBlock(blockArray[i][j], (i + multiArrayNumber * BLOCK_ROW), j, _movingViewHeight, _unvisibleBlock);
-            commonBlock.show();
-        }
-    }
-
     public void SetPause(boolean isPaused) {
         _isPaused = isPaused;
     }
 
-    private boolean checkVisible(int i, int j, int[][] blockArray) {
+    private boolean isVisible(int i, int j, int[][] blockArray) {
         if (i < BLOCK_ROW - 1 && (blockArray[i + 1][j] == DEFAULT_NONE_BLOCK_TYPE || blockArray[i + 1][j] == DEFAULT_CHARACTER_TYPE))
             return true;
         else if (i > 0 && (blockArray[i - 1][j] == DEFAULT_NONE_BLOCK_TYPE || blockArray[i - 1][j] == DEFAULT_CHARACTER_TYPE))
@@ -388,6 +356,7 @@ public class GameMap implements GameObject {
             return true;
         else
             return false;
+//        return true;
     }
 
     public void attach(tw.edu.ntut.csie.game.Observer observer){
@@ -396,7 +365,16 @@ public class GameMap implements GameObject {
 
     public void notifyAllObservers(){
         for (tw.edu.ntut.csie.game.Observer observer : _observers) {
-            observer.update();
+//            observer.update();
         }
     }
+
+//    public int GetScore()
+//    {
+//        return _score;
+//    }
+
+//    private int GetTotalHits() {
+//        return 15;
+//    }
 }

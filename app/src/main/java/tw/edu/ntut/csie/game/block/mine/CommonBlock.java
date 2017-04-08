@@ -9,38 +9,40 @@ import tw.edu.ntut.csie.game.core.MovingBitmap;
 
 public class CommonBlock extends Block {
 
-    public CommonBlock(int blockType, int arrayX, int arrayY, int viewHeight, MovingBitmap picture) {
-        super(blockType, arrayX, arrayY, viewHeight, picture);
+    public CommonBlock(int blockType, int arrayX, int arrayY, int viewHeight, MovingBitmap picture, int multiArrayNumber) {
+        super(blockType, arrayX, arrayY, viewHeight, picture, multiArrayNumber);
     }
 
+    @Override
     public int GetPoints() {
        switch (_blockType) {
-           case 3:
-               return 1;
            case 4:
-               return 2;
+               return 1;
            case 5:
-               return 3;
+               return 2;
            case 6:
-               return 5;
+               return 3;
            case 7:
+               return 5;
+           case 8:
                return 10;
            default:
                return 0;
        }
     }
 
+    @Override
     public int GetDurability() {
         switch (_blockType) {
-            case 3:
-                return 1;
             case 4:
-                return 2;
-            case 5:
                 return 1;
-            case 6:
+            case 5:
                 return 2;
+            case 6:
+                return 1;
             case 7:
+                return 2;
+            case 8:
                 return 3;
             default:
                 return 1;
