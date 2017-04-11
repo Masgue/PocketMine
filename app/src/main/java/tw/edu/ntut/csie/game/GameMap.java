@@ -16,7 +16,7 @@ import java.util.Random;
 public class GameMap implements GameObject {
     private static final int BLOCK_ROW = 15;
     private static final int BLOCK_COLUMN = 6;
-    private static final int MOVING_VIEW_SPEED = 3;
+    private static final int MOVING_VIEW_SPEED = 8;
     private static final int DIGIT_LENGTH = 18;
     private static final int DEFAULT_SCORE = 0;
     private static final int DEFAULT_DURABILITY = 50;
@@ -38,6 +38,7 @@ public class GameMap implements GameObject {
     private int _floor;
     private boolean _isPaused;
     private int _multiArrayNumber;
+    private int _firstTimeGeneratingTwoMaps;
 
     private List<tw.edu.ntut.csie.game.Observer> _observers;
 
@@ -50,12 +51,14 @@ public class GameMap implements GameObject {
         _score = DEFAULT_SCORE;
         _durability = DEFAULT_DURABILITY;
         GenerateRandomBlockArray(_blockArray, _blockSpawningRate);
+        GenerateRandomBlockArray(_blockArrayTwo, _blockSpawningRate);
 
         _floor = 0;
         _isPaused = false;
         _multiArrayNumber = 0;
 
         _observers = new ArrayList<tw.edu.ntut.csie.game.Observer>();
+        _firstTimeGeneratingTwoMaps = 0;
     }
 
     private void LoadMovingBitMap() {
@@ -182,7 +185,7 @@ public class GameMap implements GameObject {
             for (int j = 0; j < BLOCK_COLUMN; j++) {
                 if (isVisible(i, j, blockArray)) {
                     if (blockArray[i][j] >= 0 && blockArray[i][j] < amount) {
-                        block = new CommonBlock(_blockArray[i][j], i, j, _movingViewHeight, _MineList[_blockArray[i][j]], multiArrayNumber);
+                        block = new CommonBlock(blockArray[i][j], i, j, _movingViewHeight, _MineList[blockArray[i][j]], multiArrayNumber);
                         block.show();
                     }
                     else if (blockArray[i][j] == DEFAULT_CHARACTER_TYPE) {
@@ -193,7 +196,7 @@ public class GameMap implements GameObject {
                     }
                 }
                 else {
-                    block = new CommonBlock(_blockArray[i][j], i, j, _movingViewHeight, _MineList[INVISIBLE], multiArrayNumber);
+                    block = new CommonBlock(blockArray[i][j], i, j, _movingViewHeight, _MineList[INVISIBLE], multiArrayNumber);
                     block.show();
                 }
             }
@@ -334,14 +337,25 @@ public class GameMap implements GameObject {
             }
         }
 
-        if (_movingViewHeight == 0) {
+        if (_firstTimeGeneratingTwoMaps == 0) {
             for (int i = 0; i < BLOCK_COLUMN; i++)
             {
                 blockArray[0][i] = DEFAULT_NONE_BLOCK_TYPE;
             }
             blockArray[0][5] = DEFAULT_CHARACTER_TYPE;
+            _firstTimeGeneratingTwoMaps = 1;
         }
 
+        else if (_firstTimeGeneratingTwoMaps == 1)
+        {
+            for (int i = 0; i < BLOCK_COLUMN; i++)
+            {
+                //if (i % 2 == 0)
+                blockArray[0][i] = DEFAULT_NONE_BLOCK_TYPE;
+                //else
+                //    blockArray[0][i] = 1;
+            }
+        }
     }
 
     public void SetPause(boolean isPaused) {
@@ -368,7 +382,7 @@ public class GameMap implements GameObject {
 
     public void notifyAllObservers(){
         for (tw.edu.ntut.csie.game.Observer observer : _observers) {
-//            observer.update();
+            observer.update();
         }
     }
 
