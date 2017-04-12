@@ -193,7 +193,7 @@ public class GameMap implements GameObject {
     }
 
     private void ShowMap(int multiArrayNumber) {
-        //SwapArray(multiArrayNumber);
+        SwapArray(multiArrayNumber);
         ShowArray(_blockArray, multiArrayNumber);
         ShowArray(_blockArrayTwo, multiArrayNumber + 1);
     }
@@ -407,7 +407,7 @@ public class GameMap implements GameObject {
 
     public void notifyAllObservers(){
         for (tw.edu.ntut.csie.game.Observer observer : _observers) {
-            observer.update();
+//            observer.update();
         }
     }
 
