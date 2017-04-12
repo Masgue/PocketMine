@@ -114,11 +114,6 @@ public class GameMap implements GameObject {
     }
 
     public void ResetAllBlock(int touchX, int touchY) {
-        ResetBlock(touchX, touchY, _blockArray, _multiArrayNumber);
-//        ResetBlock(touchX, touchY, _blockArrayTwo, _multiArrayNumber + 1);
-    }
-
-    private void ResetBlock(int touchX, int touchY, int[][] blockArray, int multiArrayNumber) {
         if (!_isPaused) {
             if (_durability != 0) {
                 if (touchX > (160 - _movingViewHeight)) {
@@ -134,11 +129,14 @@ public class GameMap implements GameObject {
                         arrayY++;
                         y -= 60;
                     }
-
-                    if (arrayX >= BLOCK_ROW)
-                        DigBlock(arrayX - BLOCK_ROW, arrayY, _blockArrayTwo, multiArrayNumber + 1);
+                    if (arrayX % BLOCK_ROW == 0 && CharacterX == BLOCK_ROW - 1)
+                        DigSwitchBlock(arrayX - arrayX / BLOCK_ROW * BLOCK_ROW, arrayY,_blockArray, _blockArrayTwo, _multiArrayNumber + 1);
+                    else if (arrayX % BLOCK_ROW == BLOCK_ROW - 1 && CharacterX == 0)
+                        DigSwitchBlock(arrayX - arrayX / BLOCK_ROW * BLOCK_ROW, arrayY, _blockArrayTwo,_blockArray, _multiArrayNumber + 1);
+                    else if (arrayX / BLOCK_ROW % 2 == 1)
+                        DigBlock(arrayX - arrayX / BLOCK_ROW * BLOCK_ROW, arrayY, _blockArrayTwo, _multiArrayNumber + 1);
                     else
-                        DigBlock(arrayX, arrayY, blockArray, multiArrayNumber);
+                        DigBlock(arrayX - arrayX / BLOCK_ROW * BLOCK_ROW, arrayY, _blockArray, _multiArrayNumber);
 
                     if (arrayX >= _floor) {
                         _floor = arrayX;
@@ -171,8 +169,31 @@ public class GameMap implements GameObject {
         }
     }
 
+    private void DigSwitchBlock(int arrayX, int arrayY, int[][] blockArray, int[][] blockArrayTwo, int multiArrayNumber) {
+
+        if (isVisible(arrayX, arrayY, blockArrayTwo)) {
+            if(blockArrayTwo[arrayX][arrayY] == DEFAULT_NONE_BLOCK_TYPE) {
+                blockArray[CharacterX][CharacterY] = DEFAULT_NONE_BLOCK_TYPE;
+                blockArrayTwo[arrayX][arrayY] = DEFAULT_CHARACTER_TYPE;
+            }
+            else if (blockArrayTwo[arrayX][arrayY] > 0) {
+                CommonBlock blocks = new CommonBlock(blockArrayTwo[arrayX][arrayY], arrayX, arrayY, _movingViewHeight, _MineList[blockArrayTwo[arrayX][arrayY]], multiArrayNumber);
+                _score += blocks.GetPoints();
+                _durability -= blocks.GetDurability();
+
+                if (_durability < 0)
+                    _durability = 0;
+
+                if (blockArrayTwo[arrayX][arrayY] > 1) {
+                    blockArray[CharacterX][CharacterY] = DEFAULT_NONE_BLOCK_TYPE;
+                    blockArrayTwo[arrayX][arrayY] = DEFAULT_CHARACTER_TYPE;
+                }
+            }
+        }
+    }
+
     private void ShowMap(int multiArrayNumber) {
-        SwapArray(multiArrayNumber);
+        //SwapArray(multiArrayNumber);
         ShowArray(_blockArray, multiArrayNumber);
         ShowArray(_blockArrayTwo, multiArrayNumber + 1);
     }
@@ -226,7 +247,7 @@ public class GameMap implements GameObject {
                 ChangeBlockAppearingRate(1);
                 GenerateRandomBlockArray(_blockArray, _blockSpawningRate);
             }
-            //_multiArrayNumber++;
+            _multiArrayNumber++;
         }
     }
 

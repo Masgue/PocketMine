@@ -35,7 +35,7 @@ public abstract class Block implements GameObject {
         _viewHeight = viewHeight;
         _picture = picture;
         _multiArrayNumber = multiArrayNumber;
-        CalculateXY(viewHeight);
+        CalculateXY();
     }
 
     @Override
@@ -52,7 +52,7 @@ public abstract class Block implements GameObject {
         _picture.show();
     }
 
-    protected void CalculateXY(int viewHeight) {
+    protected void CalculateXY() {
         _actualY = 10 + BLOCK_HEIGHT * _arrayY;
         _actualX = 160 + BLOCK_HEIGHT * (_arrayX + _multiArrayNumber * BLOCK_ROW) - _viewHeight;
     }
