@@ -16,7 +16,7 @@ import java.util.Random;
 public class GameMap implements GameObject {
     private static final int BLOCK_ROW = 15;
     private static final int BLOCK_COLUMN = 6;
-    private static final int MOVING_VIEW_SPEED = 8;
+    private static final int MOVING_VIEW_SPEED = 5;
     private static final int DIGIT_LENGTH = 18;
     private static final int DEFAULT_SCORE = 0;
     private static final int DEFAULT_DURABILITY = 50;
@@ -135,7 +135,10 @@ public class GameMap implements GameObject {
                         y -= 60;
                     }
 
-                    DigBlock(arrayX, arrayY, blockArray, multiArrayNumber);
+                    if (arrayX >= BLOCK_ROW)
+                        DigBlock(arrayX - BLOCK_ROW, arrayY, _blockArrayTwo, multiArrayNumber + 1);
+                    else
+                        DigBlock(arrayX, arrayY, blockArray, multiArrayNumber);
 
                     if (arrayX >= _floor) {
                         _floor = arrayX;
@@ -167,6 +170,7 @@ public class GameMap implements GameObject {
             }
         }
     }
+
     private void ShowMap(int multiArrayNumber) {
         SwapArray(multiArrayNumber);
         ShowArray(_blockArray, multiArrayNumber);
@@ -222,7 +226,7 @@ public class GameMap implements GameObject {
                 ChangeBlockAppearingRate(1);
                 GenerateRandomBlockArray(_blockArray, _blockSpawningRate);
             }
-            _multiArrayNumber++;
+            //_multiArrayNumber++;
         }
     }
 
