@@ -7,10 +7,8 @@ import tw.edu.ntut.csie.game.core.MovingBitmap;
  */
 
 public class Dynamite extends Tool {
-    private int[][] _blockArray;
-
-    public Dynamite(int blockType, int arrayX, int arrayY, int viewHeight, MovingBitmap picture, int[][] blockArray) {
-        super(blockType, arrayX, arrayY, viewHeight, picture, blockArray);
+    public Dynamite(int blockType, int arrayX, int arrayY, int viewHeight, int[][] blockArray) {
+        super(blockType, arrayX, arrayY, viewHeight, blockArray);
         _blockArray = blockArray;
     }
 
@@ -30,8 +28,8 @@ public class Dynamite extends Tool {
             if (_blockArray[x][y] >= 0 && _blockArray[x][y] != 1)
                 _blockArray[x][y] = DEFAULT_NONE_BLOCK_TYPE;
 
-            if (_blockArray[x][y] == blockType) {
-                Dynamite dynamite = new Dynamite(_blockType, x, y, _viewHeight, _picture, _blockArray);
+            if (_blockArray[x][y] == _blockType) {
+                Dynamite dynamite = new Dynamite(_blockType, x, y, _viewHeight, _blockArray);
                 dynamite.Active();
             }
         }

@@ -1,6 +1,6 @@
 package tw.edu.ntut.csie.game.block.mine;
 
-import tw.edu.ntut.csie.game.block.Block;
+import tw.edu.ntut.csie.game.R;
 import tw.edu.ntut.csie.game.core.MovingBitmap;
 
 /**

@@ -7,10 +7,8 @@ import tw.edu.ntut.csie.game.core.MovingBitmap;
  */
 
 public class Drill extends Tool {
-    private int[][] _blockArray;
-
-    public Drill(int blockType, int arrayX, int arrayY, int viewHeight, MovingBitmap picture, int[][] blockArray) {
-        super(blockType, arrayX, arrayY, viewHeight, picture, blockArray);
+    public Drill(int blockType, int arrayX, int arrayY, int viewHeight, int[][] blockArray) {
+        super(blockType, arrayX, arrayY, viewHeight, blockArray);
         _blockArray = blockArray;
     }
 
@@ -28,8 +26,8 @@ public class Drill extends Tool {
             if (_blockArray[x][y] >= 0 && _blockArray[x][y] != 1)
                 _blockArray[x][y] = DEFAULT_NONE_BLOCK_TYPE;
 
-            if (_blockArray[x][y] == blockType) {
-                Drill drill = new Drill(_blockType, x, y, _viewHeight, _picture, _blockArray);
+            if (_blockArray[x][y] == _blockType) {
+                Drill drill = new Drill(_blockType, x, y, _viewHeight, _blockArray);
                 drill.Active();
             }
         }

@@ -4,10 +4,14 @@ import tw.edu.ntut.csie.game.GameObject;
 import tw.edu.ntut.csie.game.core.MovingBitmap;
 
 /**
- * Created by ChenKeng on 2017/3/16.
+ * Created by ChenKeng on 2017/4/14.
  */
 
-public abstract class Block implements GameObject {
+public abstract class Block implements GameObject, BlockObject {
+    protected static final int DEFAULT_NONE_BLOCK_TYPE = -1;
+    protected static final int DEFAULT_TOOL_TYPE = -200;
+
+
     protected static final int DEFAULT_NUMBER = -1;
     protected static final int BLOCK_HEIGHT = 60;
     protected static final int BLOCK_ROW = 15;
@@ -24,42 +28,34 @@ public abstract class Block implements GameObject {
     protected int _actualY;
     protected boolean _isVisible;
 
-    public Block() { }
-
     public Block(int blockType, int arrayX, int arrayY, int viewHeight) {
-        _durability = DEFAULT_NUMBER;
-        _points = DEFAULT_NUMBER;
         _blockType = blockType;
         _arrayX = arrayX;
         _arrayY = arrayY;
         _viewHeight = viewHeight;
-        CalculateXY(viewHeight);
     }
 
     @Override
-    public void release() {
-        _picture.release();
-    }
-
-    @Override
-    public void move() { }
-
-    @Override
-    public void show() {
-        if (_actualX < 800) {
-            _picture.setLocation(_actualX, _actualY);
-            _picture.show();
-        }
-    }
-
-    protected void CalculateXY(int viewHeight) {
+    public void CalculateXY(int viewHeight) {
         _actualY = 10 + BLOCK_HEIGHT * _arrayY;
         _actualX = 160 + BLOCK_HEIGHT * _arrayX - _viewHeight;
     }
 
-    public int GetPoints() {
+    @Override
+    public void show() {
+        CalculateXY(_viewHeight);
+        _picture.setLocation(_actualX, _actualY);
+        _picture.show();
     }
 
-    public int GetDurability() {
+    @Override
+    public void move() {
+
     }
+
+    @Override
+    public void release() {
+
+    }
+
 }

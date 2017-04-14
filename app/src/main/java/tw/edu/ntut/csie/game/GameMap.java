@@ -1,6 +1,6 @@
 package tw.edu.ntut.csie.game;
 
-import tw.edu.ntut.csie.game.block.Block;
+import tw.edu.ntut.csie.game.block.BlockObject;
 import tw.edu.ntut.csie.game.block.character.CharacterBlock;
 import tw.edu.ntut.csie.game.block.mine.CommonBlock;
 import tw.edu.ntut.csie.game.block.tool.Bomb;
@@ -8,7 +8,6 @@ import tw.edu.ntut.csie.game.core.MovingBitmap;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Created by ChenKeng on 2017/3/16.
@@ -50,7 +49,7 @@ public class GameMap implements GameObject {
         _score = DEFAULT_SCORE;
         _durability = DEFAULT_DURABILITY;
         // GenerateRandomBlockArray(_blockArray, _blockSpawningRate);
-        _generatingBlocks = new GeneratingBlocks();
+        _generatingBlocks = new GeneratingBlocks(BLOCK_ROW);
         _blockArray = _generatingBlocks.GenerateMap();
 
         _floor = 0;
@@ -153,13 +152,13 @@ public class GameMap implements GameObject {
             blockArray[arrayX][arrayY] = DEFAULT_CHARACTER_TYPE;
         }
         else if (blockArray[arrayX][arrayY] == DEFAULT_TOOL_TYPE) {
-            Bomb bomb = new Bomb(blockArray[arrayX][arrayY], arrayX, arrayY, _movingViewHeight, _toolList[0], blockArray);
+            Bomb bomb = new Bomb(blockArray[arrayX][arrayY], arrayX, arrayY, _movingViewHeight, blockArray);
             bomb.Active();
             blockArray[CharacterX][CharacterY] = DEFAULT_NONE_BLOCK_TYPE;
             blockArray[arrayX][arrayY] = DEFAULT_CHARACTER_TYPE;
         }
         else if (blockArray[arrayX][arrayY] > 0) {
-            CommonBlock blocks = new CommonBlock(blockArray[arrayX][arrayY], arrayX, arrayY, _movingViewHeight, _mineList[blockArray[arrayX][arrayY]]);
+            CommonBlock blocks = new CommonBlock(blockArray[arrayX][arrayY], arrayX, arrayY, _movingViewHeight);
             _score += blocks.GetPoints();
             _durability -= blocks.GetDurability();
 
@@ -182,28 +181,28 @@ public class GameMap implements GameObject {
 
     private void ShowBlocks(int[][] blockArray) {
         int amount = _mineList.length;
-        Block block;
+        BlockObject block;
 
         for (int i = 0; i < BLOCK_ROW; i++) {
             for (int j = 0; j < BLOCK_COLUMN; j++) {
                 if (isVisible(i, j, blockArray)) {
                     if (blockArray[i][j] >= 0 && blockArray[i][j] < amount) {
-                        block = new CommonBlock(_blockArray[i][j], i, j, _movingViewHeight, _mineList[_blockArray[i][j]]);
+                        block = new CommonBlock(_blockArray[i][j], i, j, _movingViewHeight);
                         block.show();
                     }
                     else if (blockArray[i][j] == DEFAULT_CHARACTER_TYPE) {
-                        block = new CharacterBlock(blockArray[i][j], i, j, _movingViewHeight, _characterList[0]);
+                        block = new CharacterBlock(blockArray[i][j], i, j, _movingViewHeight);
                         block.show();
                         CharacterX = i;
                         CharacterY = j;
                     }
                     else if (blockArray[i][j] == DEFAULT_TOOL_TYPE) {
-                        block = new Bomb(blockArray[i][j], i, j, _movingViewHeight, _toolList[0], blockArray);
+                        block = new Bomb(blockArray[i][j], i, j, _movingViewHeight, blockArray);
                         block.show();
                     }
                 }
                 else {
-                    block = new CommonBlock(_blockArray[i][j], i, j, _movingViewHeight, _mineList[INVISIBLE]);
+                    block = new CommonBlock(_blockArray[i][j], i, j, _movingViewHeight);
                     block.show();
                 }
             }
@@ -292,98 +291,6 @@ public class GameMap implements GameObject {
             }
         }
     }
-
-<<<<<<< HEAD
-    private void ChangeBlockAppearingRate(int demo) {
-        _blockSpawningRate[1] = demo;
-    }
-
-    private void GenerateRandomBlockArray(int[][] blockArray, int[] blockSpawningRate) {
-        Random rnd = new Random(System.currentTimeMillis());
-        int[] blockSpawningArray;
-        int amount = _mineList.length;
-        int blockType;
-        int count;
-        int sum = 0;
-
-        for (blockType = 0; blockType < amount; blockType++) {
-            sum += blockSpawningRate[blockType];
-        }
-
-        blockSpawningArray = new int[sum];
-        sum = 0;
-
-        for (blockType = 0; blockType < amount; blockType++) {
-            for (count = 0; count < blockSpawningRate[blockType]; count++)
-            {
-                blockSpawningArray[sum] = blockType;
-                sum++;
-            }
-        }
-
-        for (blockType = 0; blockType < BLOCK_ROW; blockType++) {
-            for (count = 0; count < BLOCK_COLUMN; count++)
-            {
-                blockArray[blockType][count] = blockSpawningArray[rnd.nextInt(sum)];
-            }
-        }
-
-        if (_movingViewHeight == 0) {
-            for (int i = 0; i < BLOCK_COLUMN; i++)
-            {
-                blockArray[0][i] = DEFAULT_NONE_BLOCK_TYPE;
-            }
-
-            blockArray[0][5] = DEFAULT_CHARACTER_TYPE;
-            blockArray[1][3] = DEFAULT_TOOL_TYPE;
-            blockArray[5][2] = DEFAULT_TOOL_TYPE;
-            blockArray[6][3] = DEFAULT_TOOL_TYPE;
-        }
-    }
-=======
-    // private void ChangeBlockAppearingRate(int demo) {
-    //     _blockSpawningRate[1] = demo;
-    // }
-
-    // private void GenerateRandomBlockArray(int[][] blockArray, int[] blockSpawningRate) {
-    //     Random rnd = new Random(System.currentTimeMillis());
-    //     int[] blockSpawningArray;
-    //     int amount = _mineList.length;
-    //     int blockType;
-    //     int count;
-    //     int sum = 0;
-    //
-    //     for (blockType = 0; blockType < amount; blockType++) {
-    //         sum += blockSpawningRate[blockType];
-    //     }
-    //
-    //     blockSpawningArray = new int[sum];
-    //     sum = 0;
-    //
-    //     for (blockType = 0; blockType < amount; blockType++) {
-    //         for (count = 0; count < blockSpawningRate[blockType]; count++)
-    //         {
-    //             blockSpawningArray[sum] = blockType;
-    //             sum++;
-    //         }
-    //     }
-    //
-    //     for (blockType = 0; blockType < BLOCK_ROW; blockType++) {
-    //         for (count = 0; count < BLOCK_COLUMN; count++)
-    //         {
-    //             blockArray[blockType][count] = blockSpawningArray[rnd.nextInt(sum)];
-    //         }
-    //     }
-    //
-    //     if (_movingViewHeight == 0) {
-    //         for (int i = 0; i < BLOCK_COLUMN; i++)
-    //         {
-    //             blockArray[0][i] = DEFAULT_NONE_BLOCK_TYPE;
-    //         }
-    //         blockArray[0][5] = DEFAULT_CHARACTER_TYPE;
-    //     }
-    // }
->>>>>>> origin/master_2.0
 
     public void SetPause(boolean isPaused) {
         _isPaused = isPaused;

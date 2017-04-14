@@ -1,6 +1,6 @@
 package tw.edu.ntut.csie.game.block.mine;
 
-import tw.edu.ntut.csie.game.block.Block;
+import tw.edu.ntut.csie.game.R;
 import tw.edu.ntut.csie.game.core.MovingBitmap;
 
 /**
@@ -18,11 +18,11 @@ public class Gold extends CommonBlock {
 
     @Override
     public int GetPoints() {
-        return COAL_POINTS;
+        return GOLD_POINTS;
     }
 
     @Override
     public int GetDurability() {
-        return COAL_CONSUME;
+        return GOLD_CONSUME;
     }
 }
