@@ -26,14 +26,13 @@ public abstract class Block implements GameObject {
 
     public Block() { }
 
-    public Block(int blockType, int arrayX, int arrayY, int viewHeight, MovingBitmap picture) {
+    public Block(int blockType, int arrayX, int arrayY, int viewHeight) {
         _durability = DEFAULT_NUMBER;
         _points = DEFAULT_NUMBER;
         _blockType = blockType;
         _arrayX = arrayX;
         _arrayY = arrayY;
         _viewHeight = viewHeight;
-        _picture = picture;
         CalculateXY(viewHeight);
     }
 
@@ -59,10 +58,8 @@ public abstract class Block implements GameObject {
     }
 
     public int GetPoints() {
-        return  _points;
     }
 
     public int GetDurability() {
-        return _durability;
     }
 }

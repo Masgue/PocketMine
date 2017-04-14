@@ -30,25 +30,28 @@ public class GameMap implements GameObject {
     private MovingBitmap[] _characterList;
     private MovingBitmap[] _mineList;
     private MovingBitmap[] _toolList;
-    private int [][] _blockArray;
-    private int [] _blockSpawningRate;
+    private int[][] _blockArray;
+    // private int[] _blockSpawningRate;
     private int _movingViewHeight;
     private int _score;
     private int _durability;
     private int CharacterX, CharacterY;
     private int _floor;
     private boolean _isPaused;
+    private GeneratingBlocks _generatingBlocks;
 
     private List<tw.edu.ntut.csie.game.Observer> _observers;
 
     public GameMap() {
         LoadMovingBitMap();
-        _blockArray = new int [BLOCK_ROW][BLOCK_COLUMN];
-        _blockSpawningRate = new int[]{0, 1, 25, 10, 25,  20, 15, 10, 5};
+        // _blockArray = new int[BLOCK_ROW][BLOCK_COLUMN];
+        // _blockSpawningRate = new int[]{0, 1, 25, 10, 25,  20, 15, 10, 5};
         _movingViewHeight = 0;
         _score = DEFAULT_SCORE;
         _durability = DEFAULT_DURABILITY;
-        GenerateRandomBlockArray(_blockArray, _blockSpawningRate);
+        // GenerateRandomBlockArray(_blockArray, _blockSpawningRate);
+        _generatingBlocks = new GeneratingBlocks();
+        _blockArray = _generatingBlocks.GenerateMap();
 
         _floor = 0;
         _isPaused = false;
@@ -290,48 +293,48 @@ public class GameMap implements GameObject {
         }
     }
 
-    private void ChangeBlockAppearingRate(int demo) {
-        _blockSpawningRate[1] = demo;
-    }
+    // private void ChangeBlockAppearingRate(int demo) {
+    //     _blockSpawningRate[1] = demo;
+    // }
 
-    private void GenerateRandomBlockArray(int[][] blockArray, int[] blockSpawningRate) {
-        Random rnd = new Random(System.currentTimeMillis());
-        int[] blockSpawningArray;
-        int amount = _mineList.length;
-        int blockType;
-        int count;
-        int sum = 0;
-
-        for (blockType = 0; blockType < amount; blockType++) {
-            sum += blockSpawningRate[blockType];
-        }
-
-        blockSpawningArray = new int[sum];
-        sum = 0;
-
-        for (blockType = 0; blockType < amount; blockType++) {
-            for (count = 0; count < blockSpawningRate[blockType]; count++)
-            {
-                blockSpawningArray[sum] = blockType;
-                sum++;
-            }
-        }
-
-        for (blockType = 0; blockType < BLOCK_ROW; blockType++) {
-            for (count = 0; count < BLOCK_COLUMN; count++)
-            {
-                blockArray[blockType][count] = blockSpawningArray[rnd.nextInt(sum)];
-            }
-        }
-
-        if (_movingViewHeight == 0) {
-            for (int i = 0; i < BLOCK_COLUMN; i++)
-            {
-                blockArray[0][i] = DEFAULT_NONE_BLOCK_TYPE;
-            }
-            blockArray[0][5] = DEFAULT_CHARACTER_TYPE;
-        }
-    }
+    // private void GenerateRandomBlockArray(int[][] blockArray, int[] blockSpawningRate) {
+    //     Random rnd = new Random(System.currentTimeMillis());
+    //     int[] blockSpawningArray;
+    //     int amount = _mineList.length;
+    //     int blockType;
+    //     int count;
+    //     int sum = 0;
+    //
+    //     for (blockType = 0; blockType < amount; blockType++) {
+    //         sum += blockSpawningRate[blockType];
+    //     }
+    //
+    //     blockSpawningArray = new int[sum];
+    //     sum = 0;
+    //
+    //     for (blockType = 0; blockType < amount; blockType++) {
+    //         for (count = 0; count < blockSpawningRate[blockType]; count++)
+    //         {
+    //             blockSpawningArray[sum] = blockType;
+    //             sum++;
+    //         }
+    //     }
+    //
+    //     for (blockType = 0; blockType < BLOCK_ROW; blockType++) {
+    //         for (count = 0; count < BLOCK_COLUMN; count++)
+    //         {
+    //             blockArray[blockType][count] = blockSpawningArray[rnd.nextInt(sum)];
+    //         }
+    //     }
+    //
+    //     if (_movingViewHeight == 0) {
+    //         for (int i = 0; i < BLOCK_COLUMN; i++)
+    //         {
+    //             blockArray[0][i] = DEFAULT_NONE_BLOCK_TYPE;
+    //         }
+    //         blockArray[0][5] = DEFAULT_CHARACTER_TYPE;
+    //     }
+    // }
 
     public void SetPause(boolean isPaused) {
         _isPaused = isPaused;
