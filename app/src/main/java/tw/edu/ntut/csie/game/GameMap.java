@@ -329,7 +329,11 @@ public class GameMap implements GameObject {
             {
                 blockArray[0][i] = DEFAULT_NONE_BLOCK_TYPE;
             }
+
             blockArray[0][5] = DEFAULT_CHARACTER_TYPE;
+            blockArray[1][3] = DEFAULT_TOOL_TYPE;
+            blockArray[5][2] = DEFAULT_TOOL_TYPE;
+            blockArray[6][3] = DEFAULT_TOOL_TYPE;
         }
     }
 
