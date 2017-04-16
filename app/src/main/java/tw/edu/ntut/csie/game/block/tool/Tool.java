@@ -17,7 +17,15 @@ public abstract class Tool extends Block{
         _blockArray = blockArray;
     }
 
-    public void Active() {
+    public void Active() { }
 
+    @Override
+    public int GetPoints() {
+        return 0;
+    }
+
+    @Override
+    public int GetDurability() {
+        return 1;
     }
 }

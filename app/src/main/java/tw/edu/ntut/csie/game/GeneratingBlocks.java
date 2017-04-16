@@ -24,25 +24,15 @@ public class GeneratingBlocks {
     }
 
     private void AddMineBlocks() {
-        ArrayListBlock arrayListBlock;
-        arrayListBlock = new ArrayListBlock(0, 0, "block0_invisible");
-        _mineBlockList.add(arrayListBlock);
-       arrayListBlock.SetBlock(1, 1 ,"block1_unbreakable");
-        _mineBlockList.add(arrayListBlock);
-        arrayListBlock.SetBlock(2, 25, "block2_dirt");
-        _mineBlockList.add(arrayListBlock);
-        arrayListBlock.SetBlock(3, 10, "block3_stone");
-        _mineBlockList.add(arrayListBlock);
-        arrayListBlock.SetBlock(4, 25, "block4_coal");
-        _mineBlockList.add(arrayListBlock);
-        arrayListBlock.SetBlock(5, 20, "block5_gold");
-        _mineBlockList.add(arrayListBlock);
-        arrayListBlock.SetBlock(6, 15, "block6_iron");
-        _mineBlockList.add(arrayListBlock);
-        arrayListBlock.SetBlock(7, 10, "block7_diamond");
-        _mineBlockList.add(arrayListBlock);
-        arrayListBlock.SetBlock(8,5, "block8_ruby");
-        _mineBlockList.add(arrayListBlock);
+        //_mineBlockList.add(new ArrayListBlock(0, 0, "block0_invisible"));
+        _mineBlockList.add(new ArrayListBlock(0, 1 ,"block1_unbreakable"));
+        _mineBlockList.add(new ArrayListBlock(1, 25, "block2_dirt"));
+        _mineBlockList.add(new ArrayListBlock(2, 10, "block3_stone"));
+        _mineBlockList.add(new ArrayListBlock(3, 25, "block4_coal"));
+        _mineBlockList.add(new ArrayListBlock(4, 20, "block5_gold"));
+        _mineBlockList.add(new ArrayListBlock(5, 15, "block6_iron"));
+        _mineBlockList.add(new ArrayListBlock(6, 10, "block7_diamond"));
+        _mineBlockList.add(new ArrayListBlock(7, 5, "block8_ruby"));
     }
 
     private void AddToolBlocks() {
@@ -53,36 +43,50 @@ public class GeneratingBlocks {
         _characterBlockList.add(new ArrayListBlock(0, 0, "digit_8"));
     }
 
-    public int[][] GenerateMap(int ) {
+    public int[][] GenerateMap() {
         int[][] blockArray = new int[_blockRow][BLOCK_COLUMN];
-
-
+        GenerateRandomBlockArray(blockArray);
+        return blockArray;
     }
 
     private void ChangeBlockAppearingRate(int blockType, int spawningRate) {
 
     }
 
-    private void GenerateRandomBlockArray(int[][] blockArray, int[] blockSpawningRate) {
+    private void GenerateRandomBlockArray(int[][] blockArray) {
         Random rnd = new Random(System.currentTimeMillis());
         int[] blockSpawningArray;
-        int amount = _mineList.length;
+        int amount = _mineBlockList.size() + _toolBlockList.size();
         int blockType;
         int count;
         int sum = 0;
 
         for (blockType = 0; blockType < amount; blockType++) {
-            sum += blockSpawningRate[blockType];
+            if (blockType < _mineBlockList.size())
+                sum += _mineBlockList.get(blockType).GetBlockSpawningRate();
+            else
+                sum += _toolBlockList.get(blockType - _mineBlockList.size()).GetBlockSpawningRate();
         }
 
         blockSpawningArray = new int[sum];
         sum = 0;
 
         for (blockType = 0; blockType < amount; blockType++) {
-            for (count = 0; count < blockSpawningRate[blockType]; count++)
+            if (blockType < _mineBlockList.size())
             {
-                blockSpawningArray[sum] = blockType;
-                sum++;
+                for (count = 0; count < _mineBlockList.get(blockType).GetBlockSpawningRate(); count++)
+                {
+                    blockSpawningArray[sum] = blockType;
+                    sum++;
+                }
+            }
+            else
+            {
+                for (count = 0; count < _toolBlockList.get(blockType - _mineBlockList.size()).GetBlockSpawningRate(); count++)
+                {
+                    blockSpawningArray[sum] = blockType;
+                    sum++;
+                }
             }
         }
 
@@ -98,9 +102,18 @@ public class GeneratingBlocks {
             blockArray[0][i] = DEFAULT_NONE_BLOCK_TYPE;
         }
 
-//            blockArray[0][5] = DEFAULT_CHARACTER_TYPE;
+            blockArray[0][5] = ChooseCharacter();
 //            blockArray[1][3] = DEFAULT_TOOL_TYPE;
 //            blockArray[5][2] = DEFAULT_TOOL_TYPE;
 //            blockArray[6][3] = DEFAULT_TOOL_TYPE;
     }
+
+    private int ChooseCharacter() {
+        int character = 0;
+        return _mineBlockList.size() + _toolBlockList.size() + _characterBlockList.get(character).GetBlockArrayNum();
+    }
+
+    public int GetMineBlocksArraySize() {   return _mineBlockList.size();}
+
+    public int GetToolBlocksArraySize() {   return _toolBlockList.size();}
 }

@@ -10,7 +10,7 @@ import tw.edu.ntut.csie.game.core.MovingBitmap;
  */
 
 public abstract class CommonBlock extends Block{
-    public CommonBlock(int blockType, int arrayX, int arrayY, int viewHeight, int[][] blockArray) {
+    public CommonBlock(int blockType, int arrayX, int arrayY, int viewHeight) {
         super(blockType, arrayX, arrayY, viewHeight);
     }
 }

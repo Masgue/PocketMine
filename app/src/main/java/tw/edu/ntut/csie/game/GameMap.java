@@ -1,7 +1,9 @@
 package tw.edu.ntut.csie.game;
 
+import tw.edu.ntut.csie.game.block.Block;
 import tw.edu.ntut.csie.game.block.BlockObject;
 import tw.edu.ntut.csie.game.block.character.CharacterBlock;
+import tw.edu.ntut.csie.game.block.mine.Coal;
 import tw.edu.ntut.csie.game.block.mine.CommonBlock;
 import tw.edu.ntut.csie.game.block.tool.Bomb;
 import tw.edu.ntut.csie.game.core.MovingBitmap;
@@ -26,9 +28,10 @@ public class GameMap implements GameObject {
     private static final int INVISIBLE = 0;
 
     private MovingBitmap[] _digitNumberList;
-    private MovingBitmap[] _characterList;
-    private MovingBitmap[] _mineList;
-    private MovingBitmap[] _toolList;
+ //   private MovingBitmap[] _characterList;
+    //private MovingBitmap[] _mineList;
+ //   private MovingBitmap[] _toolList;
+    private CommonBlock[] _mineList;
     private int[][] _blockArray;
     // private int[] _blockSpawningRate;
     private int _movingViewHeight;
@@ -69,8 +72,11 @@ public class GameMap implements GameObject {
                 new MovingBitmap(R.drawable.digit_7),
                 new MovingBitmap(R.drawable.digit_8),
                 new MovingBitmap(R.drawable.digit_9)};
-        _characterList = new MovingBitmap[]{new MovingBitmap(R.drawable.android_green_60x60)};
-        _mineList = new MovingBitmap[]{new MovingBitmap(R.drawable.block0_invisible),
+        _mineList = new CommonBlock[]{
+                new Coal(0,0,0,0)
+        };
+      //  _characterList = new MovingBitmap[]{new MovingBitmap(R.drawable.android_green_60x60)};
+        /*_mineList = new MovingBitmap[]{new MovingBitmap(R.drawable.block0_invisible),
                 new MovingBitmap(R.drawable.block1_unbreakable),
                 new MovingBitmap(R.drawable.block2_dirt),
                 new MovingBitmap(R.drawable.block3_stone),
@@ -78,8 +84,8 @@ public class GameMap implements GameObject {
                 new MovingBitmap(R.drawable.block5_gold),
                 new MovingBitmap(R.drawable.block6_iron),
                 new MovingBitmap(R.drawable.block7_diamond),
-                new MovingBitmap(R.drawable.block8_ruby)};
-        _toolList = new MovingBitmap[]{new MovingBitmap(R.drawable.digit_8)};
+                new MovingBitmap(R.drawable.block8_ruby)};*/
+       // _toolList = new MovingBitmap[]{new MovingBitmap(R.drawable.digit_8)};
     }
 
     @Override
@@ -179,7 +185,7 @@ public class GameMap implements GameObject {
         ShowBlocks(blockArray);
     }
 
-    private void ShowBlocks(int[][] blockArray) {
+ /*   private void ShowBlocks(int[][] blockArray) {
         int amount = _mineList.length;
         BlockObject block;
 
@@ -213,6 +219,28 @@ public class GameMap implements GameObject {
 //            block = new CommonBlock(_blockArray[i][3], i, 3, _movingViewHeight, _mineList[_blockArray[i][3]], multiArrayNumber);
 //            block.show();
 //        }
+    }*/
+
+    private void ShowBlocks(int[][] blockArray) {
+        int amount = _generatingBlocks.GetMineBlocksArraySize() + _generatingBlocks.GetMineBlocksArraySize();
+        for (int i = 0; i < BLOCK_ROW; i++)
+        {
+            for (int j = 0; j < BLOCK_COLUMN; j++)
+            {
+                if (isVisible(i, j, blockArray)) {
+                    if (_blockArray[i][j] < _generatingBlocks.GetMineBlocksArraySize()) {
+
+                    }
+                    else if (_blockArray[i][j] < _generatingBlocks.GetMineBlocksArraySize() + _generatingBlocks.GetToolBlocksArraySize()){
+
+                    }
+                }
+                else
+                {
+
+                }
+            }
+        }
     }
 
     private void showScores() {
@@ -222,18 +250,18 @@ public class GameMap implements GameObject {
         int units = _score % 10;
         if (_score > 10000)
         {
-            _digitNumberList[9].setLocation(0,190 - 1 * DIGIT_LENGTH);
+            _digitNumberList[9].setLocation(0,190 - DIGIT_LENGTH);
             _digitNumberList[9].show();
             _digitNumberList[9].setLocation(0, 190);
             _digitNumberList[9].show();
-            _digitNumberList[9].setLocation(0, 190 + 1 * DIGIT_LENGTH);
+            _digitNumberList[9].setLocation(0, 190 + DIGIT_LENGTH);
             _digitNumberList[9].show();
             _digitNumberList[9].setLocation(0, 190 + 2 * DIGIT_LENGTH);
             _digitNumberList[9].show();
         }
         else
         {
-            _digitNumberList[units].setLocation(0, 190 - 1 * DIGIT_LENGTH);
+            _digitNumberList[units].setLocation(0, 190 - DIGIT_LENGTH);
             _digitNumberList[units].show();
             if (_score >= 10)
             {
@@ -241,7 +269,7 @@ public class GameMap implements GameObject {
                 _digitNumberList[tens].show();
                 if (_score >= 100)
                 {
-                    _digitNumberList[hundreds].setLocation(0, 190 + 1 * DIGIT_LENGTH);
+                    _digitNumberList[hundreds].setLocation(0, 190 + DIGIT_LENGTH);
                     _digitNumberList[hundreds].show();
                     if (_score >= 1000)
                     {

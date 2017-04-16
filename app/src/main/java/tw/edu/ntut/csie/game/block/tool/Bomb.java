@@ -38,4 +38,14 @@ public class Bomb extends Tool {
             }
         }
     }
+
+    @Override
+    public int GetPoints() {
+        return 0;
+    }
+
+    @Override
+    public int GetDurability() {
+        return 1;
+    }
 }

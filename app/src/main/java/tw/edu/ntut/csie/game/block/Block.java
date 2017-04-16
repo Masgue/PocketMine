@@ -49,13 +49,8 @@ public abstract class Block implements GameObject, BlockObject {
     }
 
     @Override
-    public void move() {
-
-    }
+    public void move() { }
 
     @Override
-    public void release() {
-
-    }
-
+    public void release() { }
 }
