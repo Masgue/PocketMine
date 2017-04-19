@@ -24,7 +24,6 @@ public class GeneratingBlocks {
     }
 
     private void AddMineBlocks() {
-        //_mineBlockList.add(new ArrayListBlock(0, 0, "block0_invisible"));
         _mineBlockList.add(new ArrayListBlock(0, 1 ,"block1_unbreakable"));
         _mineBlockList.add(new ArrayListBlock(1, 25, "block2_dirt"));
         _mineBlockList.add(new ArrayListBlock(2, 10, "block3_stone"));
@@ -33,11 +32,12 @@ public class GeneratingBlocks {
         _mineBlockList.add(new ArrayListBlock(5, 15, "block6_iron"));
         _mineBlockList.add(new ArrayListBlock(6, 10, "block7_diamond"));
         _mineBlockList.add(new ArrayListBlock(7, 5, "block8_ruby"));
+        //_mineBlockList.add(new ArrayListBlock(0, 0, "block0_invisible"));
     }
 
     private void AddToolBlocks() {
-        _toolBlockList.add(new ArrayListBlock(0, 0, "digit_8"));
-        _toolBlockList.add(new ArrayListBlock(1, 1, "digit_6"));
+        _toolBlockList.add(new ArrayListBlock(0, 0, "digit_6"));
+        //_toolBlockList.add(new ArrayListBlock(1, 1, "digit_8"));
     }
     private void AddCharacterBlocks() {
         _characterBlockList.add(new ArrayListBlock(0, 0, "digit_8"));

@@ -53,4 +53,10 @@ public abstract class Block implements GameObject, BlockObject {
 
     @Override
     public void release() { }
+
+    public void SetBlock(int arrayX, int arrayY, int viewHeight) {
+        _arrayX = arrayX;
+        _arrayY = arrayY;
+        _viewHeight = viewHeight;
+    }
 }
