@@ -9,12 +9,9 @@ import tw.edu.ntut.csie.game.core.MovingBitmap;
 
 public abstract class Block implements GameObject, BlockObject {
     protected static final int DEFAULT_NONE_BLOCK_TYPE = -1;
-    protected static final int DEFAULT_TOOL_TYPE = -200;
-
-
     protected static final int DEFAULT_NUMBER = -1;
     protected static final int BLOCK_HEIGHT = 60;
-    protected static final int BLOCK_ROW = 15;
+    protected static final int BLOCK_ROW = 50;
     protected static final int BLOCK_COLUMN = 6;
 
     protected MovingBitmap _picture;
