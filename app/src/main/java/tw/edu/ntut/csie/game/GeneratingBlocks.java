@@ -50,7 +50,6 @@ public class GeneratingBlocks {
         _mineList = new CommonBlock[_mineBlockList.size()];
         _toolList = new Tool[_toolBlockList.size()];
 
-
         _movingViewHeight = 0;
         _blockArray = new int[_blockRow][BLOCK_COLUMN];
         GenerateMap();
@@ -64,10 +63,15 @@ public class GeneratingBlocks {
                 new Diamond(6,0,0,0),
                 new Ruby(7,0,0,0)};
         _toolList =  new Tool[]{
-                new Bomb(0,0,0,0,_blockArray),
-                new Drill(1,0,0,0,_blockArray),
-                new Dynamite(2,0,0,0,_blockArray)};
+                new Bomb(0,0,0,0),
+                new Drill(1,0,0,0),
+                new Dynamite(2,0,0,0)};
         _character = new CharacterBlock(0,0,0,0);
+
+        SetToolList();
+        SetBlockArray();
+        SetMimeNum();
+        SetToolNum();
     }
 
     private void AddMineBlocks() {
@@ -152,10 +156,13 @@ public class GeneratingBlocks {
         {
             blockArray[_blockRow - 1][i] = 0;
         }
-
-        blockArray[2][3] = _mineBlockList.size();
-        blockArray[2][2] = 0;
-        blockArray[3][3] = 0;
+//        for (int i = 0 ; i < 6; i++)
+//        {
+//            blockArray[1][i] = _mineBlockList.size();
+//        }
+//        blockArray[2][3] = _mineBlockList.size();
+//        blockArray[2][2] = _mineBlockList.size();
+//        blockArray[3][3] =  _mineBlockList.size();
     }
 
     private int ChooseCharacter() {
@@ -196,6 +203,23 @@ public class GeneratingBlocks {
     }
 
     public void ActiveTool(int arrayX, int arrayY) {
+        _toolList[_blockArray[arrayX][arrayY] - GetMineBlocksArraySize()].SetBlockXY(arrayX,arrayY);
         _toolList[_blockArray[arrayX][arrayY] - GetMineBlocksArraySize()].Active();
+    }
+
+    private void SetToolList() {
+        Tool.SetToolList(_toolList);
+    }
+
+    private void SetBlockArray() {
+        Tool.SetBlockArray(_blockArray);
+    }
+
+    private void SetMimeNum() {
+        Tool.SetMineNum(_mineBlockList.size());
+    }
+
+    private void SetToolNum() {
+        Tool.SetToolNum(_toolBlockList.size());
     }
 }

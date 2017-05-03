@@ -8,40 +8,32 @@ import tw.edu.ntut.csie.game.core.MovingBitmap;
  */
 
 public class Dynamite extends Tool {
-    public Dynamite(int blockType, int arrayX, int arrayY, int viewHeight, int[][] blockArray) {
-        super(blockType, arrayX, arrayY, viewHeight, blockArray);
-        _blockArray = blockArray;
+    public Dynamite(int blockType, int arrayX, int arrayY, int viewHeight) {
+        super(blockType, arrayX, arrayY, viewHeight);
         _picture = new MovingBitmap(R.drawable.dynamite);
     }
 
     @Override
     public void Active() {
-        _blockArray[_arrayX][_arrayY] = DEFAULT_NONE_BLOCK_TYPE;
-        for (int i = 1; i <= 5; i++)
-        {
-            if (_arrayY - i >= 0 && _blockArray[_arrayX][_arrayY - i] != 0)
-                Explode(_arrayX, _arrayY - i);
-            else
-                break;
-        }
-        for (int i = 1; i <= 5; i++)
-        {
-            if (_arrayY + i < BLOCK_COLUMN && _blockArray[_arrayX][_arrayY + i] != 0)
-                Explode(_arrayX, _arrayY + i);
-            else
-                break;
-        }
+        ExplodeAll(_arrayX, _arrayY);
     }
 
-    private void Explode(int x, int y) {
-        if (x >= 0 && x < BLOCK_ROW && y >= 0 && y < BLOCK_COLUMN) {
-            if (_blockArray[x][y] > 0)
-                _blockArray[x][y] = DEFAULT_NONE_BLOCK_TYPE;
-
-            if (_blockArray[x][y] == _blockType) {
-                //Dynamite dynamite = new Dynamite(_blockType, x, y, _viewHeight, _blockArray);
-                //dynamite.Active();
-            }
+    @Override
+    public void ExplodeAll(int arrayX, int arrayY) {
+        _blockArray[arrayX][arrayY] = DEFAULT_NONE_BLOCK_TYPE;
+        for (int i = 1; i <= 5; i++)
+        {
+            if (arrayY - i >= 0 && _blockArray[arrayX][arrayY - i] != 0)
+                Explode(arrayX, arrayY - i);
+            else
+                break;
+        }
+        for (int i = 1; i <= 5; i++)
+        {
+            if (arrayY + i < BLOCK_COLUMN && _blockArray[arrayX][arrayY + i] != 0)
+                Explode(arrayX, arrayY + i);
+            else
+                break;
         }
     }
 }

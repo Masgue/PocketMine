@@ -18,7 +18,6 @@ public class GameMap implements GameObject {
     private static final int DEFAULT_SCORE = 0;
     private static final int DEFAULT_DURABILITY = 50;
     private static final int DEFAULT_NONE_BLOCK_TYPE = -1;
-    private static final int INVISIBLE = 0;
 
     private MovingBitmap[] _digitNumberList;
     private int[][] _blockArray;
@@ -157,7 +156,7 @@ public class GameMap implements GameObject {
         {
             for (int j = 0; j < BLOCK_COLUMN; j++)
             {
-                if (isVisible(i, j, blockArray)) {
+                //if (isVisible(i, j, blockArray)) {
                     if (_blockArray[i][j] != DEFAULT_NONE_BLOCK_TYPE)
                     {
                         if (_blockArray[i][j] < _generatingBlocks.GetMineBlocksArraySize()) {
@@ -172,12 +171,12 @@ public class GameMap implements GameObject {
                             CharacterY = j;
                         }
                     }
-                }
-                else
-                {
-                    _invisible.SetBlock(i, j, _generatingBlocks.GetMovingViewHeight());
-                    _invisible.show();
-                }
+//                }
+//                else
+//                {
+//                    _invisible.SetBlock(i, j, _generatingBlocks.GetMovingViewHeight());
+//                    _invisible.show();
+//                }
             }
         }
     }

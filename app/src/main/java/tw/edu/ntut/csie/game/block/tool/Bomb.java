@@ -8,81 +8,53 @@ import tw.edu.ntut.csie.game.core.MovingBitmap;
  */
 
 public class Bomb extends Tool {
-    public Bomb(int blockType, int arrayX, int arrayY, int viewHeight, int[][] blockArray) {
-        super(blockType, arrayX, arrayY, viewHeight, blockArray);
-        _blockArray = blockArray;
+    public Bomb(int blockType, int arrayX, int arrayY, int viewHeight) {
+        super(blockType, arrayX, arrayY, viewHeight);
         _picture = new MovingBitmap(R.drawable.bomb);
     }
 
     @Override
     public void Active() {
-        _blockArray[_arrayX][_arrayY] = DEFAULT_NONE_BLOCK_TYPE;
-        if (_arrayY == 0)
+        ExplodeAll(_arrayX, _arrayY);
+    }
+
+    @Override
+    public void ExplodeAll(int arrayX, int arrayY) {
+        _blockArray[arrayX][arrayY] = DEFAULT_NONE_BLOCK_TYPE;
+        if (arrayY == 0)
         {
-            Explode(_arrayX - 1, _arrayY);
-            Explode(_arrayX + 1, _arrayY);
-            Explode(_arrayX, _arrayY + 1);
-            if (_blockArray[_arrayX - 1][_arrayY] != 0 || _blockArray[_arrayX][_arrayY + 1] != 0)
-                Explode(_arrayX - 1, _arrayY + 1);
-            if (_blockArray[_arrayX + 1][_arrayY] != 0 || _blockArray[_arrayX][_arrayY + 1] != 0)
-                Explode(_arrayX + 1, _arrayY + 1);
+            Explode(arrayX - 1, arrayY);
+            Explode(arrayX + 1, arrayY);
+            Explode(arrayX, arrayY + 1);
+            if (_blockArray[arrayX - 1][arrayY] != 0 || _blockArray[arrayX][arrayY + 1] != 0)
+                Explode(arrayX - 1, arrayY + 1);
+            if (_blockArray[arrayX + 1][arrayY] != 0 || _blockArray[arrayX][arrayY + 1] != 0)
+                Explode(arrayX + 1, arrayY + 1);
         }
-        else if (_arrayY == BLOCK_COLUMN - 1)
+        else if (arrayY == BLOCK_COLUMN - 1)
         {
-            Explode(_arrayX - 1, _arrayY);
-            Explode(_arrayX + 1, _arrayY);
-            Explode(_arrayX, _arrayY - 1);
-            if (_blockArray[_arrayX - 1][_arrayY] != 0 || _blockArray[_arrayX][_arrayY - 1] != 0)
-                Explode(_arrayX - 1, _arrayY - 1);
-            if (_blockArray[_arrayX + 1][_arrayY] != 0 || _blockArray[_arrayX][_arrayY - 1] != 0)
-                Explode(_arrayX + 1, _arrayY - 1);
+            Explode(arrayX - 1, arrayY);
+            Explode(arrayX + 1, arrayY);
+            Explode(arrayX, arrayY - 1);
+            if (_blockArray[arrayX - 1][arrayY] != 0 || _blockArray[arrayX][arrayY - 1] != 0)
+                Explode(arrayX - 1, arrayY - 1);
+            if (_blockArray[arrayX + 1][arrayY] != 0 || _blockArray[arrayX][arrayY - 1] != 0)
+                Explode(arrayX + 1, arrayY - 1);
         }
         else
         {
-            Explode(_arrayX - 1, _arrayY);
-            Explode(_arrayX + 1, _arrayY);
-            Explode(_arrayX, _arrayY - 1);
-            Explode(_arrayX, _arrayY + 1);
-            if (_blockArray[_arrayX - 1][_arrayY] != 0 || _blockArray[_arrayX][_arrayY - 1] != 0)
-                Explode(_arrayX - 1, _arrayY - 1);
-            if (_blockArray[_arrayX + 1][_arrayY] != 0 || _blockArray[_arrayX][_arrayY - 1] != 0)
-                Explode(_arrayX + 1, _arrayY - 1);
-            if (_blockArray[_arrayX - 1][_arrayY] != 0 || _blockArray[_arrayX][_arrayY + 1] != 0)
-                Explode(_arrayX - 1, _arrayY + 1);
-            if (_blockArray[_arrayX + 1][_arrayY] != 0 || _blockArray[_arrayX][_arrayY + 1] != 0)
-                Explode(_arrayX + 1, _arrayY + 1);
-        }
-
-//        if (_arrayY > 0)
-//        {
-//            Explode(_arrayX - 1, _arrayY - 1);
-//            Explode(_arrayX, _arrayY - 1);
-//            Explode(_arrayX + 1, _arrayY - 1);
-//        }
-//        if (_arrayY < BLOCK_COLUMN - 1)
-//        {
-//            Explode(_arrayX - 1, _arrayY + 1);
-//            Explode(_arrayX, _arrayY + 1);
-//            Explode(_arrayX + 1, _arrayY + 1);
-//        }
-//        Explode(_arrayX - 1, _arrayY);
-//        Explode(_arrayX + 1, _arrayY);
-
-    }
-
-    private void Explode(int x, int y) {
-        //int presentBlockNumber;
-        if (x >= 0 && x < BLOCK_ROW && y >= 0 && y < BLOCK_COLUMN) {
-            //presentBlockNumber = _blockArray[x][y];
-            if (_blockArray[x][y] > 0) {
-                _blockArray[x][y] = DEFAULT_NONE_BLOCK_TYPE;
-            }
-
-           //if (presentBlockNumber >= _mineNumber && presentBlockNumber < _mineNumber + _toolList.length) {
-               // _toolList[presentBlockNumber - _mineNumber].Active();
-                //Bomb bomb = new Bomb(_blockType, x, y, _viewHeight, _blockArray);
-                //bomb.Active();
-            //}
+            Explode(arrayX - 1, arrayY);
+            Explode(arrayX + 1, arrayY);
+            Explode(arrayX, arrayY - 1);
+            Explode(arrayX, arrayY + 1);
+            if (_blockArray[arrayX - 1][arrayY] != 0 || _blockArray[arrayX][arrayY - 1] != 0)
+                Explode(arrayX - 1, arrayY - 1);
+            if (_blockArray[arrayX + 1][arrayY] != 0 || _blockArray[arrayX][arrayY - 1] != 0)
+                Explode(arrayX + 1, arrayY - 1);
+            if (_blockArray[arrayX - 1][arrayY] != 0 || _blockArray[arrayX][arrayY + 1] != 0)
+                Explode(arrayX - 1, arrayY + 1);
+            if (_blockArray[arrayX + 1][arrayY] != 0 || _blockArray[arrayX][arrayY + 1] != 0)
+                Explode(arrayX + 1, arrayY + 1);
         }
     }
 
