@@ -2,6 +2,7 @@ package tw.edu.ntut.csie.game.block.tool;
 
 import tw.edu.ntut.csie.game.R;
 import tw.edu.ntut.csie.game.core.MovingBitmap;
+import tw.edu.ntut.csie.game.extend.Animation;
 
 /**
  * Created by Johnson on 2017/4/7.
@@ -12,8 +13,9 @@ public class Drill extends Tool {
 
     public Drill(int blockType, int arrayX, int arrayY, int viewHeight) {
         super(blockType, arrayX, arrayY, viewHeight);
-        _picture = new MovingBitmap(R.drawable.drill);
+        //_picture = new MovingBitmap(R.drawable.drill);
         _digPower = 4;
+        SetBombAnimation();
     }
 
     @Override
@@ -31,5 +33,12 @@ public class Drill extends Tool {
             else
                 break;
         }
+    }
+
+    public void SetBombAnimation() {
+        _blockAnimation = new Animation();
+        _blockAnimation.addFrame(R.drawable.drill);
+        //_blockAnimation.addFrame(R.drawable.blue);
+        _blockAnimation.setDelay(2);
     }
 }

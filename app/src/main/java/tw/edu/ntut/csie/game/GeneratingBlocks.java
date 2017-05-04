@@ -3,6 +3,7 @@ package tw.edu.ntut.csie.game;
 import java.util.ArrayList;
 import java.util.Random;
 
+import tw.edu.ntut.csie.game.block.Block;
 import tw.edu.ntut.csie.game.block.character.CharacterBlock;
 import tw.edu.ntut.csie.game.block.mine.Coal;
 import tw.edu.ntut.csie.game.block.mine.CommonBlock;
@@ -29,7 +30,7 @@ public class GeneratingBlocks {
     private ArrayList<ArrayListBlock> _mineBlockList;
     private ArrayList<ArrayListBlock> _toolBlockList;
     private ArrayList<ArrayListBlock> _characterBlockList;
-    private int _blockRow;
+    private static int _blockRow;
 
     private int _movingViewHeight;
     private CommonBlock[] _mineList;
@@ -69,6 +70,7 @@ public class GeneratingBlocks {
         _character = new CharacterBlock(0,0,0,0);
 
         SetToolList();
+        SetBlockRow();
         SetBlockArray();
         SetMimeNum();
         SetToolNum();
@@ -221,5 +223,17 @@ public class GeneratingBlocks {
 
     private void SetToolNum() {
         Tool.SetToolNum(_toolBlockList.size());
+    }
+
+    private static void SetBlockRow() {
+        Block.SetBlockRowNum(_blockRow);
+    }
+
+    public Tool[] GetToolList() {
+        return _toolList;
+    }
+
+    public CommonBlock[] GetMineList() {
+        return _mineList;
     }
 }

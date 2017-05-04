@@ -54,7 +54,7 @@ public abstract class Tool extends Block{
 
     protected void Explode(int x, int y) {
         int presentBlockNumber;
-        if (x >= 0 && x < BLOCK_ROW && y >= 0 && y < BLOCK_COLUMN) {
+        if (x >= 0 && x < _blockRow && y >= 0 && y < BLOCK_COLUMN) {
             presentBlockNumber = _blockArray[x][y];
             if (_blockArray[x][y] > 0)
                 _blockArray[x][y] = DEFAULT_NONE_BLOCK_TYPE;

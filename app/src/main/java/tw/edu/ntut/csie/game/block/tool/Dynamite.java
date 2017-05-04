@@ -2,6 +2,7 @@ package tw.edu.ntut.csie.game.block.tool;
 
 import tw.edu.ntut.csie.game.R;
 import tw.edu.ntut.csie.game.core.MovingBitmap;
+import tw.edu.ntut.csie.game.extend.Animation;
 
 /**
  * Created by Johnson on 2017/4/7.
@@ -10,7 +11,8 @@ import tw.edu.ntut.csie.game.core.MovingBitmap;
 public class Dynamite extends Tool {
     public Dynamite(int blockType, int arrayX, int arrayY, int viewHeight) {
         super(blockType, arrayX, arrayY, viewHeight);
-        _picture = new MovingBitmap(R.drawable.dynamite);
+        //_picture = new MovingBitmap(R.drawable.dynamite);
+        SetBombAnimation();
     }
 
     @Override
@@ -35,5 +37,12 @@ public class Dynamite extends Tool {
             else
                 break;
         }
+    }
+
+    public void SetBombAnimation() {
+        _blockAnimation = new Animation();
+        _blockAnimation.addFrame(R.drawable.dynamite);
+        //_blockAnimation.addFrame(R.drawable.blue);
+        _blockAnimation.setDelay(2);
     }
 }

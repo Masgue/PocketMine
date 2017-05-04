@@ -73,6 +73,8 @@ public class GameMap implements GameObject {
                 _generatingBlocks.SetMovingViewHeight(_generatingBlocks.GetMovingViewHeight() + 3 *  MOVING_VIEW_SPEED);
             else
                 _generatingBlocks.SetMovingViewHeight(_generatingBlocks.GetMovingViewHeight() +  MOVING_VIEW_SPEED);
+
+            //BlockAnimationMove();
         }
     }
 
@@ -282,6 +284,18 @@ public class GameMap implements GameObject {
     public void notifyAllObservers(){
         for (tw.edu.ntut.csie.game.Observer observer : _observers) {
             observer.update();
+        }
+    }
+
+    private void BlockAnimationMove() {
+        for (int i = 0; i < _generatingBlocks.GetMineBlocksArraySize(); i++)
+        {
+            _generatingBlocks.GetMineList()[i].GetAnimation().move();
+        }
+
+        for (int i = 0; i < _generatingBlocks.GetToolBlocksArraySize(); i++)
+        {
+            _generatingBlocks.GetToolList()[i].GetAnimation().move();
         }
     }
 }

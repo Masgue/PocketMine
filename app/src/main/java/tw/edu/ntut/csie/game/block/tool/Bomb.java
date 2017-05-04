@@ -1,7 +1,7 @@
 package tw.edu.ntut.csie.game.block.tool;
 
 import tw.edu.ntut.csie.game.R;
-import tw.edu.ntut.csie.game.core.MovingBitmap;
+import tw.edu.ntut.csie.game.extend.Animation;
 
 /**
  * Created by Johnson on 2017/4/7.
@@ -10,7 +10,8 @@ import tw.edu.ntut.csie.game.core.MovingBitmap;
 public class Bomb extends Tool {
     public Bomb(int blockType, int arrayX, int arrayY, int viewHeight) {
         super(blockType, arrayX, arrayY, viewHeight);
-        _picture = new MovingBitmap(R.drawable.bomb);
+        //_picture = new MovingBitmap(R.drawable.bomb);
+        SetBombAnimation();
     }
 
     @Override
@@ -66,5 +67,12 @@ public class Bomb extends Tool {
     @Override
     public int GetDurability() {
         return 1;
+    }
+
+    public void SetBombAnimation() {
+        _blockAnimation = new Animation();
+        _blockAnimation.addFrame(R.drawable.bomb);
+        //_blockAnimation.addFrame(R.drawable.blue);
+        _blockAnimation.setDelay(2);
     }
 }
