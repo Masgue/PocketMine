@@ -1,6 +1,11 @@
 package tw.edu.ntut.csie.game.state;
 
+import android.support.annotation.NonNull;
+
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import tw.edu.ntut.csie.game.Game;
 import tw.edu.ntut.csie.game.R;
@@ -268,10 +273,16 @@ public class StateReady extends AbstractGameState {
         _digButton.addButtonEventHandler(new ButtonEventHandler() {
             @Override
             public void perform(BitmapButton button) {
-                changeState(Game.RUNNING_STATE);
+                changeState(Game.RUNNING_STATE, CreateMap());
             }
         });
         addPointerEventHandler(_digButton);
+    }
+
+    private Map<String, Object> CreateMap() {
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("FirstCard", _firstCard);
+        return map;
     }
 
     private void InitializeSettingButton() {
