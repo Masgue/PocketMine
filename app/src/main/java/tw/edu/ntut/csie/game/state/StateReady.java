@@ -105,6 +105,7 @@ public class StateReady extends AbstractGameState {
             @Override
             public void perform(BitmapButton button) {
                 _pressFirstCard = !_pressFirstCard;
+                setVisibility();
             }
         });
         addPointerEventHandler(_firstCard.GetBitmapButton());
@@ -118,6 +119,7 @@ public class StateReady extends AbstractGameState {
             @Override
             public void perform(BitmapButton button) {
                 _pressSecondCard = !_pressSecondCard;
+                setVisibility();
             }
         });
         addPointerEventHandler(_secondCard.GetBitmapButton());
@@ -131,6 +133,7 @@ public class StateReady extends AbstractGameState {
             @Override
             public void perform(BitmapButton button) {
                 _pressThirdCard = !_pressThirdCard;
+                setVisibility();
             }
         });
         addPointerEventHandler(_thirdCard.GetBitmapButton());
