@@ -28,6 +28,7 @@ public class StateReady extends AbstractGameState {
     private BitmapButton _shopButton;
     private BitmapButton _museumButton;
     private BitmapButton _playButton;
+    private BitmapButton _changeCardsButton;
     private BitmapButton _digButton;
     private BitmapButton _settingButton;
     private BitmapButton _backButton;
@@ -71,6 +72,7 @@ public class StateReady extends AbstractGameState {
         initializeGearButton();
         initializeMuseumButton();
         initializePlayButton();
+        InitializeChangeCardsButton();
         InitializeDigButton();
         InitializeSettingButton();
         InitializeBackButton();
@@ -250,6 +252,17 @@ public class StateReady extends AbstractGameState {
         addPointerEventHandler(_playButton);
     }
 
+    private void InitializeChangeCardsButton() {
+        addGameObject(_changeCardsButton = new BitmapButton(R.drawable.block0_invisible, 400, 50));
+        _changeCardsButton.addButtonEventHandler(new ButtonEventHandler() {
+            @Override
+            public void perform(BitmapButton button) {
+
+            }
+        });
+        addPointerEventHandler(_changeCardsButton);
+    }
+
     private void InitializeDigButton() {
         addGameObject(_digButton = new BitmapButton(R.drawable.dig, 500, 10));
         _digButton.addButtonEventHandler(new ButtonEventHandler() {
@@ -341,6 +354,7 @@ public class StateReady extends AbstractGameState {
         _museumButton.setVisible(showOther);
         _shopButton.setVisible(showOther);
         _playButton.setVisible(_showMenu);
+        _changeCardsButton.setVisible(_pressFirstCard || _pressSecondCard || _pressThirdCard);
         _digButton.setVisible(_showDig);
         _settingButton.setVisible(showOther);
         _backButton.setVisible(_showSetting || _showDig);
