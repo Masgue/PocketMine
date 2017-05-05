@@ -47,6 +47,9 @@ public class StateReady extends AbstractGameState {
     private boolean _showFirstCard;
     private boolean _showSecondCard;
     private boolean _showThirdCard;
+    private boolean _pressFirstCard;
+    private boolean _pressSecondCard;
+    private boolean _pressThirdCard;
 
     public StateReady(GameEngine engine) {
         super(engine);
@@ -82,6 +85,9 @@ public class StateReady extends AbstractGameState {
         _showFirstCard = false;
         _showSecondCard = false;
         _showThirdCard = false;
+        _pressFirstCard = false;
+        _pressSecondCard = false;
+        _pressThirdCard = false;
         setVisibility();
     }
 
@@ -98,7 +104,7 @@ public class StateReady extends AbstractGameState {
         _firstCard.GetBitmapButton().addButtonEventHandler(new ButtonEventHandler() {
             @Override
             public void perform(BitmapButton button) {
-
+                _pressFirstCard = !_pressFirstCard;
             }
         });
         addPointerEventHandler(_firstCard.GetBitmapButton());
@@ -106,10 +112,28 @@ public class StateReady extends AbstractGameState {
 
     private void InitializeSecondCard() {
         _secondCard = new CoalBonus();
+        _secondCard.SetBitmapButton(new BitmapButton(R.drawable.block1_unbreakable, 100, 100));
+        addGameObject(_secondCard.GetBitmapButton());
+        _secondCard.GetBitmapButton().addButtonEventHandler(new ButtonEventHandler() {
+            @Override
+            public void perform(BitmapButton button) {
+                _pressSecondCard = !_pressSecondCard;
+            }
+        });
+        addPointerEventHandler(_secondCard.GetBitmapButton());
     }
 
     private void InitializeThirdCard() {
         _thirdCard = new BombBonus();
+        _thirdCard.SetBitmapButton(new BitmapButton(R.drawable.block2_dirt, 100, 30));
+        addGameObject(_thirdCard.GetBitmapButton());
+        _thirdCard.GetBitmapButton().addButtonEventHandler(new ButtonEventHandler() {
+            @Override
+            public void perform(BitmapButton button) {
+                _pressThirdCard = !_pressThirdCard;
+            }
+        });
+        addPointerEventHandler(_thirdCard.GetBitmapButton());
     }
 
     private void InitializeMenuButton() {
@@ -124,9 +148,6 @@ public class StateReady extends AbstractGameState {
                 _showMuseum = false;
                 _showDig = false;
                 _showSetting = false;
-                _showFirstCard = false;
-                _showSecondCard = false;
-                _showThirdCard = false;
                 setVisibility();
             }
         });
@@ -145,9 +166,6 @@ public class StateReady extends AbstractGameState {
                 _showMuseum = false;
                 _showDig = false;
                 _showSetting = false;
-                _showFirstCard = false;
-                _showSecondCard = false;
-                _showThirdCard = false;
                 setVisibility();
             }
         });
@@ -166,9 +184,6 @@ public class StateReady extends AbstractGameState {
                 _showMuseum = false;
                 _showDig = false;
                 _showSetting = false;
-                _showFirstCard = false;
-                _showSecondCard = false;
-                _showThirdCard = false;
                 setVisibility();
             }
         });
@@ -187,9 +202,6 @@ public class StateReady extends AbstractGameState {
                 _showMuseum = true;
                 _showDig = false;
                 _showSetting = false;
-                _showFirstCard = false;
-                _showSecondCard = false;
-                _showThirdCard = false;
                 setVisibility();
             }
         });
@@ -208,9 +220,6 @@ public class StateReady extends AbstractGameState {
                 _showMuseum = false;
                 _showDig = false;
                 _showSetting = false;
-                _showFirstCard = false;
-                _showSecondCard = false;
-                _showThirdCard = false;
                 setVisibility();
             }
         });
@@ -363,6 +372,21 @@ public class StateReady extends AbstractGameState {
             _shopButton.loadBitmap(R.drawable.shop_pressed);
         else
             _shopButton.loadBitmap(R.drawable.shop);
+
+        if(_pressFirstCard)
+            _firstCard.GetBitmapButton().loadBitmap(R.drawable.digit_0);
+        else
+            _firstCard.GetBitmapButton().loadBitmap(R.drawable.block0_invisible);
+
+        if(_pressSecondCard)
+            _secondCard.GetBitmapButton().loadBitmap(R.drawable.digit_0);
+        else
+            _secondCard.GetBitmapButton().loadBitmap(R.drawable.block1_unbreakable);
+
+        if(_pressThirdCard)
+            _thirdCard.GetBitmapButton().loadBitmap(R.drawable.digit_0);
+        else
+            _thirdCard.GetBitmapButton().loadBitmap(R.drawable.block2_dirt);
     }
 }
 
