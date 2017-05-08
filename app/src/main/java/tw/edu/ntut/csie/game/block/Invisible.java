@@ -12,7 +12,7 @@ public class Invisible extends Block {
     public Invisible(int blockType, int arrayX, int arrayY, int viewHeight) {
         super(blockType, arrayX, arrayY, viewHeight);
         //_picture = new MovingBitmap(R.drawable.block0_invisible);
-        SetBombAnimation();
+        SetAnimation();
     }
     @Override
     public int GetPoints() {
@@ -24,7 +24,7 @@ public class Invisible extends Block {
         return 0;
     }
 
-    public void SetBombAnimation() {
+    public void SetAnimation() {
         _blockAnimation = new Animation();
         _blockAnimation.addFrame(R.drawable.block0_invisible);
         _blockAnimation.setDelay(2);

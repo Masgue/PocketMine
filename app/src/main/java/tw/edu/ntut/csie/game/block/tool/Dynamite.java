@@ -12,12 +12,31 @@ public class Dynamite extends Tool {
     public Dynamite(int blockType, int arrayX, int arrayY, int viewHeight) {
         super(blockType, arrayX, arrayY, viewHeight);
         //_picture = new MovingBitmap(R.drawable.dynamite);
-        SetBombAnimation();
+        SetDynamiteAnimation();
     }
 
     @Override
     public void Active() {
-        ExplodeAll(_arrayX, _arrayY);
+        DetectWarningBlocks(_arrayX, _arrayY);
+    }
+
+    @Override
+    public void DetectWarningBlocks(int arrayX, int arrayY) {
+        _blockArray[arrayX][arrayY] = DEFAULT_NONE_BLOCK_TYPE;
+        for (int i = 1; i <= 5; i++)
+        {
+            if (arrayY - i >= 0 && _blockArray[arrayX][arrayY - i] != 0)
+                _activeBlockList.AddToList(arrayX, arrayY - i);
+            else
+                break;
+        }
+        for (int i = 1; i <= 5; i++)
+        {
+            if (arrayY + i < BLOCK_COLUMN && _blockArray[arrayX][arrayY + i] != 0)
+                _activeBlockList.AddToList(arrayX, arrayY + i);
+            else
+                break;
+        }
     }
 
     @Override
@@ -39,7 +58,7 @@ public class Dynamite extends Tool {
         }
     }
 
-    public void SetBombAnimation() {
+    public void SetDynamiteAnimation() {
         _blockAnimation = new Animation();
         _blockAnimation.addFrame(R.drawable.dynamite);
         //_blockAnimation.addFrame(R.drawable.blue);

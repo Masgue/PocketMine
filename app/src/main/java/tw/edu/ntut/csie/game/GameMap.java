@@ -1,5 +1,6 @@
 package tw.edu.ntut.csie.game;
 
+import tw.edu.ntut.csie.game.block.Explosion;
 import tw.edu.ntut.csie.game.block.Invisible;
 import tw.edu.ntut.csie.game.core.MovingBitmap;
 
@@ -23,12 +24,16 @@ public class GameMap implements GameObject {
     private int[][] _blockArray;
     private int _score;
     private int _durability;
-    private int CharacterX, CharacterY;
+    private int CharacterX = 0, CharacterY = 5;
     private int _floor;
     private boolean _isPaused;
     private GeneratingBlocks _generatingBlocks;
     private int _characterNum;
     private Invisible _invisible;
+    private Explosion _explosion;
+    private int _timer = 0;
+    private boolean _timerSwitch = false;
+    private int toolX, toolY, _toolType;
 
     private List<tw.edu.ntut.csie.game.Observer> _observers;
 
@@ -44,6 +49,7 @@ public class GameMap implements GameObject {
 
         _observers = new ArrayList<tw.edu.ntut.csie.game.Observer>();
         _invisible = new Invisible(0,0,0,0);
+        _explosion = new Explosion(0,0,0,0);
     }
 
     private void LoadMovingBitMap() {
@@ -69,12 +75,13 @@ public class GameMap implements GameObject {
     @Override
     public void move() {
         if (!_isPaused) {
+            _explosion.GetAnimation().move();
             if (_durability == 0)
                 _generatingBlocks.SetMovingViewHeight(_generatingBlocks.GetMovingViewHeight() + 3 *  MOVING_VIEW_SPEED);
             else
                 _generatingBlocks.SetMovingViewHeight(_generatingBlocks.GetMovingViewHeight() +  MOVING_VIEW_SPEED);
-
-            //BlockAnimationMove();
+        ExplodeTimer();
+//            BlockAnimationMove();
         }
     }
 
@@ -126,6 +133,8 @@ public class GameMap implements GameObject {
         if(blockArray[arrayX][arrayY] == DEFAULT_NONE_BLOCK_TYPE) {
             blockArray[CharacterX][CharacterY] = DEFAULT_NONE_BLOCK_TYPE;
             blockArray[arrayX][arrayY] =_characterNum;
+            CharacterX = arrayX;
+            CharacterY = arrayY;
         }
         else if (blockArray[arrayX][arrayY] >= 0 && blockArray[arrayX][arrayY] < _generatingBlocks.GetMineBlocksArraySize()) {
             _score += _generatingBlocks.GetPoints(arrayX, arrayY);
@@ -137,11 +146,35 @@ public class GameMap implements GameObject {
             if (blockArray[arrayX][arrayY] >= 1) {
                 blockArray[CharacterX][CharacterY] = DEFAULT_NONE_BLOCK_TYPE;
                 blockArray[arrayX][arrayY] = _characterNum;
+                CharacterX = arrayX;
+                CharacterY = arrayY;
             }
         }
         else if (blockArray[arrayX][arrayY] > 0 && blockArray[arrayX][arrayY] < _generatingBlocks.GetMineBlocksArraySize() + _generatingBlocks.GetToolBlocksArraySize()) {
+            _toolType = blockArray[arrayX][arrayY] - _generatingBlocks.GetMineBlocksArraySize();
             _generatingBlocks.ActiveTool(arrayX, arrayY);
             blockArray[CharacterX][CharacterY] = DEFAULT_NONE_BLOCK_TYPE;
+            CharacterX = arrayX;
+            CharacterY = arrayY;
+            toolX = arrayX;
+            toolY = arrayY;
+            for (int k = 0; k <  _generatingBlocks.GetActiveBlockList().GetBlockListSize(); k++)
+            {
+                int x = _generatingBlocks.GetActiveBlockList().GetActiveList(k).GetBlockX();
+                int y = _generatingBlocks.GetActiveBlockList().GetActiveList(k).GetBlockY();
+                if (blockArray[x][y] != 0)
+                {
+                    blockArray[_generatingBlocks.GetActiveBlockList().GetActiveList(k).GetBlockX()][_generatingBlocks.GetActiveBlockList().GetActiveList(k).GetBlockY()] += (_generatingBlocks.GetMineBlocksArraySize() + _generatingBlocks.GetToolBlocksArraySize() + 2);
+                }
+            }
+            if ( _generatingBlocks.GetActiveBlockList().GetBlockListSize() != 0)
+            {
+                _timerSwitch = true;
+            }
+            else
+            {
+                _timerSwitch = false;
+            }
             blockArray[arrayX][arrayY] = _characterNum;
         }
     }
@@ -158,7 +191,7 @@ public class GameMap implements GameObject {
         {
             for (int j = 0; j < BLOCK_COLUMN; j++)
             {
-                //if (isVisible(i, j, blockArray)) {
+                if (isVisible(i, j, blockArray)) {
                     if (_blockArray[i][j] != DEFAULT_NONE_BLOCK_TYPE)
                     {
                         if (_blockArray[i][j] < _generatingBlocks.GetMineBlocksArraySize()) {
@@ -167,18 +200,21 @@ public class GameMap implements GameObject {
                         else if (_blockArray[i][j] < _generatingBlocks.GetMineBlocksArraySize() + _generatingBlocks.GetToolBlocksArraySize()){
                             _generatingBlocks.ShowToolBlock(i, j);
                         }
-                        else {
+                        else if (_blockArray[i][j] == _generatingBlocks.GetMineBlocksArraySize() + _generatingBlocks.GetToolBlocksArraySize()){
                             _generatingBlocks.ShowCharacterBlock(i, j);
-                            CharacterX = i;
-                            CharacterY = j;
+                           }
+                        else
+                        {
+                            _explosion.SetBlock(i, j, _generatingBlocks.GetMovingViewHeight());
+                            _explosion.show();
                         }
                     }
-//                }
-//                else
-//                {
-//                    _invisible.SetBlock(i, j, _generatingBlocks.GetMovingViewHeight());
-//                    _invisible.show();
-//                }
+                }
+                else
+                {
+                    _invisible.SetBlock(i, j, _generatingBlocks.GetMovingViewHeight());
+                    _invisible.show();
+                }
             }
         }
     }
@@ -265,16 +301,25 @@ public class GameMap implements GameObject {
     }
 
     private boolean isVisible(int i, int j, int[][] blockArray) {
-        if (i < BLOCK_ROW - 1 && (blockArray[i + 1][j] == DEFAULT_NONE_BLOCK_TYPE || blockArray[i + 1][j] == _characterNum))
+        if (i < BLOCK_ROW - 1 && (blockArray[i + 1][j] == DEFAULT_NONE_BLOCK_TYPE || blockArray[i + 1][j] >= _characterNum))
             return true;
-        else if (i > 0 && (blockArray[i - 1][j] == DEFAULT_NONE_BLOCK_TYPE || blockArray[i - 1][j] == _characterNum))
+        else if (i > 0 && (blockArray[i - 1][j] == DEFAULT_NONE_BLOCK_TYPE || blockArray[i - 1][j] >= _characterNum))
             return true;
-        else if (j < BLOCK_COLUMN - 1 && (blockArray[i][j + 1] == DEFAULT_NONE_BLOCK_TYPE || blockArray[i][j + 1] == _characterNum))
+        else if (j < BLOCK_COLUMN - 1 && (blockArray[i][j + 1] == DEFAULT_NONE_BLOCK_TYPE || blockArray[i][j + 1] >= _characterNum))
             return true;
-        else if (j > 0 && (blockArray[i][j - 1] == DEFAULT_NONE_BLOCK_TYPE || blockArray[i][j - 1] == _characterNum))
+        else if (j > 0 && (blockArray[i][j - 1] == DEFAULT_NONE_BLOCK_TYPE || blockArray[i][j - 1] >= _characterNum))
             return true;
-        else
-            return false;
+        else if (_blockArray[i][j] ==  _characterNum)
+            return true;
+        else if (_generatingBlocks.GetActiveBlockList().GetBlockListSize() != 0)
+        {
+            for (int k = 0; k < _generatingBlocks.GetActiveBlockList().GetBlockListSize(); k++)
+            {
+                if (i == _generatingBlocks.GetActiveBlockList().GetActiveList(k).GetBlockX() && j == _generatingBlocks.GetActiveBlockList().GetActiveList(k).GetBlockY())
+                    return true;
+            }
+        }
+        return false;
     }
 
     public void attach(tw.edu.ntut.csie.game.Observer observer){
@@ -288,14 +333,44 @@ public class GameMap implements GameObject {
     }
 
     private void BlockAnimationMove() {
-        for (int i = 0; i < _generatingBlocks.GetMineBlocksArraySize(); i++)
+        for (int j = 0; j < _generatingBlocks.GetActiveBlockList().GetBlockListSize(); j++)
         {
-            _generatingBlocks.GetMineList()[i].GetAnimation().move();
-        }
+            for (int i = 0; i < _generatingBlocks.GetMineBlocksArraySize(); i++)
+            {
+                _generatingBlocks.GetMineList()[i].GetAnimation().move();
+            }
 
-        for (int i = 0; i < _generatingBlocks.GetToolBlocksArraySize(); i++)
+            for (int i = 0; i < _generatingBlocks.GetToolBlocksArraySize(); i++)
+            {
+                _generatingBlocks.GetToolList()[i].GetAnimation().move();
+            }
+        }
+    }
+
+    private void ExplodeTimer() {
+        if (_timerSwitch == true)
         {
-            _generatingBlocks.GetToolList()[i].GetAnimation().move();
+            _timer++;
+            if (_timer >= 10)
+            {
+                for (int k = 0; k <  _generatingBlocks.GetActiveBlockList().GetBlockListSize(); k++)
+                {
+                    int x = _generatingBlocks.GetActiveBlockList().GetActiveList(k).GetBlockX();
+                    int y = _generatingBlocks.GetActiveBlockList().GetActiveList(k).GetBlockY();
+                    if (_blockArray[x][y] != 0)
+                    {
+                        _blockArray[_generatingBlocks.GetActiveBlockList().GetActiveList(k).GetBlockX()][_generatingBlocks.GetActiveBlockList().GetActiveList(k).GetBlockY()] -= (_generatingBlocks.GetMineBlocksArraySize() + _generatingBlocks.GetToolBlocksArraySize() + 2);
+                    }
+                }
+                _timer = 0;
+                _timerSwitch = false;
+                _generatingBlocks.GetToolList()[_toolType].Explosion();
+                while(_generatingBlocks.GetActiveBlockList().GetBlockListSize() != 0)
+                {
+                    _generatingBlocks.GetActiveBlockList().RemoveBlockList();
+                }
+               _blockArray[CharacterX][CharacterY] = _characterNum;
+            }
         }
     }
 }

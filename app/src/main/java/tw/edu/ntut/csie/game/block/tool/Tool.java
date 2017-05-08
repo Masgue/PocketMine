@@ -1,5 +1,6 @@
 package tw.edu.ntut.csie.game.block.tool;
 
+import tw.edu.ntut.csie.game.block.ActiveBlockList;
 import tw.edu.ntut.csie.game.block.Block;
 
 
@@ -12,6 +13,7 @@ public abstract class Tool extends Block{
     protected static Tool[] _toolList;
     protected static int _mineNum;
     protected static int _toolNum;
+    protected static ActiveBlockList _activeBlockList;
 
     public Tool(int blockType, int arrayX, int arrayY, int viewHeight) {
         super(blockType, arrayX, arrayY, viewHeight);
@@ -54,7 +56,27 @@ public abstract class Tool extends Block{
 
     public void DetectWarningBlocks(int arrayX, int arrayY) { }
 
-    public void RemoveAll(int arrayX, int arrayY) { }
+    public void Explosion() {
+        for (int i = 0; i < _activeBlockList.GetBlockListSize(); i++)
+        {
+            Explode(_activeBlockList.GetActiveList(i).GetBlockX(),_activeBlockList.GetActiveList(i).GetBlockY());
+        }
+    }
+
+    public static void RemoveActiveArray() {
+        while(_activeBlockList.GetBlockListSize() != 0)
+        {
+            _activeBlockList.RemoveBlockList();
+        }
+    }
+
+    public static void SetActiveBlockList(ActiveBlockList activeBlockList) {
+        _activeBlockList = activeBlockList;
+    }
+
+    public ActiveBlockList GetActiveBlockList() {
+        return _activeBlockList;
+    }
 
     protected void Explode(int x, int y) {
         int presentBlockNumber;
