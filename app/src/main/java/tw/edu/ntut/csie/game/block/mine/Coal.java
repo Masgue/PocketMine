@@ -33,6 +33,6 @@ public class Coal extends CommonBlock {
         _blockAnimation = new Animation();
         _blockAnimation.addFrame(R.drawable.block4_coal);
         _blockAnimation.addFrame(R.drawable.blue);
-        _blockAnimation.setDelay(2);
+        _blockAnimation.setDelay(1);
     }
 }

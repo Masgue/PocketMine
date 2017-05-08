@@ -52,6 +52,10 @@ public abstract class Tool extends Block{
 
     public void ExplodeAll(int arrayX, int arrayY) { }
 
+    public void DetectWarningBlocks(int arrayX, int arrayY) { }
+
+    public void RemoveAll(int arrayX, int arrayY) { }
+
     protected void Explode(int x, int y) {
         int presentBlockNumber;
         if (x >= 0 && x < _blockRow && y >= 0 && y < BLOCK_COLUMN) {
