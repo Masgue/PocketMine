@@ -20,10 +20,8 @@ public class ArrayListBlock {
     public int GetBlockSpawningRate() {return _spawningRate;}
     public String GetBlockName() {return _name;}
 
-    public void SetBlock(int arrayNum, int spawningRate, String name) {
-        _blockType = arrayNum;
+    public void SetSpawningRate(int spawningRate) {
         _spawningRate = spawningRate;
-        _name = name;
     }
 }
 

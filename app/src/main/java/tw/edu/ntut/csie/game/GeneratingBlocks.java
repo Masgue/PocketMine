@@ -19,6 +19,7 @@ import tw.edu.ntut.csie.game.block.tool.Bomb;
 import tw.edu.ntut.csie.game.block.tool.Drill;
 import tw.edu.ntut.csie.game.block.tool.Dynamite;
 import tw.edu.ntut.csie.game.block.tool.Tool;
+import tw.edu.ntut.csie.game.card.CardAttributes;
 
 /**
  * Created by ChenKeng on 2017/4/14.
@@ -39,22 +40,30 @@ public class GeneratingBlocks {
     private CharacterBlock _character;
     private int[][] _blockArray;
     private static ActiveBlockList _activeBlockList;
+    private ArrayList<CardAttributes> _cardAttributes  = new ArrayList<CardAttributes>();
 
-    public GeneratingBlocks(int blockRow) {
+    public GeneratingBlocks(int blockRow, ArrayList<CardAttributes> cardAttributes) {
 
+        _cardAttributes = cardAttributes;
         _mineBlockList = new ArrayList<ArrayListBlock>();
         _toolBlockList = new ArrayList<ArrayListBlock>();
         _characterBlockList = new ArrayList<ArrayListBlock>();
+
         _blockRow = blockRow;
         AddMineBlocks();
         AddToolBlocks();
         AddCharacterBlocks();
+
+        ChangeBlockSpawningRate();
 
         _mineList = new CommonBlock[_mineBlockList.size()];
         _toolList = new Tool[_toolBlockList.size()];
 
         _movingViewHeight = 0;
         _blockArray = new int[_blockRow][BLOCK_COLUMN];
+
+
+
         GenerateMap();
         _mineList = new CommonBlock[]{
                 new Unbreakable(0,0,0,0),
@@ -103,8 +112,26 @@ public class GeneratingBlocks {
         GenerateRandomBlockArray(_blockArray);
     }
 
-    private void ChangeBlockAppearingRate(int blockType, int spawningRate) {
-
+    private void ChangeBlockSpawningRate() {
+        for (int i = 0; i < 3; i++)
+        {
+            int type = _cardAttributes.get(i).GetBlockType();
+            if (type != -1)
+            {
+                if (type < _mineBlockList.size())
+                {
+                    ArrayListBlock mine = _mineBlockList.get(type);
+                    mine.SetSpawningRate(_cardAttributes.get(i).GetBlockSpawningRate());
+                    _mineBlockList.set(type, mine);
+                }
+                else if (type < _mineBlockList.size() + _toolBlockList.size())
+                {
+                    ArrayListBlock tool = _toolBlockList.get(type - _mineBlockList.size());
+                    tool.SetSpawningRate(_cardAttributes.get(i).GetBlockSpawningRate());
+                    _toolBlockList.set(type - _mineBlockList.size(), tool);
+                }
+            }
+        }
     }
 
     private void GenerateRandomBlockArray(int[][] blockArray) {

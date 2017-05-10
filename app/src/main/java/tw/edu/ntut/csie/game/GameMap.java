@@ -2,6 +2,7 @@ package tw.edu.ntut.csie.game;
 
 import tw.edu.ntut.csie.game.block.Explosion;
 import tw.edu.ntut.csie.game.block.Invisible;
+import tw.edu.ntut.csie.game.card.CardAttributes;
 import tw.edu.ntut.csie.game.core.MovingBitmap;
 
 import java.util.ArrayList;
@@ -34,13 +35,15 @@ public class GameMap implements GameObject {
     private int _timer = 0;
     private boolean _timerSwitch = false;
     private int toolX, toolY, _toolType;
+    private ArrayList<CardAttributes> _cardAttributes = new ArrayList<CardAttributes>();
 
     private List<tw.edu.ntut.csie.game.Observer> _observers;
 
-    public GameMap() {
+    public GameMap(ArrayList<CardAttributes> cardAttributes) {
+        _cardAttributes = cardAttributes;
         _score = DEFAULT_SCORE;
-        _durability = DEFAULT_DURABILITY;
-        _generatingBlocks = new GeneratingBlocks(BLOCK_ROW);
+        SetDurability();
+        _generatingBlocks = new GeneratingBlocks(BLOCK_ROW, _cardAttributes);
         _blockArray = _generatingBlocks.GetBlocksArray();
         LoadMovingBitMap();
         _characterNum = _generatingBlocks.GetMineBlocksArraySize() + _generatingBlocks.GetToolBlocksArraySize();
@@ -370,6 +373,18 @@ public class GameMap implements GameObject {
                     _generatingBlocks.GetActiveBlockList().RemoveBlockList();
                 }
                _blockArray[CharacterX][CharacterY] = _characterNum;
+            }
+        }
+    }
+
+    private void SetDurability() {
+        _durability = DEFAULT_DURABILITY;
+        for (int i = 0; i < 3; i++)
+        {
+            int type = _cardAttributes.get(i).GetBlockType();
+            if (type == -1)
+            {
+                _durability += _cardAttributes.get(i).GetDurability();
             }
         }
     }

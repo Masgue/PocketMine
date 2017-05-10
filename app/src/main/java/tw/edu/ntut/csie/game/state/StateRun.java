@@ -1,5 +1,6 @@
 package tw.edu.ntut.csie.game.state;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -7,6 +8,10 @@ import tw.edu.ntut.csie.game.Game;
 import tw.edu.ntut.csie.game.GameMap;
 import tw.edu.ntut.csie.game.Pointer;
 import tw.edu.ntut.csie.game.R;
+import tw.edu.ntut.csie.game.card.CardAttributes;
+import tw.edu.ntut.csie.game.card.character.DurabilityBonus;
+import tw.edu.ntut.csie.game.card.mine.CoalBonus;
+import tw.edu.ntut.csie.game.card.tool.BombBonus;
 import tw.edu.ntut.csie.game.core.MovingBitmap;
 import tw.edu.ntut.csie.game.engine.GameEngine;
 import tw.edu.ntut.csie.game.MapObserver;
@@ -20,6 +25,7 @@ public class StateRun extends GameState {
     private int _score;
     private int _durabiility;
     private boolean _isPaused;
+    private ArrayList<CardAttributes> _cardAttributes = new ArrayList<CardAttributes>();
 
     private tw.edu.ntut.csie.game.MapObserver _observer;
 
@@ -31,9 +37,11 @@ public class StateRun extends GameState {
     public void initialize(Map<String, Object> data) {
         _background = new MovingBitmap(R.drawable.background);
         _pause = new MovingBitmap(R.drawable.pause, 0, 0);
-        _map = new GameMap();
+        SetCardAttributes();
+        _map = new GameMap(_cardAttributes);
         _score = DEFAULT_SCORE;
         _isPaused = false;
+
 
         _observer = new MapObserver(_map) {
             @Override
@@ -128,5 +136,15 @@ public class StateRun extends GameState {
         _isPaused = false;
         _pause = new MovingBitmap(R.drawable.pause, 0, 0);
         _map.SetPause(_isPaused);
+    }
+
+    private void SetCardAttributes() {
+        DurabilityBonus _durabilityBonus = new DurabilityBonus();
+        CoalBonus _coalBonus = new CoalBonus();
+        BombBonus _bombBonus = new BombBonus();
+
+        _cardAttributes.add(_durabilityBonus.GetCardAttributes());
+        _cardAttributes.add(_coalBonus.GetCardAttributes());
+        _cardAttributes.add(_bombBonus.GetCardAttributes());
     }
 }
