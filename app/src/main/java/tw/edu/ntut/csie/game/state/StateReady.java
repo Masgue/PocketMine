@@ -285,8 +285,8 @@ public class StateReady extends AbstractGameState {
         Map<String, Object> map = new HashMap<String, Object>();
         ArrayList<CardAttributes> cardAttributes = new ArrayList<CardAttributes>();
         cardAttributes.add(_firstCard.GetCardAttributes());
-        cardAttributes.add(_secondCard.GetCardAttributes());
-        cardAttributes.add(_thirdCard.GetCardAttributes());
+//        cardAttributes.add(_secondCard.GetCardAttributes());
+//        cardAttributes.add(_thirdCard.GetCardAttributes());
         map.put("CardAttributes", cardAttributes);
         return map;
     }

@@ -60,53 +60,50 @@ public class Bomb extends Tool {
     }
 
     @Override
-    public void ExplodeAll(int arrayX, int arrayY) {
+    public int ExplodeAll(int arrayX, int arrayY) {
+        int score = 0;
         _blockArray[arrayX][arrayY] = DEFAULT_NONE_BLOCK_TYPE;
         if (arrayY == 0)
         {
-            Explode(arrayX - 1, arrayY);
-            Explode(arrayX + 1, arrayY);
-            Explode(arrayX, arrayY + 1);
+            score += Explode(arrayX - 1, arrayY);
+            score += Explode(arrayX + 1, arrayY);
+            score += Explode(arrayX, arrayY + 1);
             if (_blockArray[arrayX - 1][arrayY] != 0 || _blockArray[arrayX][arrayY + 1] != 0)
-                Explode(arrayX - 1, arrayY + 1);
+                score += Explode(arrayX - 1, arrayY + 1);
             if (_blockArray[arrayX + 1][arrayY] != 0 || _blockArray[arrayX][arrayY + 1] != 0)
-                Explode(arrayX + 1, arrayY + 1);
+                score += Explode(arrayX + 1, arrayY + 1);
         }
         else if (arrayY == BLOCK_COLUMN - 1)
         {
-            Explode(arrayX - 1, arrayY);
-            Explode(arrayX + 1, arrayY);
-            Explode(arrayX, arrayY - 1);
+            score += Explode(arrayX - 1, arrayY);
+            score += Explode(arrayX + 1, arrayY);
+            score += Explode(arrayX, arrayY - 1);
             if (_blockArray[arrayX - 1][arrayY] != 0 || _blockArray[arrayX][arrayY - 1] != 0)
-                Explode(arrayX - 1, arrayY - 1);
+                score += Explode(arrayX - 1, arrayY - 1);
             if (_blockArray[arrayX + 1][arrayY] != 0 || _blockArray[arrayX][arrayY - 1] != 0)
-                Explode(arrayX + 1, arrayY - 1);
+                score += Explode(arrayX + 1, arrayY - 1);
         }
         else
         {
-            Explode(arrayX - 1, arrayY);
-            Explode(arrayX + 1, arrayY);
-            Explode(arrayX, arrayY - 1);
-            Explode(arrayX, arrayY + 1);
+            score += Explode(arrayX - 1, arrayY);
+            score += Explode(arrayX + 1, arrayY);
+            score += Explode(arrayX, arrayY - 1);
+            score += Explode(arrayX, arrayY + 1);
             if (_blockArray[arrayX - 1][arrayY] != 0 || _blockArray[arrayX][arrayY - 1] != 0)
-                Explode(arrayX - 1, arrayY - 1);
+                score += Explode(arrayX - 1, arrayY - 1);
             if (_blockArray[arrayX + 1][arrayY] != 0 || _blockArray[arrayX][arrayY - 1] != 0)
-                Explode(arrayX + 1, arrayY - 1);
+                score += Explode(arrayX + 1, arrayY - 1);
             if (_blockArray[arrayX - 1][arrayY] != 0 || _blockArray[arrayX][arrayY + 1] != 0)
-                Explode(arrayX - 1, arrayY + 1);
+                score += Explode(arrayX - 1, arrayY + 1);
             if (_blockArray[arrayX + 1][arrayY] != 0 || _blockArray[arrayX][arrayY + 1] != 0)
-                Explode(arrayX + 1, arrayY + 1);
+                score += Explode(arrayX + 1, arrayY + 1);
         }
+        return score;
     }
 
     @Override
     public int GetPoints() {
         return 0;
-    }
-
-    @Override
-    public int GetDurability() {
-        return 1;
     }
 
     public void SetBombAnimation() {

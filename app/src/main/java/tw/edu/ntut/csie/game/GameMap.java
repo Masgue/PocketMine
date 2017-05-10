@@ -156,6 +156,7 @@ public class GameMap implements GameObject {
         else if (blockArray[arrayX][arrayY] > 0 && blockArray[arrayX][arrayY] < _generatingBlocks.GetMineBlocksArraySize() + _generatingBlocks.GetToolBlocksArraySize()) {
             _toolType = blockArray[arrayX][arrayY] - _generatingBlocks.GetMineBlocksArraySize();
             _generatingBlocks.ActiveTool(arrayX, arrayY);
+            _durability -= _generatingBlocks.GetToolList()[_toolType].GetDurability();
             blockArray[CharacterX][CharacterY] = DEFAULT_NONE_BLOCK_TYPE;
             CharacterX = arrayX;
             CharacterY = arrayY;
@@ -367,7 +368,7 @@ public class GameMap implements GameObject {
                 }
                 _timer = 0;
                 _timerSwitch = false;
-                _generatingBlocks.GetToolList()[_toolType].Explosion();
+                _score +=_generatingBlocks.GetToolList()[_toolType].Explosion();
                 while(_generatingBlocks.GetActiveBlockList().GetBlockListSize() != 0)
                 {
                     _generatingBlocks.GetActiveBlockList().RemoveBlockList();

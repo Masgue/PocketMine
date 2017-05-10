@@ -35,15 +35,17 @@ public class Drill extends Tool {
     }
 
     @Override
-    public void ExplodeAll(int arrayX, int arrayY) {
+    public int ExplodeAll(int arrayX, int arrayY) {
+        int score = 0;
         _blockArray[arrayX][arrayY] = DEFAULT_NONE_BLOCK_TYPE;
         for (int i = 1; i <= _digPower; i++)
         {
             if (_blockArray[arrayX + i][arrayY] != 0)
-                Explode(arrayX + i, arrayY);
+                score += Explode(arrayX + i, arrayY);
             else
                 break;
         }
+        return score;
     }
 
     public void SetDrillAnimation() {

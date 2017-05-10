@@ -40,22 +40,24 @@ public class Dynamite extends Tool {
     }
 
     @Override
-    public void ExplodeAll(int arrayX, int arrayY) {
+    public int ExplodeAll(int arrayX, int arrayY) {
+        int score = 0;
         _blockArray[arrayX][arrayY] = DEFAULT_NONE_BLOCK_TYPE;
         for (int i = 1; i <= 5; i++)
         {
             if (arrayY - i >= 0 && _blockArray[arrayX][arrayY - i] != 0)
-                Explode(arrayX, arrayY - i);
+                score += Explode(arrayX, arrayY - i);
             else
                 break;
         }
         for (int i = 1; i <= 5; i++)
         {
             if (arrayY + i < BLOCK_COLUMN && _blockArray[arrayX][arrayY + i] != 0)
-                Explode(arrayX, arrayY + i);
+                score += Explode(arrayX, arrayY + i);
             else
                 break;
         }
+        return score;
     }
 
     public void SetDynamiteAnimation() {

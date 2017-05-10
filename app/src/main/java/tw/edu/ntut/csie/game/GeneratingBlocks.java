@@ -81,6 +81,7 @@ public class GeneratingBlocks {
         _character = new CharacterBlock(0,0,0,0);
 
         SetToolList();
+        SetMineList();
         SetBlockRow();
         SetBlockArray();
         SetMimeNum();
@@ -220,6 +221,8 @@ public class GeneratingBlocks {
     private void SetToolList() {
         Tool.SetToolList(_toolList);
     }
+
+    private void SetMineList() {Tool.SetMineList(_mineList);}
 
     private void SetBlockArray() {
         Tool.SetBlockArray(_blockArray);

@@ -2,6 +2,7 @@ package tw.edu.ntut.csie.game.block.tool;
 
 import tw.edu.ntut.csie.game.block.ActiveBlockList;
 import tw.edu.ntut.csie.game.block.Block;
+import tw.edu.ntut.csie.game.block.mine.CommonBlock;
 
 
 /**
@@ -11,6 +12,7 @@ import tw.edu.ntut.csie.game.block.Block;
 public abstract class Tool extends Block{
     protected static int[][] _blockArray;
     protected static Tool[] _toolList;
+    protected static CommonBlock[] _mineList;
     protected static int _mineNum;
     protected static int _toolNum;
     protected static ActiveBlockList _activeBlockList;
@@ -35,6 +37,10 @@ public abstract class Tool extends Block{
         _toolList = toolList;
     }
 
+    public static void SetMineList(CommonBlock[] mineList) {
+        _mineList = mineList;
+    }
+
     public static void SetBlockArray(int[][] blockArray) {
         _blockArray = blockArray;
     }
@@ -52,15 +58,17 @@ public abstract class Tool extends Block{
         _arrayY = arrayY;
     }
 
-    public void ExplodeAll(int arrayX, int arrayY) { }
+    public int ExplodeAll(int arrayX, int arrayY) { return  0;}
 
     public void DetectWarningBlocks(int arrayX, int arrayY) { }
 
-    public void Explosion() {
+    public int Explosion() {
+        int score = 0;
         for (int i = 0; i < _activeBlockList.GetBlockListSize(); i++)
         {
-            Explode(_activeBlockList.GetActiveList(i).GetBlockX(),_activeBlockList.GetActiveList(i).GetBlockY());
+            score += Explode(_activeBlockList.GetActiveList(i).GetBlockX(),_activeBlockList.GetActiveList(i).GetBlockY());
         }
+        return score;
     }
 
     public static void RemoveActiveArray() {
@@ -78,20 +86,22 @@ public abstract class Tool extends Block{
         return _activeBlockList;
     }
 
-    protected void Explode(int x, int y) {
+    protected int Explode(int x, int y) {
+        int score = 0;
         int presentBlockNumber;
         if (x >= 0 && x < _blockRow && y >= 0 && y < BLOCK_COLUMN) {
             presentBlockNumber = _blockArray[x][y];
-            if (_blockArray[x][y] > 0)
+            if (_blockArray[x][y] > 0 &&  _blockArray[x][y] < _mineNum)
             {
-
                 _blockArray[x][y] = DEFAULT_NONE_BLOCK_TYPE;
+                score += _mineList[presentBlockNumber].GetPoints();
             }
 
-            if (presentBlockNumber > _mineNum - 1 && presentBlockNumber != _mineNum + _toolNum) {
+            else if (presentBlockNumber > _mineNum - 1 && presentBlockNumber != _mineNum + _toolNum) {
                 _blockArray[x][y] = DEFAULT_NONE_BLOCK_TYPE;
-                _toolList[presentBlockNumber - _mineNum].ExplodeAll(x,y);
+                score += _toolList[presentBlockNumber - _mineNum].ExplodeAll(x,y);
             }
         }
+        return score;
     }
 }
