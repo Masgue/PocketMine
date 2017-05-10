@@ -37,7 +37,7 @@ public class StateRun extends GameState {
     public void initialize(Map<String, Object> data) {
         _background = new MovingBitmap(R.drawable.background);
         _pause = new MovingBitmap(R.drawable.pause, 0, 0);
-        SetCardAttributes();
+        _cardAttributes = (ArrayList<CardAttributes>) data.get("CardAttributes");
         _map = new GameMap(_cardAttributes);
         _score = DEFAULT_SCORE;
         _isPaused = false;
@@ -136,15 +136,5 @@ public class StateRun extends GameState {
         _isPaused = false;
         _pause = new MovingBitmap(R.drawable.pause, 0, 0);
         _map.SetPause(_isPaused);
-    }
-
-    private void SetCardAttributes() {
-        DurabilityBonus _durabilityBonus = new DurabilityBonus();
-        CoalBonus _coalBonus = new CoalBonus();
-        BombBonus _bombBonus = new BombBonus();
-
-        _cardAttributes.add(_durabilityBonus.GetCardAttributes());
-        _cardAttributes.add(_coalBonus.GetCardAttributes());
-        _cardAttributes.add(_bombBonus.GetCardAttributes());
     }
 }

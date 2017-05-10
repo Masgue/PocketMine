@@ -83,7 +83,10 @@ public abstract class Tool extends Block{
         if (x >= 0 && x < _blockRow && y >= 0 && y < BLOCK_COLUMN) {
             presentBlockNumber = _blockArray[x][y];
             if (_blockArray[x][y] > 0)
+            {
+
                 _blockArray[x][y] = DEFAULT_NONE_BLOCK_TYPE;
+            }
 
             if (presentBlockNumber > _mineNum - 1 && presentBlockNumber != _mineNum + _toolNum) {
                 _blockArray[x][y] = DEFAULT_NONE_BLOCK_TYPE;

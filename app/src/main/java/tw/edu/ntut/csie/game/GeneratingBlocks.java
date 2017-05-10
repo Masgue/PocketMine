@@ -112,28 +112,6 @@ public class GeneratingBlocks {
         GenerateRandomBlockArray(_blockArray);
     }
 
-    private void ChangeBlockSpawningRate() {
-        for (int i = 0; i < 3; i++)
-        {
-            int type = _cardAttributes.get(i).GetBlockType();
-            if (type != -1)
-            {
-                if (type < _mineBlockList.size())
-                {
-                    ArrayListBlock mine = _mineBlockList.get(type);
-                    mine.SetSpawningRate(_cardAttributes.get(i).GetBlockSpawningRate());
-                    _mineBlockList.set(type, mine);
-                }
-                else if (type < _mineBlockList.size() + _toolBlockList.size())
-                {
-                    ArrayListBlock tool = _toolBlockList.get(type - _mineBlockList.size());
-                    tool.SetSpawningRate(_cardAttributes.get(i).GetBlockSpawningRate());
-                    _toolBlockList.set(type - _mineBlockList.size(), tool);
-                }
-            }
-        }
-    }
-
     private void GenerateRandomBlockArray(int[][] blockArray) {
         Random rnd = new Random(System.currentTimeMillis());
         int[] blockSpawningArray;
@@ -275,4 +253,26 @@ public class GeneratingBlocks {
     public ActiveBlockList GetActiveBlockList() {return _activeBlockList;}
 
     public void RemoveActiveArray() {Tool.RemoveActiveArray();}
+
+    private void ChangeBlockSpawningRate() {
+        for (int i = 0; i < _cardAttributes.size(); i++)
+        {
+            int type = _cardAttributes.get(i).GetBlockType();
+            if (type != -1)
+            {
+                if (type < _mineBlockList.size())
+                {
+                    ArrayListBlock mine = _mineBlockList.get(type);
+                    mine.SetSpawningRate(_cardAttributes.get(i).GetBlockSpawningRate());
+                    _mineBlockList.set(type, mine);
+                }
+                else if (type < _mineBlockList.size() + _toolBlockList.size())
+                {
+                    ArrayListBlock tool = _toolBlockList.get(type - _mineBlockList.size());
+                    tool.SetSpawningRate(_cardAttributes.get(i).GetBlockSpawningRate());
+                    _toolBlockList.set(type - _mineBlockList.size(), tool);
+                }
+            }
+        }
+    }
 }

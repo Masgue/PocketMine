@@ -354,7 +354,7 @@ public class GameMap implements GameObject {
         if (_timerSwitch == true)
         {
             _timer++;
-            if (_timer >= 10)
+            if (_timer >= 5)
             {
                 for (int k = 0; k <  _generatingBlocks.GetActiveBlockList().GetBlockListSize(); k++)
                 {
@@ -379,7 +379,7 @@ public class GameMap implements GameObject {
 
     private void SetDurability() {
         _durability = DEFAULT_DURABILITY;
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < _cardAttributes.size(); i++)
         {
             int type = _cardAttributes.get(i).GetBlockType();
             if (type == -1)

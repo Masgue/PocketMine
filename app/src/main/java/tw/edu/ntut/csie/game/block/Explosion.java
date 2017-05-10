@@ -26,6 +26,6 @@ public class Explosion extends Block {
             _blockAnimation = new Animation();
             _blockAnimation.addFrame(R.drawable.blue);
             _blockAnimation.addFrame(R.drawable.block0_invisible);
-            _blockAnimation.setDelay(2);
+            _blockAnimation.setDelay(1);
         }
 }
