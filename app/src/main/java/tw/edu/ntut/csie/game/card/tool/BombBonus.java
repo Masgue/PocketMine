@@ -1,14 +1,13 @@
 package tw.edu.ntut.csie.game.card.tool;
 
 import tw.edu.ntut.csie.game.card.Card;
+import tw.edu.ntut.csie.game.card.CardAttributes;
 import tw.edu.ntut.csie.game.core.MovingBitmap;
 
 
 public class BombBonus extends Card {
     public BombBonus() {
         super();
-        _blockType = 10;
-        _blockSpawningRate = 500;
-        _hasChangedBlock = true;
+        _cardAttributes = new CardAttributes(10, 500, -1);
     }
 }

@@ -5,7 +5,14 @@ package tw.edu.ntut.csie.game.card;
  */
 
 public class CardAttributes {
-    public CardAttributes() {
+    protected int _blockType;
+    protected int _blockSpawningRate;
+    protected int _durability;
+    protected  int _cardType;
 
+    public CardAttributes(int blockType, int blockSpawningRate, int durability) {
+        _blockType = blockType;
+        _blockSpawningRate = blockSpawningRate;
+        _durability = durability;
     }
 }

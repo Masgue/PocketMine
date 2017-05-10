@@ -2,6 +2,7 @@ package tw.edu.ntut.csie.game.state;
 
 import android.support.annotation.NonNull;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,6 +10,7 @@ import java.util.Set;
 
 import tw.edu.ntut.csie.game.Game;
 import tw.edu.ntut.csie.game.R;
+import tw.edu.ntut.csie.game.card.CardAttributes;
 import tw.edu.ntut.csie.game.card.character.DurabilityBonus;
 import tw.edu.ntut.csie.game.card.mine.CoalBonus;
 import tw.edu.ntut.csie.game.card.tool.BombBonus;
@@ -281,7 +283,11 @@ public class StateReady extends AbstractGameState {
 
     private Map<String, Object> CreateMap() {
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("FirstCard", _firstCard);
+        ArrayList<CardAttributes> cardAttributes = new ArrayList<CardAttributes>();
+        cardAttributes.add(_firstCard.GetCardAttributes());
+        cardAttributes.add(_secondCard.GetCardAttributes());
+        cardAttributes.add(_thirdCard.GetCardAttributes());
+        map.put("CardAttributes", cardAttributes);
         return map;
     }
 
