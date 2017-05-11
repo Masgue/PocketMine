@@ -394,4 +394,8 @@ public class GameMap implements GameObject {
             }
         }
     }
+
+    public int GetScore() {
+        return _score;
+    }
 }

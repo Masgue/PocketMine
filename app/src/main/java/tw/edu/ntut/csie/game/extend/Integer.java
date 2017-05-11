@@ -88,24 +88,24 @@ public class Integer implements GameObject {
 
     @Override
     public void show() {
-        int nx;
+        int ny;
         int MSB;
         if (_value >= 0) {
             MSB = _value;
-            nx = _x + _digitImages[0].getHeight() * (_digits - 1);
+            ny = _y + _digitImages[0].getHeight() * (_digits - 1);
         } else {
             MSB = -_value;
-            nx = _x + _digitImages[0].getWidth() * _digits;
+            ny = _y + _digitImages[0].getWidth() * _digits;
         }
         for (int i = 0; i < _digits; i++) {
             int d = MSB % 10;
             MSB /= 10;
-            _digitImages[d].setLocation(nx, _y);
+            _digitImages[d].setLocation(_x, ny);
             _digitImages[d].show();
-            nx -= _digitImages[d].getWidth();
+            ny += _digitImages[d].getWidth();
         }
         if (_value < 0) {
-            _digitImages[10].setLocation(nx, _y);
+            _digitImages[10].setLocation(_x, ny);
             _digitImages[10].show();
         }
     }
@@ -113,7 +113,7 @@ public class Integer implements GameObject {
     /**
      * 對目前顯示的數值減去指定的值。
      *
-     * @param addend 減數(目前的值為被減數)
+     * //@param addend 減數(目前的值為被減數)
      */
     public void subtract(int subtrahend) {
         _value -= subtrahend;

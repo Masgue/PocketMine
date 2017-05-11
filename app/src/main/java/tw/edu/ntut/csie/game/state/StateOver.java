@@ -8,9 +8,11 @@ import tw.edu.ntut.csie.game.core.MovingBitmap;
 import tw.edu.ntut.csie.game.engine.GameEngine;
 import tw.edu.ntut.csie.game.extend.BitmapButton;
 import tw.edu.ntut.csie.game.extend.ButtonEventHandler;
+import tw.edu.ntut.csie.game.extend.Integer;
 
 public class StateOver extends AbstractGameState {
     private BitmapButton _menuButton;
+    private Integer _score;
 
     public StateOver(GameEngine engine) {
         super(engine);
@@ -28,6 +30,13 @@ public class StateOver extends AbstractGameState {
         });
         addGameObject(_menuButton);
         addPointerEventHandler(_menuButton);
+        _score = new Integer(4, (int)data.get("Score"), 10, 10);
+        ShowScore();
+    }
+
+    private void ShowScore() {
+        addGameObject(_score);
+        _score.show();
     }
 
     @Override

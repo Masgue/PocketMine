@@ -1,6 +1,7 @@
 package tw.edu.ntut.csie.game.state;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -52,8 +53,12 @@ public class StateRun extends GameState {
         _observer = new MapObserver(_map) {
             @Override
             public void update() {
-//                _score = _map.GetScore();
-                changeState(Game.OVER_STATE);
+                Map<String, Object> map = new HashMap<String, Object>();
+                _score = _map.GetScore();
+                map.put("Score", _score);
+                _audio.stop();
+                _audio.release();
+                changeState(Game.OVER_STATE, map);
             }
         };
     }
