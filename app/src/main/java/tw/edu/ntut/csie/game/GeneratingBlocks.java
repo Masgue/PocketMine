@@ -101,9 +101,9 @@ public class GeneratingBlocks {
     }
 
     private void AddToolBlocks() {
-        _toolBlockList.add(new ArrayListBlock(0, 10, "Bomb"));
-        _toolBlockList.add(new ArrayListBlock(1, 10, "Drill"));
-        _toolBlockList.add(new ArrayListBlock(2, 10, "Dynamite"));
+        _toolBlockList.add(new ArrayListBlock(0, 5, "Bomb"));
+        _toolBlockList.add(new ArrayListBlock(1, 5, "Drill"));
+        _toolBlockList.add(new ArrayListBlock(2, 5, "Dynamite"));
     }
     private void AddCharacterBlocks() {
         _characterBlockList.add(new ArrayListBlock(0, 0, "digit_8"));

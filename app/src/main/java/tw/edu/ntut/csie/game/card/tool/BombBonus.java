@@ -5,9 +5,12 @@ import tw.edu.ntut.csie.game.card.CardAttributes;
 import tw.edu.ntut.csie.game.core.MovingBitmap;
 
 
+
+
 public class BombBonus extends Card {
     public BombBonus() {
         super();
-        _cardAttributes = new CardAttributes(8, 500, -1);
+        _cardType = 2;
+        _cardAttributes = new CardAttributes(8, 100, -1);
     }
 }

@@ -8,6 +8,7 @@ import tw.edu.ntut.csie.game.extend.BitmapButton;
 public abstract class Card {
     protected BitmapButton _bitmapButton;
     protected CardAttributes _cardAttributes;
+    protected int _cardType;
 
     public Card() {
     }
@@ -22,5 +23,9 @@ public abstract class Card {
 
     public CardAttributes GetCardAttributes() {
         return _cardAttributes;
+    }
+
+    public int GetCardType() {
+        return _cardType;
     }
 }

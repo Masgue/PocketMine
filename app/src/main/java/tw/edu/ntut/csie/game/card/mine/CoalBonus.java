@@ -7,6 +7,7 @@ import tw.edu.ntut.csie.game.core.MovingBitmap;
 public class CoalBonus extends Card {
     public CoalBonus() {
         super();
-        _cardAttributes = new CardAttributes(3, 500, -1);
+        _cardType = 1;
+        _cardAttributes = new CardAttributes(3, 100, -1);
     }
 }

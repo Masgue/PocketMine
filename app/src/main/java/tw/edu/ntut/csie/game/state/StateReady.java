@@ -1,12 +1,9 @@
 package tw.edu.ntut.csie.game.state;
 
-import android.support.annotation.NonNull;
-
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+import java.util.Random;
 
 import tw.edu.ntut.csie.game.Game;
 import tw.edu.ntut.csie.game.R;
@@ -14,6 +11,8 @@ import tw.edu.ntut.csie.game.card.CardAttributes;
 import tw.edu.ntut.csie.game.card.character.DurabilityBonus;
 import tw.edu.ntut.csie.game.card.mine.CoalBonus;
 import tw.edu.ntut.csie.game.card.tool.BombBonus;
+import tw.edu.ntut.csie.game.card.tool.DrillBonus;
+import tw.edu.ntut.csie.game.card.tool.DynamiteBonus;
 import tw.edu.ntut.csie.game.core.MovingBitmap;
 import tw.edu.ntut.csie.game.engine.GameEngine;
 import tw.edu.ntut.csie.game.extend.BitmapButton;
@@ -79,7 +78,7 @@ public class StateReady extends AbstractGameState {
         initializeGearButton();
         initializeMuseumButton();
         initializePlayButton();
-        InitializeChangeCardsButton();
+        InitializeCardsShufflingButton();
         InitializeDigButton();
         InitializeSettingButton();
         InitializeBackButton();
@@ -101,14 +100,14 @@ public class StateReady extends AbstractGameState {
     }
 
     private void InitializeCards() {
-        InitializeFirstCard();
-        InitializeSecondCard();
-        InitializeThirdCard();
+        LoadFirstCard(GenerateCard());
+        LoadSecondCard(GenerateCard());
+        LoadThirdCard(GenerateCard());
     }
 
-    private void InitializeFirstCard() {
-        _firstCard = new DurabilityBonus();
-        _firstCard.SetBitmapButton(new BitmapButton(R.drawable.block0_invisible, 100, 170));
+    private void LoadFirstCard(Card card) {
+        _firstCard = card;
+        _firstCard.GetBitmapButton().setLocation(100, 253);
         addGameObject(_firstCard.GetBitmapButton());
         _firstCard.GetBitmapButton().addButtonEventHandler(new ButtonEventHandler() {
             @Override
@@ -120,9 +119,9 @@ public class StateReady extends AbstractGameState {
         addPointerEventHandler(_firstCard.GetBitmapButton());
     }
 
-    private void InitializeSecondCard() {
-        _secondCard = new CoalBonus();
-        _secondCard.SetBitmapButton(new BitmapButton(R.drawable.block1_unbreakable, 100, 100));
+    private void LoadSecondCard(Card card) {
+        _secondCard = card;
+        _secondCard.GetBitmapButton().setLocation(100, 133);
         addGameObject(_secondCard.GetBitmapButton());
         _secondCard.GetBitmapButton().addButtonEventHandler(new ButtonEventHandler() {
             @Override
@@ -134,9 +133,9 @@ public class StateReady extends AbstractGameState {
         addPointerEventHandler(_secondCard.GetBitmapButton());
     }
 
-    private void InitializeThirdCard() {
-        _thirdCard = new BombBonus();
-        _thirdCard.SetBitmapButton(new BitmapButton(R.drawable.block2_dirt, 100, 30));
+    private void LoadThirdCard(Card card) {
+        _thirdCard = card;
+        _thirdCard.GetBitmapButton().setLocation(100, 13);
         addGameObject(_thirdCard.GetBitmapButton());
         _thirdCard.GetBitmapButton().addButtonEventHandler(new ButtonEventHandler() {
             @Override
@@ -146,6 +145,55 @@ public class StateReady extends AbstractGameState {
             }
         });
         addPointerEventHandler(_thirdCard.GetBitmapButton());
+    }
+
+    private Card GenerateCard() {
+        Card card;
+        Random random = new Random(System.currentTimeMillis());
+        int randomNumber = random.nextInt(5);
+
+        if (randomNumber == 0)
+            card = InitializeDurabilityBonus();
+        else if (randomNumber == 1)
+            card = InitializeCoalBonus();
+        else if (randomNumber == 2)
+            card = InitializeBombBonus();
+        else if (randomNumber == 3)
+            card = InitializeDrillBonus();
+        else
+            card = InitializeDynamiteBonus();
+
+        return card;
+    }
+
+    private DurabilityBonus InitializeDurabilityBonus() {
+        DurabilityBonus durabilityBonus = new DurabilityBonus();
+        durabilityBonus.SetBitmapButton(new BitmapButton(R.drawable.durability_bonus));
+        return durabilityBonus;
+    }
+
+    private CoalBonus InitializeCoalBonus() {
+        CoalBonus coalBonus = new CoalBonus();
+        coalBonus.SetBitmapButton(new BitmapButton(R.drawable.coal_bonus));
+        return coalBonus;
+    }
+
+    private BombBonus InitializeBombBonus() {
+        BombBonus bombBonus = new BombBonus();
+        bombBonus.SetBitmapButton(new BitmapButton(R.drawable.bomb_bonus));
+        return bombBonus;
+    }
+
+    private DrillBonus InitializeDrillBonus() {
+        DrillBonus drillBonus = new DrillBonus();
+        drillBonus.SetBitmapButton(new BitmapButton(R.drawable.drill_bonus));
+        return drillBonus;
+    }
+
+    private DynamiteBonus InitializeDynamiteBonus() {
+        DynamiteBonus dynamiteBonus = new DynamiteBonus();
+        dynamiteBonus.SetBitmapButton(new BitmapButton(R.drawable.dynamite_bonus));
+        return dynamiteBonus;
     }
 
     private void InitializeMenuButton() {
@@ -259,12 +307,36 @@ public class StateReady extends AbstractGameState {
         addPointerEventHandler(_playButton);
     }
 
-    private void InitializeChangeCardsButton() {
-        addGameObject(_changeCardsButton = new BitmapButton(R.drawable.block0_invisible, 400, 50));
+    private void InitializeCardsShufflingButton() {
+        addGameObject(_changeCardsButton = new BitmapButton(R.drawable.shuffle, 400, 70));
         _changeCardsButton.addButtonEventHandler(new ButtonEventHandler() {
             @Override
             public void perform(BitmapButton button) {
+                if (_pressFirstCard) {
+                    removeGameObject(_firstCard.GetBitmapButton());
+                    removePointerEventHandler(_firstCard.GetBitmapButton());
+                    _firstCard.GetBitmapButton().removeButtonEventHandler(this);
+                    LoadFirstCard(GenerateCard());
+                    _pressFirstCard = false;
+                }
 
+                if (_pressSecondCard) {
+                    removeGameObject(_secondCard.GetBitmapButton());
+                    removePointerEventHandler(_secondCard.GetBitmapButton());
+                    _secondCard.GetBitmapButton().removeButtonEventHandler(this);
+                    LoadSecondCard(GenerateCard());
+                    _pressSecondCard = false;
+                }
+
+                if (_pressThirdCard) {
+                    removeGameObject(_thirdCard.GetBitmapButton());
+                    removePointerEventHandler(_thirdCard.GetBitmapButton());
+                    _thirdCard.GetBitmapButton().removeButtonEventHandler(this);
+                    LoadThirdCard(GenerateCard());
+                    _pressThirdCard = false;
+                }
+
+                setVisibility();
             }
         });
         addPointerEventHandler(_changeCardsButton);
@@ -285,8 +357,8 @@ public class StateReady extends AbstractGameState {
         Map<String, Object> map = new HashMap<String, Object>();
         ArrayList<CardAttributes> cardAttributes = new ArrayList<CardAttributes>();
         cardAttributes.add(_firstCard.GetCardAttributes());
-//        cardAttributes.add(_secondCard.GetCardAttributes());
-//        cardAttributes.add(_thirdCard.GetCardAttributes());
+        cardAttributes.add(_secondCard.GetCardAttributes());
+        cardAttributes.add(_thirdCard.GetCardAttributes());
         map.put("CardAttributes", cardAttributes);
         return map;
     }
@@ -407,20 +479,65 @@ public class StateReady extends AbstractGameState {
         else
             _shopButton.loadBitmap(R.drawable.shop);
 
+        SetCardsVisibility();
+    }
+
+    private void SetCardsVisibility() {
+        int type;
+
+        type = _firstCard.GetCardType();
         if(_pressFirstCard)
-            _firstCard.GetBitmapButton().loadBitmap(R.drawable.digit_0);
+            SetpressedCard(_firstCard, type);
         else
-            _firstCard.GetBitmapButton().loadBitmap(R.drawable.block0_invisible);
+            SetUnpressedCard(_firstCard, type);
 
+        type = _secondCard.GetCardType();
         if(_pressSecondCard)
-            _secondCard.GetBitmapButton().loadBitmap(R.drawable.digit_0);
+            SetpressedCard(_secondCard, type);
         else
-            _secondCard.GetBitmapButton().loadBitmap(R.drawable.block1_unbreakable);
+            SetUnpressedCard(_secondCard, type);
 
+        type = _thirdCard.GetCardType();
         if(_pressThirdCard)
-            _thirdCard.GetBitmapButton().loadBitmap(R.drawable.digit_0);
+            SetpressedCard(_thirdCard, type);
         else
-            _thirdCard.GetBitmapButton().loadBitmap(R.drawable.block2_dirt);
+            SetUnpressedCard(_thirdCard, type);
+    }
+
+    private void SetpressedCard(Card card, int type) {
+        if (type == 0) {
+            card.GetBitmapButton().loadBitmap(R.drawable.durability_bonus_pressed);
+        }
+        else if (type == 1) {
+            card.GetBitmapButton().loadBitmap(R.drawable.coal_bonus_pressed);
+        }
+        else if (type == 2) {
+            card.GetBitmapButton().loadBitmap(R.drawable.bomb_bonus_pressed);
+        }
+        else if (type == 3) {
+            card.GetBitmapButton().loadBitmap(R.drawable.drill_bonus_pressed);
+        }
+        else if (type == 4) {
+            card.GetBitmapButton().loadBitmap(R.drawable.dynamite_bonus_pressed);
+        }
+    }
+
+    private void SetUnpressedCard(Card card, int type) {
+        if (type == 0) {
+            card.GetBitmapButton().loadBitmap(R.drawable.durability_bonus);
+        }
+        else if (type == 1) {
+            card.GetBitmapButton().loadBitmap(R.drawable.coal_bonus);
+        }
+        else if (type == 2) {
+            card.GetBitmapButton().loadBitmap(R.drawable.bomb_bonus);
+        }
+        else if (type == 3) {
+            card.GetBitmapButton().loadBitmap(R.drawable.drill_bonus);
+        }
+        else if (type == 4) {
+            card.GetBitmapButton().loadBitmap(R.drawable.dynamite_bonus);
+        }
     }
 }
 

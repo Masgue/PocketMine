@@ -37,6 +37,8 @@ public class GameMap implements GameObject {
     private int toolX, toolY, _toolType;
     private ArrayList<CardAttributes> _cardAttributes = new ArrayList<CardAttributes>();
 
+    private boolean _isVisibleControl;
+
     private List<tw.edu.ntut.csie.game.Observer> _observers;
 
     public GameMap(ArrayList<CardAttributes> cardAttributes) {
@@ -49,6 +51,8 @@ public class GameMap implements GameObject {
         _characterNum = _generatingBlocks.GetMineBlocksArraySize() + _generatingBlocks.GetToolBlocksArraySize();
         _floor = 0;
         _isPaused = false;
+
+        _isVisibleControl = false;
 
         _observers = new ArrayList<tw.edu.ntut.csie.game.Observer>();
         _invisible = new Invisible(0,0,0,0);
@@ -195,7 +199,7 @@ public class GameMap implements GameObject {
         {
             for (int j = 0; j < BLOCK_COLUMN; j++)
             {
-                if (isVisible(i, j, blockArray)) {
+                if (isVisible(i, j, blockArray) || _isVisibleControl) {
                     if (_blockArray[i][j] != DEFAULT_NONE_BLOCK_TYPE)
                     {
                         if (_blockArray[i][j] < _generatingBlocks.GetMineBlocksArraySize()) {
@@ -302,6 +306,7 @@ public class GameMap implements GameObject {
 
     public void SetPause(boolean isPaused) {
         _isPaused = isPaused;
+        _isVisibleControl = !_isVisibleControl;
     }
 
     private boolean isVisible(int i, int j, int[][] blockArray) {
