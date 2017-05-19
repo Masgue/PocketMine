@@ -18,6 +18,7 @@ import tw.edu.ntut.csie.game.engine.GameEngine;
 import tw.edu.ntut.csie.game.extend.BitmapButton;
 import tw.edu.ntut.csie.game.extend.ButtonEventHandler;
 import tw.edu.ntut.csie.game.card.Card;
+import tw.edu.ntut.csie.game.display.EnergyBar;
 
 public class StateReady extends AbstractGameState {
     private MovingBitmap _menuInfo;
@@ -43,6 +44,13 @@ public class StateReady extends AbstractGameState {
     private Card _firstCard;
     private Card _secondCard;
     private Card _thirdCard;
+
+    private EnergyBar _level;
+    private EnergyBar _energy;
+
+    private Integer _money;
+    private Integer _diamond;
+    private Integer _durability;
 
     private boolean _showMenu;
     private boolean _showCard;
@@ -71,6 +79,11 @@ public class StateReady extends AbstractGameState {
         addGameObject(_museumInfo = new MovingBitmap(R.drawable.museumbackground));
         addGameObject(_digInfo = new MovingBitmap(R.drawable.digbackground));
         addGameObject(_settingInfo = new MovingBitmap(R.drawable.settingbackground));
+        InitializeLevel();
+        InitializeEnergy();
+        InitializeMoney();
+        InitializeDiamond();
+        InitializeDurability();
         InitializeCards();
         InitializeMenuButton();
         initializeCardButton();
@@ -97,6 +110,46 @@ public class StateReady extends AbstractGameState {
         _pressSecondCard = false;
         _pressThirdCard = false;
         setVisibility();
+    }
+
+    private void InitializeLevel() {
+        ArrayList<MovingBitmap> bar = new ArrayList<MovingBitmap>(){
+            new MovingBitmap(R.drawable.block1_unbreakable);
+        };
+        _level = new EnergyBar(bar, 0, 300);
+        addGameObject(_level.GetBar());
+        addGameObject(_level.GetInteger());
+        _level.GetBar().show();
+        _level.GetInteger().show();
+    }
+
+    private void InitializeEnergy() {
+        ArrayList<MovingBitmap> bar = new ArrayList<MovingBitmap>(){
+            new MovingBitmap(R.drawable.block1_unbreakable);
+        };
+        _energy = new EnergyBar(bar, 0, 100);
+        addGameObject(_energy.GetBar());
+        addGameObject(_energy.GetInteger());
+        _energy.GetBar().show();
+        _energy.GetInteger().show();
+    }
+
+    private void InitializeMoney() {
+        _money = new Integer(4, 1000, 0, 200);
+        addGameObject(_money);
+        _money.show();
+    }
+
+    private void InitializeDiamond() {
+        _diamond = new Integer(3, 500, 0, 100);
+        addGameObject(_diamond);
+        _diamond.show();
+    }
+
+    private void InitializeDurability() {
+        _durability = new Integer(3, 50, 300, 150);
+        addGameObject(_durability);
+        _durability.show();
     }
 
     private void InitializeCards() {
@@ -197,7 +250,7 @@ public class StateReady extends AbstractGameState {
     }
 
     private void InitializeMenuButton() {
-        addGameObject(_menuButton = new BitmapButton(R.drawable.menu, 65, 290));
+        addGameObject(_menuButton = new BitmapButton(R.drawable.menu, 65, 315));
         _menuButton.addButtonEventHandler(new ButtonEventHandler() {
             @Override
             public void perform(BitmapButton button) {
@@ -215,7 +268,7 @@ public class StateReady extends AbstractGameState {
     }
 
     private void initializeCardButton() {
-        addGameObject(_cardButton = new BitmapButton(R.drawable.card, 65, 225));
+        addGameObject(_cardButton = new BitmapButton(R.drawable.card, 65, 253));
         _cardButton.addButtonEventHandler(new ButtonEventHandler() {
             @Override
             public void perform(BitmapButton button) {
@@ -233,7 +286,7 @@ public class StateReady extends AbstractGameState {
     }
 
     private void initializeGearButton() {
-        addGameObject(_gearButton = new BitmapButton(R.drawable.gear, 65, 160));
+        addGameObject(_gearButton = new BitmapButton(R.drawable.gear, 65, 191));
         _gearButton.addButtonEventHandler(new ButtonEventHandler() {
             @Override
             public void perform(BitmapButton button) {
@@ -251,7 +304,7 @@ public class StateReady extends AbstractGameState {
     }
 
     private void initializeMuseumButton() {
-        addGameObject(_museumButton = new BitmapButton(R.drawable.museum, 65, 95));
+        addGameObject(_museumButton = new BitmapButton(R.drawable.museum, 65, 129));
         _museumButton.addButtonEventHandler(new ButtonEventHandler() {
             @Override
             public void perform(BitmapButton button) {
@@ -269,7 +322,7 @@ public class StateReady extends AbstractGameState {
     }
 
     private void initializeShopButton() {
-        addGameObject(_shopButton = new BitmapButton(R.drawable.shop, 65, 30));
+        addGameObject(_shopButton = new BitmapButton(R.drawable.shop, 65, 67));
         _shopButton.addButtonEventHandler(new ButtonEventHandler() {
             @Override
             public void perform(BitmapButton button) {
@@ -364,7 +417,7 @@ public class StateReady extends AbstractGameState {
     }
 
     private void InitializeSettingButton() {
-        addGameObject(_settingButton = new BitmapButton(R.drawable.setting_pressed, 0, 0));
+        addGameObject(_settingButton = new BitmapButton(R.drawable.setting_pressed, 65, 5));
         _settingButton.addButtonEventHandler(new ButtonEventHandler() {
             @Override
             public void perform(BitmapButton button) {
@@ -540,4 +593,3 @@ public class StateReady extends AbstractGameState {
         }
     }
 }
-
