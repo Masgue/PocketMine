@@ -1,5 +1,7 @@
 package tw.edu.ntut.csie.game;
 
+import tw.edu.ntut.csie.game.block.ActiveBlocks;
+import tw.edu.ntut.csie.game.block.CharacterMovingBlock;
 import tw.edu.ntut.csie.game.block.Explosion;
 import tw.edu.ntut.csie.game.block.Invisible;
 import tw.edu.ntut.csie.game.card.CardAttributes;
@@ -20,6 +22,7 @@ public class GameMap implements GameObject {
     private static final int DEFAULT_SCORE = 0;
     private static final int DEFAULT_DURABILITY = 50;
     private static final int DEFAULT_NONE_BLOCK_TYPE = -1;
+    private static final int DEFAULT_CHARACTER_PATH = -21;
 
     private MovingBitmap[] _digitNumberList;
     private int[][] _blockArray;
@@ -32,14 +35,19 @@ public class GameMap implements GameObject {
     private int _characterNum;
     private Invisible _invisible;
     private Explosion _explosion;
-    private int _timer = 0;
-    private boolean _timerSwitch = false;
+    private CharacterMovingBlock _characterMovingBlock;
+    private int _explosionTimer = 0;
+    private int _characterTimer = 0;
+    private boolean _explosionTimerSwitch = false;
+    private boolean _characterTimerSwitch = false;
     private int toolX, toolY, _toolType;
     private ArrayList<CardAttributes> _cardAttributes = new ArrayList<CardAttributes>();
 
     private boolean _isVisibleControl;
 
     private List<tw.edu.ntut.csie.game.Observer> _observers;
+    private CharacterPath _path;
+    private ArrayList<ActiveBlocks> _pathList;
 
     public GameMap(ArrayList<CardAttributes> cardAttributes) {
         _cardAttributes = cardAttributes;
@@ -57,6 +65,9 @@ public class GameMap implements GameObject {
         _observers = new ArrayList<tw.edu.ntut.csie.game.Observer>();
         _invisible = new Invisible(0,0,0,0);
         _explosion = new Explosion(0,0,0,0);
+        _characterMovingBlock = new CharacterMovingBlock(0,0,0,0);
+        _path = new CharacterPath(BLOCK_ROW, _blockArray);
+        _pathList = new ArrayList<ActiveBlocks>();
     }
 
     private void LoadMovingBitMap() {
@@ -88,24 +99,20 @@ public class GameMap implements GameObject {
             else
                 _generatingBlocks.SetMovingViewHeight(_generatingBlocks.GetMovingViewHeight() +  MOVING_VIEW_SPEED);
         ExplodeTimer();
-//            BlockAnimationMove();
+        CharacterTimer();
         }
     }
 
     @Override
     public void show() {
-        if ( _generatingBlocks.GetMovingViewHeight() >= 60 * (_floor + 3) + 160)
+        if (_generatingBlocks.GetMovingViewHeight() >= 60 * (_floor + 3) + 160)
             notifyAllObservers();
-        ShowMap();
+        ShowBlocks();
         showScores();
         showDurability();
     }
 
-    public void ResetAllBlock(int touchX, int touchY) {
-        ResetBlock(touchX, touchY, _blockArray);
-    }
-
-    private void ResetBlock(int touchX, int touchY, int[][] blockArray) {
+    public void ResetBlock(int touchX, int touchY) {
         if (!_isPaused) {
             if (_durability != 0) {
                 if (touchX > (160 - _generatingBlocks.GetMovingViewHeight())) {
@@ -123,8 +130,8 @@ public class GameMap implements GameObject {
                             y -= 60;
                         }
 
-                        if(isVisible(arrayX, arrayY, blockArray)) {
-                            DigBlock(arrayX, arrayY, blockArray);
+                        if(isVisible(arrayX, arrayY)) {
+                            DigBlock(arrayX, arrayY);
 
                             if (arrayX >= _floor) {
                                 _floor = arrayX;
@@ -136,73 +143,72 @@ public class GameMap implements GameObject {
         }
     }
 
-    private void DigBlock(int arrayX, int arrayY, int[][] blockArray) {
-        if(blockArray[arrayX][arrayY] == DEFAULT_NONE_BLOCK_TYPE) {
-            blockArray[CharacterX][CharacterY] = DEFAULT_NONE_BLOCK_TYPE;
-            blockArray[arrayX][arrayY] =_characterNum;
-            CharacterX = arrayX;
-            CharacterY = arrayY;
+    private void DigBlock(int arrayX, int arrayY) {
+        if(_blockArray[arrayX][arrayY] == DEFAULT_NONE_BLOCK_TYPE) {
+            _blockArray[CharacterX][CharacterY] = DEFAULT_NONE_BLOCK_TYPE;
+
+            CheckCharacterPathTimer(arrayX, arrayY);
+//            _blockArray[arrayX][arrayY] =_characterNum;
         }
-        else if (blockArray[arrayX][arrayY] >= 0 && blockArray[arrayX][arrayY] < _generatingBlocks.GetMineBlocksArraySize()) {
+        else if (_blockArray[arrayX][arrayY] >= 0 && _blockArray[arrayX][arrayY] < _generatingBlocks.GetMineBlocksArraySize()) {
             _score += _generatingBlocks.GetPoints(arrayX, arrayY);
             _durability -= _generatingBlocks.GetDurability(arrayX, arrayY);
 
             if (_durability < 0)
                 _durability = 0;
 
-            if (blockArray[arrayX][arrayY] >= 1) {
-                blockArray[CharacterX][CharacterY] = DEFAULT_NONE_BLOCK_TYPE;
-                blockArray[arrayX][arrayY] = _characterNum;
-                CharacterX = arrayX;
-                CharacterY = arrayY;
+            if (_blockArray[arrayX][arrayY] >= 1) {
+                _blockArray[CharacterX][CharacterY] = DEFAULT_NONE_BLOCK_TYPE;
+                _blockArray[arrayX][arrayY] = _characterNum;
             }
         }
-        else if (blockArray[arrayX][arrayY] > 0 && blockArray[arrayX][arrayY] < _generatingBlocks.GetMineBlocksArraySize() + _generatingBlocks.GetToolBlocksArraySize()) {
-            _toolType = blockArray[arrayX][arrayY] - _generatingBlocks.GetMineBlocksArraySize();
+        else if (_blockArray[arrayX][arrayY] > 0 && _blockArray[arrayX][arrayY] < _generatingBlocks.GetMineBlocksArraySize() + _generatingBlocks.GetToolBlocksArraySize()) {
+            _toolType = _blockArray[arrayX][arrayY] - _generatingBlocks.GetMineBlocksArraySize();
             _generatingBlocks.ActiveTool(arrayX, arrayY);
             _durability -= _generatingBlocks.GetToolList()[_toolType].GetDurability();
-            blockArray[CharacterX][CharacterY] = DEFAULT_NONE_BLOCK_TYPE;
-            CharacterX = arrayX;
-            CharacterY = arrayY;
+            _blockArray[CharacterX][CharacterY] = DEFAULT_NONE_BLOCK_TYPE;
             toolX = arrayX;
             toolY = arrayY;
             for (int k = 0; k <  _generatingBlocks.GetActiveBlockList().GetBlockListSize(); k++)
             {
                 int x = _generatingBlocks.GetActiveBlockList().GetActiveList(k).GetBlockX();
                 int y = _generatingBlocks.GetActiveBlockList().GetActiveList(k).GetBlockY();
-                if (blockArray[x][y] != 0)
+                if (_blockArray[x][y] != 0)
                 {
-                    blockArray[_generatingBlocks.GetActiveBlockList().GetActiveList(k).GetBlockX()][_generatingBlocks.GetActiveBlockList().GetActiveList(k).GetBlockY()] += (_generatingBlocks.GetMineBlocksArraySize() + _generatingBlocks.GetToolBlocksArraySize() + 2);
+                    _blockArray[_generatingBlocks.GetActiveBlockList().GetActiveList(k).GetBlockX()][_generatingBlocks.GetActiveBlockList().GetActiveList(k).GetBlockY()] += (_generatingBlocks.GetMineBlocksArraySize() + _generatingBlocks.GetToolBlocksArraySize() + 2);
                 }
             }
             if ( _generatingBlocks.GetActiveBlockList().GetBlockListSize() != 0)
             {
-                _timerSwitch = true;
+                _explosionTimerSwitch = true;
             }
             else
             {
-                _timerSwitch = false;
+                _explosionTimerSwitch = false;
             }
-            blockArray[arrayX][arrayY] = _characterNum;
+            _blockArray[arrayX][arrayY] = _characterNum;
         }
-    }
-    private void ShowMap() {
-        ShowArray(_blockArray);
-    }
-
-    private void ShowArray(int[][] blockArray) {
-        ShowBlocks(blockArray);
+        CharacterX = arrayX;
+        CharacterY = arrayY;
     }
 
-    private void ShowBlocks(int[][] blockArray) {
+
+    private void ShowBlocks() {
         for (int i = 0; i < BLOCK_ROW; i++)
         {
             for (int j = 0; j < BLOCK_COLUMN; j++)
             {
-                if (isVisible(i, j, blockArray) || _isVisibleControl) {
+                if (isVisible(i, j) || _isVisibleControl) {
                     if (_blockArray[i][j] != DEFAULT_NONE_BLOCK_TYPE)
                     {
-                        if (_blockArray[i][j] < _generatingBlocks.GetMineBlocksArraySize()) {
+                        if (_blockArray[i][j] == DEFAULT_CHARACTER_PATH)
+                        {
+                        _characterMovingBlock.SetBlock(i, j, _generatingBlocks.GetMovingViewHeight());
+                        _characterMovingBlock.SetRepeating(false);
+                        _characterMovingBlock.show();
+                        _blockArray[i][j] = DEFAULT_NONE_BLOCK_TYPE;
+                        }
+                        else if (_blockArray[i][j] < _generatingBlocks.GetMineBlocksArraySize()) {
                             _generatingBlocks.ShowMineBlock(i, j);
                         }
                         else if (_blockArray[i][j] < _generatingBlocks.GetMineBlocksArraySize() + _generatingBlocks.GetToolBlocksArraySize()){
@@ -210,10 +216,11 @@ public class GameMap implements GameObject {
                         }
                         else if (_blockArray[i][j] == _generatingBlocks.GetMineBlocksArraySize() + _generatingBlocks.GetToolBlocksArraySize()){
                             _generatingBlocks.ShowCharacterBlock(i, j);
-                           }
+                        }
                         else
                         {
                             _explosion.SetBlock(i, j, _generatingBlocks.GetMovingViewHeight());
+                            _explosion.SetRepeating(true);
                             _explosion.show();
                         }
                     }
@@ -309,14 +316,14 @@ public class GameMap implements GameObject {
         _isVisibleControl = !_isVisibleControl;
     }
 
-    private boolean isVisible(int i, int j, int[][] blockArray) {
-        if (i < BLOCK_ROW - 1 && (blockArray[i + 1][j] == DEFAULT_NONE_BLOCK_TYPE || blockArray[i + 1][j] >= _characterNum))
+    private boolean isVisible(int i, int j) {
+        if (i < BLOCK_ROW - 1 && (_blockArray[i + 1][j] == DEFAULT_NONE_BLOCK_TYPE || _blockArray[i + 1][j] >= _characterNum || _blockArray[i + 1][j] == DEFAULT_CHARACTER_PATH))
             return true;
-        else if (i > 0 && (blockArray[i - 1][j] == DEFAULT_NONE_BLOCK_TYPE || blockArray[i - 1][j] >= _characterNum))
+        else if (i > 0 && (_blockArray[i - 1][j] == DEFAULT_NONE_BLOCK_TYPE || _blockArray[i - 1][j] >= _characterNum || _blockArray[i - 1][j] == DEFAULT_CHARACTER_PATH))
             return true;
-        else if (j < BLOCK_COLUMN - 1 && (blockArray[i][j + 1] == DEFAULT_NONE_BLOCK_TYPE || blockArray[i][j + 1] >= _characterNum))
+        else if (j < BLOCK_COLUMN - 1 && (_blockArray[i][j + 1] == DEFAULT_NONE_BLOCK_TYPE || _blockArray[i][j + 1] >= _characterNum || _blockArray[i][j + 1] == DEFAULT_CHARACTER_PATH))
             return true;
-        else if (j > 0 && (blockArray[i][j - 1] == DEFAULT_NONE_BLOCK_TYPE || blockArray[i][j - 1] >= _characterNum))
+        else if (j > 0 && (_blockArray[i][j - 1] == DEFAULT_NONE_BLOCK_TYPE || _blockArray[i][j - 1] >= _characterNum || _blockArray[i][j - 1] == DEFAULT_CHARACTER_PATH))
             return true;
         else if (_blockArray[i][j] ==  _characterNum)
             return true;
@@ -357,10 +364,10 @@ public class GameMap implements GameObject {
     }
 
     private void ExplodeTimer() {
-        if (_timerSwitch == true)
+        if (_explosionTimerSwitch == true)
         {
-            _timer++;
-            if (_timer >= 5)
+            _explosionTimer++;
+            if (_explosionTimer >= 5)
             {
                 for (int k = 0; k <  _generatingBlocks.GetActiveBlockList().GetBlockListSize(); k++)
                 {
@@ -371,14 +378,33 @@ public class GameMap implements GameObject {
                         _blockArray[_generatingBlocks.GetActiveBlockList().GetActiveList(k).GetBlockX()][_generatingBlocks.GetActiveBlockList().GetActiveList(k).GetBlockY()] -= (_generatingBlocks.GetMineBlocksArraySize() + _generatingBlocks.GetToolBlocksArraySize() + 2);
                     }
                 }
-                _timer = 0;
-                _timerSwitch = false;
+                _explosionTimer = 0;
+                _explosionTimerSwitch = false;
                 _score +=_generatingBlocks.GetToolList()[_toolType].Explosion();
                 while(_generatingBlocks.GetActiveBlockList().GetBlockListSize() != 0)
                 {
                     _generatingBlocks.GetActiveBlockList().RemoveBlockList();
                 }
                _blockArray[CharacterX][CharacterY] = _characterNum;
+            }
+        }
+    }
+
+    private void CharacterTimer() {
+        if (_characterTimerSwitch == true)
+        {
+            _characterTimer++;
+            if (_characterTimer >= _pathList.size() - 1)
+            {
+                _characterTimer = 0;
+                _characterTimerSwitch = false;
+                _blockArray[_pathList.get(_pathList.size() - 1).GetBlockX()][_pathList.get(_pathList.size() - 1).GetBlockY()] = _characterNum;
+                _pathList.clear();
+            }
+            else
+            {
+                _blockArray[_pathList.get(_characterTimer - 1).GetBlockX()][_pathList.get(_characterTimer - 1).GetBlockY()] = DEFAULT_NONE_BLOCK_TYPE;
+                _blockArray[_pathList.get(_characterTimer).GetBlockX()][_pathList.get(_characterTimer).GetBlockY()] = DEFAULT_CHARACTER_PATH;
             }
         }
     }
@@ -397,5 +423,21 @@ public class GameMap implements GameObject {
 
     public int GetScore() {
         return _score;
+    }
+
+    private void Path(int CharacterX, int CharacterY, int arrayX, int arrayY) {
+        _pathList = _path.CharacterGo(_blockArray, CharacterX, CharacterY, arrayX,  arrayY);
+    }
+
+    private void CheckCharacterPathTimer(int arrayX, int arrayY) {
+        Path(CharacterX, CharacterY, arrayX, arrayY);
+        if (_pathList.size() != 0)
+        {
+            _characterTimerSwitch = true;
+        }
+        else
+        {
+            _characterTimerSwitch = false;
+        }
     }
 }

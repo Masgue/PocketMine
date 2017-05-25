@@ -28,4 +28,8 @@ public class Explosion extends Block {
             _blockAnimation.addFrame(R.drawable.block0_invisible);
             _blockAnimation.setDelay(1);
         }
+
+        public void SetRepeating(boolean repeat) {
+            _blockAnimation.setRepeating(repeat);
+        }
 }

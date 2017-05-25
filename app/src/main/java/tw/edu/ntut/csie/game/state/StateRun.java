@@ -118,7 +118,7 @@ public class StateRun extends GameState {
             }
             else if (!_isPaused) {
                 if (touchY >= 10 && touchY <= 370)
-                    _map.ResetAllBlock(touchX, touchY);
+                    _map.ResetBlock(touchX, touchY);
             }
         }
 

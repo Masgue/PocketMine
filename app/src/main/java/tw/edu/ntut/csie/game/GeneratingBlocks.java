@@ -266,13 +266,13 @@ public class GeneratingBlocks {
                 if (type < _mineBlockList.size())
                 {
                     ArrayListBlock mine = _mineBlockList.get(type);
-                    mine.SetSpawningRate(_cardAttributes.get(i).GetBlockSpawningRate());
+                    mine.SetSpawningRate(_mineBlockList.get(type).GetBlockSpawningRate() + _cardAttributes.get(i).GetBlockSpawningRate());
                     _mineBlockList.set(type, mine);
                 }
                 else if (type < _mineBlockList.size() + _toolBlockList.size())
                 {
                     ArrayListBlock tool = _toolBlockList.get(type - _mineBlockList.size());
-                    tool.SetSpawningRate(_cardAttributes.get(i).GetBlockSpawningRate());
+                    tool.SetSpawningRate(_toolBlockList.get(type - _mineBlockList.size()).GetBlockSpawningRate() + _cardAttributes.get(i).GetBlockSpawningRate());
                     _toolBlockList.set(type - _mineBlockList.size(), tool);
                 }
             }

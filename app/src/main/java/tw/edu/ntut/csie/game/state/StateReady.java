@@ -14,11 +14,14 @@ import tw.edu.ntut.csie.game.card.tool.BombBonus;
 import tw.edu.ntut.csie.game.card.tool.DrillBonus;
 import tw.edu.ntut.csie.game.card.tool.DynamiteBonus;
 import tw.edu.ntut.csie.game.core.MovingBitmap;
+import tw.edu.ntut.csie.game.display.Energy;
+import tw.edu.ntut.csie.game.display.Level;
 import tw.edu.ntut.csie.game.engine.GameEngine;
 import tw.edu.ntut.csie.game.extend.BitmapButton;
 import tw.edu.ntut.csie.game.extend.ButtonEventHandler;
 import tw.edu.ntut.csie.game.card.Card;
 import tw.edu.ntut.csie.game.display.EnergyBar;
+import tw.edu.ntut.csie.game.extend.Integer;
 
 public class StateReady extends AbstractGameState {
     private MovingBitmap _menuInfo;
@@ -30,6 +33,7 @@ public class StateReady extends AbstractGameState {
     private MovingBitmap _settingInfo;
 
     private BitmapButton _menuButton;
+    private BitmapButton _buyDurabilityButton;
     private BitmapButton _cardButton;
     private BitmapButton _gearButton;
     private BitmapButton _shopButton;
@@ -45,8 +49,8 @@ public class StateReady extends AbstractGameState {
     private Card _secondCard;
     private Card _thirdCard;
 
-    private EnergyBar _level;
-    private EnergyBar _energy;
+    private Level _level;
+    private Energy _energy;
 
     private Integer _money;
     private Integer _diamond;
@@ -86,6 +90,7 @@ public class StateReady extends AbstractGameState {
         InitializeDurability();
         InitializeCards();
         InitializeMenuButton();
+        InitializeBuyDurabilityButton();
         initializeCardButton();
         initializeShopButton();
         initializeGearButton();
@@ -113,43 +118,30 @@ public class StateReady extends AbstractGameState {
     }
 
     private void InitializeLevel() {
-        ArrayList<MovingBitmap> bar = new ArrayList<MovingBitmap>(){
-            new MovingBitmap(R.drawable.block1_unbreakable);
-        };
-        _level = new EnergyBar(bar, 0, 300);
+        _level = new Level(10, 270);
         addGameObject(_level.GetBar());
         addGameObject(_level.GetInteger());
-        _level.GetBar().show();
-        _level.GetInteger().show();
     }
 
     private void InitializeEnergy() {
-        ArrayList<MovingBitmap> bar = new ArrayList<MovingBitmap>(){
-            new MovingBitmap(R.drawable.block1_unbreakable);
-        };
-        _energy = new EnergyBar(bar, 0, 100);
+        _energy = new Energy(10, 10);
         addGameObject(_energy.GetBar());
         addGameObject(_energy.GetInteger());
-        _energy.GetBar().show();
-        _energy.GetInteger().show();
     }
 
     private void InitializeMoney() {
-        _money = new Integer(4, 1000, 0, 200);
+        _money = new Integer(4, 1000, 10, 140);
         addGameObject(_money);
-        _money.show();
     }
 
     private void InitializeDiamond() {
-        _diamond = new Integer(3, 500, 0, 100);
+        _diamond = new Integer(3, 500, 10, 75);
         addGameObject(_diamond);
-        _diamond.show();
     }
 
     private void InitializeDurability() {
         _durability = new Integer(3, 50, 300, 150);
         addGameObject(_durability);
-        _durability.show();
     }
 
     private void InitializeCards() {
@@ -265,6 +257,20 @@ public class StateReady extends AbstractGameState {
             }
         });
         addPointerEventHandler(_menuButton);
+    }
+
+    private void InitializeBuyDurabilityButton() {
+        addGameObject(_buyDurabilityButton = new BitmapButton(R.drawable.block1_unbreakable, 300, 90));
+        _buyDurabilityButton.addButtonEventHandler(new ButtonEventHandler() {
+            @Override
+            public void perform(BitmapButton button) {
+                _money.add(-10);
+                _durability.add(10);
+                setVisibility();
+            }
+        });
+        addPointerEventHandler(_buyDurabilityButton);
+
     }
 
     private void initializeCardButton() {
@@ -407,12 +413,15 @@ public class StateReady extends AbstractGameState {
     }
 
     private Map<String, Object> CreateMap() {
-        Map<String, Object> map = new HashMap<String, Object>();
         ArrayList<CardAttributes> cardAttributes = new ArrayList<CardAttributes>();
+        Map<String, Object> map = new HashMap<String, Object>();
+        int durability = _durability.getValue();
+
         cardAttributes.add(_firstCard.GetCardAttributes());
         cardAttributes.add(_secondCard.GetCardAttributes());
         cardAttributes.add(_thirdCard.GetCardAttributes());
         map.put("CardAttributes", cardAttributes);
+        map.put("Durability", durability);
         return map;
     }
 

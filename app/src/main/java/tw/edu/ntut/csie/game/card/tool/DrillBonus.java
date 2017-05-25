@@ -11,6 +11,6 @@ public class DrillBonus extends Card {
     public DrillBonus() {
         super();
         _cardType = 3;
-        _cardAttributes = new CardAttributes(9, 100, -1);
+        _cardAttributes = new CardAttributes(9, 15, -1);
     }
 }

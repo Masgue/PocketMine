@@ -11,6 +11,6 @@ public class BombBonus extends Card {
     public BombBonus() {
         super();
         _cardType = 2;
-        _cardAttributes = new CardAttributes(8, 100, -1);
+        _cardAttributes = new CardAttributes(8, 15, -1);
     }
 }

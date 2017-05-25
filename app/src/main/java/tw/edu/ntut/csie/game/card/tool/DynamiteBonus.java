@@ -11,6 +11,6 @@ public class DynamiteBonus extends Card {
     public DynamiteBonus() {
         super();
         _cardType = 4;
-        _cardAttributes = new CardAttributes(10, 100, -1);
+        _cardAttributes = new CardAttributes(10, 15, -1);
     }
 }

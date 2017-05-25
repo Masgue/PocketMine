@@ -8,6 +8,6 @@ public class CoalBonus extends Card {
     public CoalBonus() {
         super();
         _cardType = 1;
-        _cardAttributes = new CardAttributes(3, 100, -1);
+        _cardAttributes = new CardAttributes(3, 35, -1);
     }
 }
