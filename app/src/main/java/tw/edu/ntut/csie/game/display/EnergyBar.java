@@ -32,7 +32,7 @@ public class EnergyBar {
     }
 
     public MovingBitmap GetBar() {
-        return _bar.get(0);
+        return _bar.get(3);
     }
 
     public Integer GetInteger() {
