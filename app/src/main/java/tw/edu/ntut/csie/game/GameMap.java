@@ -376,6 +376,7 @@ public class GameMap implements GameObject {
                 switch (_pathEndType)
                 {
                     case 0:
+                        _blockArray[_pathList.get(0).GetBlockX()][_pathList.get(0).GetBlockY()] = DEFAULT_NONE_BLOCK_TYPE;
                         if (arrayX >= _floor) {
                             _floor = arrayX;
                         }
