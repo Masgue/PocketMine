@@ -1,5 +1,6 @@
 package tw.edu.ntut.csie.game.state;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import tw.edu.ntut.csie.game.Game;
@@ -13,6 +14,7 @@ import tw.edu.ntut.csie.game.extend.Integer;
 public class StateOver extends AbstractGameState {
     private BitmapButton _menuButton;
     private Integer _score;
+    private int _experience;
 
     public StateOver(GameEngine engine) {
         super(engine);
@@ -25,12 +27,16 @@ public class StateOver extends AbstractGameState {
         _menuButton.addButtonEventHandler(new ButtonEventHandler() {
             @Override
             public void perform(BitmapButton button) {
-                changeState(Game.INITIAL_STATE);
+                Map<String, Object> map = new HashMap<String, Object>();
+                map.put("Score", _score.getValue());
+                map.put("Experience", _experience);
+                changeState(Game.INITIAL_STATE, map);
             }
         });
         addGameObject(_menuButton);
         addPointerEventHandler(_menuButton);
         _score = new Integer(4, (int)data.get("Score"), 10, 10);
+        _experience = (int)data.get("Experience");
         ShowScore();
     }
 

@@ -13,7 +13,6 @@ public class CharacterPath {
     private final int DEFAULT_NONE_BLOCK_TYPE = -1;
     private int _blockRow;
     private int[][] _blockArray;
-    private int _startX = 0, _startY = 0;
     private int _endX = 1, _endY = 1;
     private ArrayList<ActiveBlocks> _pathList;
     private boolean _findPath = false;
@@ -28,10 +27,9 @@ public class CharacterPath {
 
     public ArrayList<ActiveBlocks> CharacterGo(int[][] maze, int startX, int startY, int endX, int endY) {
         _pathList.clear();
-        SetMaze(maze);
         SetChoice(startX,startY, endX, endY);
-        SetStart(startX, startY);
         SetEnd(endX, endY);
+        SetMaze(maze);
         _findPath = false;
         visit(startX, startY);
         return _pathList;
@@ -48,13 +46,9 @@ public class CharacterPath {
                     _blockArray[i][j] = 2;
             }
         }
-//        _blockArray = blockArray;
+        _blockArray[_endX][_endY] = 0;
     }
 
-    private void SetStart(int startX, int startY) {
-        _startX = startX;
-        _startY = startY;
-    }
 
     private void SetEnd(int endX, int endY) {
         _endX = endX;
@@ -77,6 +71,10 @@ public class CharacterPath {
         else
         {
             _findPath = true;
+//            for (ActiveBlocks a : _pathList) {
+//                System.out.println(a.GetBlockX() + "  " + a.GetBlockY());
+//            }
+//            System.out.println("Done");
         }
     }
 
@@ -153,7 +151,7 @@ public class CharacterPath {
                 if(i != _blockRow - 1 && _blockArray[i+1][j] == 0 && _findPath == false) //下
                     visit(i+1, j);
                 break;
-            default:  //目的地於左
+            case 8:  //目的地於左
                 if(j != BLOCK_COLUMN - 1 && _blockArray[i][j+1] == 0 && _findPath == false) //左
                     visit(i, j+1);
                 if(i != _blockRow - 1 && _blockArray[i+1][j] == 0 && _findPath == false) //下
@@ -162,6 +160,8 @@ public class CharacterPath {
                     visit(i-1, j);
                 if(j != 0 && _blockArray[i][j-1] == 0 && _findPath == false) //右
                     visit(i, j-1);
+                break;
+            default:
                 break;
         }
     }
@@ -173,7 +173,7 @@ public class CharacterPath {
             _choice = 2;
         else if (CharacterX < arrayX && CharacterY > arrayY) //目的地於右下
             _choice = 3;
-       else if (CharacterX == arrayX && CharacterY < arrayY) //目的地於右
+       else if (CharacterX == arrayX && CharacterY > arrayY) //目的地於右
             _choice = 4;
         else if (CharacterX > arrayX && CharacterY > arrayY) //目的地於右上
             _choice = 5;
@@ -181,7 +181,7 @@ public class CharacterPath {
             _choice = 6;
         else if (CharacterX > arrayX && CharacterY < arrayY)  //目的地於左上
             _choice = 7;
-        else                                                 //目的地於左
+        else if (CharacterX == arrayX && CharacterY < arrayY)  //目的地於左
             _choice = 8;
     }
 }

@@ -20,6 +20,7 @@ import tw.edu.ntut.csie.game.MapObserver;
 
 public class StateRun extends GameState {
     private static final int DEFAULT_SCORE = 0;
+    private static final int DEFAULT_FLOOR = 0;
 
     private Audio _audio;
 
@@ -27,6 +28,7 @@ public class StateRun extends GameState {
     private MovingBitmap _pause;
     private GameMap _map;
     private int _score;
+    private int _floor;
     private int _durabiility;
     private boolean _isPaused;
     private ArrayList<CardAttributes> _cardAttributes = new ArrayList<CardAttributes>();
@@ -45,6 +47,7 @@ public class StateRun extends GameState {
         _cardAttributes = (ArrayList<CardAttributes>) data.get("CardAttributes");
         _map = new GameMap(_cardAttributes);
         _score = DEFAULT_SCORE;
+        _floor = DEFAULT_FLOOR;
         _isPaused = false;
 
         _audio.setRepeating(true);
@@ -55,7 +58,9 @@ public class StateRun extends GameState {
             public void update() {
                 Map<String, Object> map = new HashMap<String, Object>();
                 _score = _map.GetScore();
+                _floor = _map.GetFloor();
                 map.put("Score", _score);
+                map.put("Experience", _floor);
                 _audio.stop();
                 _audio.release();
                 changeState(Game.OVER_STATE, map);
