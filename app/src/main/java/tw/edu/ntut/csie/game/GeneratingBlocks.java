@@ -87,6 +87,7 @@ public class GeneratingBlocks {
         SetMimeNum();
         SetToolNum();
         SetActiveBlockList();
+        SetFloor();
     }
 
     private void AddMineBlocks() {
@@ -240,6 +241,8 @@ public class GeneratingBlocks {
         Block.SetBlockRowNum(_blockRow);
     }
 
+    private static void SetFloor() {Tool.SetFloor();}
+
     private static void SetActiveBlockList() {
         _activeBlockList = new ActiveBlockList();
         Tool.SetActiveBlockList(_activeBlockList);
@@ -254,6 +257,8 @@ public class GeneratingBlocks {
     }
 
     public ActiveBlockList GetActiveBlockList() {return _activeBlockList;}
+
+    public int GetFloor() {return Tool.GetFloor();}
 
     public void RemoveActiveArray() {Tool.RemoveActiveArray();}
 

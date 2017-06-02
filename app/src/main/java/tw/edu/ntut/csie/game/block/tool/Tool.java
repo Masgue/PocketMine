@@ -16,6 +16,7 @@ public abstract class Tool extends Block{
     protected static int _mineNum;
     protected static int _toolNum;
     protected static ActiveBlockList _activeBlockList;
+    protected static int _floor;
 
     public Tool(int blockType, int arrayX, int arrayY, int viewHeight) {
         super(blockType, arrayX, arrayY, viewHeight);
@@ -52,6 +53,8 @@ public abstract class Tool extends Block{
     public static void SetToolNum(int toolNum) {
         _toolNum = toolNum;
     }
+
+    public static void SetFloor() {_floor = 0;}
 
     public void SetBlockXY(int arrayX, int arrayY) {
         _arrayX = arrayX;
@@ -95,6 +98,8 @@ public abstract class Tool extends Block{
             {
                 _blockArray[x][y] = DEFAULT_NONE_BLOCK_TYPE;
                 score += _mineList[presentBlockNumber].GetPoints();
+                if (x > _floor)
+                    _floor = x;
             }
 
             else if (presentBlockNumber > _mineNum - 1 && presentBlockNumber != _mineNum + _toolNum) {
@@ -104,4 +109,6 @@ public abstract class Tool extends Block{
         }
         return score;
     }
+
+    public static int GetFloor() {return _floor;}
 }

@@ -47,7 +47,9 @@ public class GameMap implements GameObject {
 
     private List<tw.edu.ntut.csie.game.Observer> _observers;
     private CharacterPath _path;
+    private int _pathEndType;
     private ArrayList<ActiveBlocks> _pathList;
+    private int _recentPathX, _recentPathY;
 
     public GameMap(ArrayList<CardAttributes> cardAttributes) {
         _cardAttributes = cardAttributes;
@@ -98,8 +100,8 @@ public class GameMap implements GameObject {
                 _generatingBlocks.SetMovingViewHeight(_generatingBlocks.GetMovingViewHeight() + 3 *  MOVING_VIEW_SPEED);
             else
                 _generatingBlocks.SetMovingViewHeight(_generatingBlocks.GetMovingViewHeight() +  MOVING_VIEW_SPEED);
-        ExplodeTimer();
-        CharacterTimer();
+            ExplodeTimer();
+            CharacterTimer();
         }
     }
 
@@ -132,10 +134,6 @@ public class GameMap implements GameObject {
 
                         if(isVisible(arrayX, arrayY)) {
                             DigBlock(arrayX, arrayY);
-
-                            if (arrayX >= _floor) {
-                                _floor = arrayX;
-                            }
                         }
                     }
                 }
@@ -144,52 +142,24 @@ public class GameMap implements GameObject {
     }
 
     private void DigBlock(int arrayX, int arrayY) {
-        if(_blockArray[arrayX][arrayY] == DEFAULT_NONE_BLOCK_TYPE) {
-            _blockArray[CharacterX][CharacterY] = DEFAULT_NONE_BLOCK_TYPE;
-
-            CheckCharacterPathTimer(arrayX, arrayY);
-//            _blockArray[arrayX][arrayY] =_characterNum;
+        if (_explosionTimerSwitch == false)
+        {
+            if(_blockArray[arrayX][arrayY] == DEFAULT_NONE_BLOCK_TYPE) {
+                RestPath();
+                CheckCharacterPathTimer(0, arrayX, arrayY);
+            }
+            else if (_blockArray[arrayX][arrayY] >= 0 && _blockArray[arrayX][arrayY] < _generatingBlocks.GetMineBlocksArraySize()) {
+                RestPath();
+                CheckCharacterPathTimer(1, arrayX, arrayY);
+            }
+            else if (_blockArray[arrayX][arrayY] > 0 && _blockArray[arrayX][arrayY] < _generatingBlocks.GetMineBlocksArraySize() + _generatingBlocks.GetToolBlocksArraySize()) {
+                RestPath();
+                CheckCharacterPathTimer(2, arrayX, arrayY);
+            }
+            CharacterX = arrayX;
+            CharacterY = arrayY;
         }
-        else if (_blockArray[arrayX][arrayY] >= 0 && _blockArray[arrayX][arrayY] < _generatingBlocks.GetMineBlocksArraySize()) {
-            _score += _generatingBlocks.GetPoints(arrayX, arrayY);
-            _durability -= _generatingBlocks.GetDurability(arrayX, arrayY);
 
-            if (_durability < 0)
-                _durability = 0;
-
-            if (_blockArray[arrayX][arrayY] >= 1) {
-                _blockArray[CharacterX][CharacterY] = DEFAULT_NONE_BLOCK_TYPE;
-                _blockArray[arrayX][arrayY] = _characterNum;
-            }
-        }
-        else if (_blockArray[arrayX][arrayY] > 0 && _blockArray[arrayX][arrayY] < _generatingBlocks.GetMineBlocksArraySize() + _generatingBlocks.GetToolBlocksArraySize()) {
-            _toolType = _blockArray[arrayX][arrayY] - _generatingBlocks.GetMineBlocksArraySize();
-            _generatingBlocks.ActiveTool(arrayX, arrayY);
-            _durability -= _generatingBlocks.GetToolList()[_toolType].GetDurability();
-            _blockArray[CharacterX][CharacterY] = DEFAULT_NONE_BLOCK_TYPE;
-            toolX = arrayX;
-            toolY = arrayY;
-            for (int k = 0; k <  _generatingBlocks.GetActiveBlockList().GetBlockListSize(); k++)
-            {
-                int x = _generatingBlocks.GetActiveBlockList().GetActiveList(k).GetBlockX();
-                int y = _generatingBlocks.GetActiveBlockList().GetActiveList(k).GetBlockY();
-                if (_blockArray[x][y] != 0)
-                {
-                    _blockArray[_generatingBlocks.GetActiveBlockList().GetActiveList(k).GetBlockX()][_generatingBlocks.GetActiveBlockList().GetActiveList(k).GetBlockY()] += (_generatingBlocks.GetMineBlocksArraySize() + _generatingBlocks.GetToolBlocksArraySize() + 2);
-                }
-            }
-            if ( _generatingBlocks.GetActiveBlockList().GetBlockListSize() != 0)
-            {
-                _explosionTimerSwitch = true;
-            }
-            else
-            {
-                _explosionTimerSwitch = false;
-            }
-            _blockArray[arrayX][arrayY] = _characterNum;
-        }
-        CharacterX = arrayX;
-        CharacterY = arrayY;
     }
 
 
@@ -203,10 +173,10 @@ public class GameMap implements GameObject {
                     {
                         if (_blockArray[i][j] == DEFAULT_CHARACTER_PATH)
                         {
-                        _characterMovingBlock.SetBlock(i, j, _generatingBlocks.GetMovingViewHeight());
-                        _characterMovingBlock.SetRepeating(false);
-                        _characterMovingBlock.show();
-                        _blockArray[i][j] = DEFAULT_NONE_BLOCK_TYPE;
+                            _characterMovingBlock.SetBlock(i, j, _generatingBlocks.GetMovingViewHeight());
+                            _characterMovingBlock.SetRepeating(false);
+                            _characterMovingBlock.show();
+                            _blockArray[i][j] = DEFAULT_NONE_BLOCK_TYPE;
                         }
                         else if (_blockArray[i][j] < _generatingBlocks.GetMineBlocksArraySize()) {
                             _generatingBlocks.ShowMineBlock(i, j);
@@ -367,7 +337,7 @@ public class GameMap implements GameObject {
         if (_explosionTimerSwitch == true)
         {
             _explosionTimer++;
-            if (_explosionTimer >= 5)
+            if (_explosionTimer >= 3)
             {
                 for (int k = 0; k <  _generatingBlocks.GetActiveBlockList().GetBlockListSize(); k++)
                 {
@@ -381,11 +351,15 @@ public class GameMap implements GameObject {
                 _explosionTimer = 0;
                 _explosionTimerSwitch = false;
                 _score +=_generatingBlocks.GetToolList()[_toolType].Explosion();
+                int floor = _generatingBlocks.GetFloor();
+                if (floor >= _floor) {
+                    _floor = floor;
+                }
                 while(_generatingBlocks.GetActiveBlockList().GetBlockListSize() != 0)
                 {
                     _generatingBlocks.GetActiveBlockList().RemoveBlockList();
                 }
-               _blockArray[CharacterX][CharacterY] = _characterNum;
+//                _blockArray[CharacterX][CharacterY] = _characterNum;
             }
         }
     }
@@ -396,15 +370,76 @@ public class GameMap implements GameObject {
             _characterTimer++;
             if (_characterTimer >= _pathList.size() - 1)
             {
+                int arrayX = _pathList.get(_pathList.size() - 1).GetBlockX();
+                int arrayY = _pathList.get(_pathList.size() - 1).GetBlockY();
+
+                switch (_pathEndType)
+                {
+                    case 0:
+                        _blockArray[_pathList.get(0).GetBlockX()][_pathList.get(0).GetBlockY()] = DEFAULT_NONE_BLOCK_TYPE;
+                        if (arrayX >= _floor) {
+                            _floor = arrayX;
+                        }
+                        break;
+                    case 1:
+                        _score += _generatingBlocks.GetPoints(arrayX, arrayY);
+                        _durability -= _generatingBlocks.GetDurability(arrayX, arrayY);
+
+                        if (_durability < 0)
+                            _durability = 0;
+
+                        if (_blockArray[arrayX][arrayY] == 0)
+                        {
+                            arrayX = _pathList.get(_pathList.size() - 2).GetBlockX();
+                            arrayY = _pathList.get(_pathList.size() - 2).GetBlockY();
+                            CharacterX = arrayX;
+                            CharacterY = arrayY;
+                        }
+                        _blockArray[_pathList.get(0).GetBlockX()][_pathList.get(0).GetBlockY()] = DEFAULT_NONE_BLOCK_TYPE;
+                        if (arrayX >= _floor) {
+                            _floor = arrayX;
+                        }
+                        break;
+                    case 2:
+                        _toolType = _blockArray[arrayX][arrayY] - _generatingBlocks.GetMineBlocksArraySize();
+                        _generatingBlocks.ActiveTool(arrayX, arrayY);
+                        _durability -= _generatingBlocks.GetToolList()[_toolType].GetDurability();
+                        _blockArray[_pathList.get(0).GetBlockX()][_pathList.get(0).GetBlockY()] = DEFAULT_NONE_BLOCK_TYPE;
+                        toolX = arrayX;
+                        toolY = arrayY;
+                        for (int k = 0; k <  _generatingBlocks.GetActiveBlockList().GetBlockListSize(); k++)
+                        {
+                            int x = _generatingBlocks.GetActiveBlockList().GetActiveList(k).GetBlockX();
+                            int y = _generatingBlocks.GetActiveBlockList().GetActiveList(k).GetBlockY();
+                            if (_blockArray[x][y] != 0)
+                            {
+                                _blockArray[_generatingBlocks.GetActiveBlockList().GetActiveList(k).GetBlockX()][_generatingBlocks.GetActiveBlockList().GetActiveList(k).GetBlockY()] += (_generatingBlocks.GetMineBlocksArraySize() + _generatingBlocks.GetToolBlocksArraySize() + 2);
+                            }
+                        }
+                        if ( _generatingBlocks.GetActiveBlockList().GetBlockListSize() != 0)
+                        {
+                            _explosionTimerSwitch = true;
+                        }
+                        else
+                        {
+                            _explosionTimerSwitch = false;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+
                 _characterTimer = 0;
                 _characterTimerSwitch = false;
-                _blockArray[_pathList.get(_pathList.size() - 1).GetBlockX()][_pathList.get(_pathList.size() - 1).GetBlockY()] = _characterNum;
+                _blockArray[arrayX][arrayY] = _characterNum;
                 _pathList.clear();
             }
             else
             {
-                _blockArray[_pathList.get(_characterTimer - 1).GetBlockX()][_pathList.get(_characterTimer - 1).GetBlockY()] = DEFAULT_NONE_BLOCK_TYPE;
-                _blockArray[_pathList.get(_characterTimer).GetBlockX()][_pathList.get(_characterTimer).GetBlockY()] = DEFAULT_CHARACTER_PATH;
+                _blockArray[_recentPathX][_recentPathY] = DEFAULT_NONE_BLOCK_TYPE;
+                _recentPathX = _pathList.get(_characterTimer).GetBlockX();
+                _recentPathY = _pathList.get(_characterTimer).GetBlockY();
+                _blockArray[_recentPathX][_recentPathY] = DEFAULT_CHARACTER_PATH;
             }
         }
     }
@@ -427,9 +462,12 @@ public class GameMap implements GameObject {
 
     private void Path(int CharacterX, int CharacterY, int arrayX, int arrayY) {
         _pathList = _path.CharacterGo(_blockArray, CharacterX, CharacterY, arrayX,  arrayY);
+        _recentPathX = _pathList.get(0).GetBlockX();
+        _recentPathY = _pathList.get(0).GetBlockY();
     }
 
-    private void CheckCharacterPathTimer(int arrayX, int arrayY) {
+    private void CheckCharacterPathTimer(int endType, int arrayX, int arrayY) {
+        _pathEndType = endType;
         Path(CharacterX, CharacterY, arrayX, arrayY);
         if (_pathList.size() != 0)
         {
@@ -439,5 +477,22 @@ public class GameMap implements GameObject {
         {
             _characterTimerSwitch = false;
         }
+    }
+
+    private void RestPath() {
+        if (_characterTimerSwitch == true)
+        {
+            _blockArray[_pathList.get(_characterTimer - 1).GetBlockX()][_pathList.get(_characterTimer - 1).GetBlockY()] = DEFAULT_NONE_BLOCK_TYPE;
+            _blockArray[_recentPathX][_recentPathY] = _characterNum;
+            CharacterX = _recentPathX;
+            CharacterY = _recentPathY;
+            _pathList.clear();
+            _characterTimer = 0;
+            _characterTimerSwitch = false;
+        }
+    }
+
+    public int GetFloor() {
+        return _floor;
     }
 }
