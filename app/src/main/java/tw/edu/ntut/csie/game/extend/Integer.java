@@ -174,4 +174,9 @@ public class Integer implements GameObject {
         _digitImages[9] = new MovingBitmap(R.drawable.digit_9);
         _digitImages[10] = new MovingBitmap(R.drawable.digit_10);
     }
+
+    public void setVisible(boolean value) {
+        for (MovingBitmap movingBitmap : _digitImages)
+            movingBitmap.setVisible(value);
+    }
 }

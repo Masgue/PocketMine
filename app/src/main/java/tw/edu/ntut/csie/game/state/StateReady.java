@@ -14,13 +14,13 @@ import tw.edu.ntut.csie.game.card.tool.BombBonus;
 import tw.edu.ntut.csie.game.card.tool.DrillBonus;
 import tw.edu.ntut.csie.game.card.tool.DynamiteBonus;
 import tw.edu.ntut.csie.game.core.MovingBitmap;
+import tw.edu.ntut.csie.game.display.BuyableButton;
 import tw.edu.ntut.csie.game.display.Energy;
 import tw.edu.ntut.csie.game.display.Level;
 import tw.edu.ntut.csie.game.engine.GameEngine;
 import tw.edu.ntut.csie.game.extend.BitmapButton;
 import tw.edu.ntut.csie.game.extend.ButtonEventHandler;
 import tw.edu.ntut.csie.game.card.Card;
-import tw.edu.ntut.csie.game.display.EnergyBar;
 import tw.edu.ntut.csie.game.extend.Integer;
 
 public class StateReady extends AbstractGameState {
@@ -33,7 +33,6 @@ public class StateReady extends AbstractGameState {
     private MovingBitmap _settingInfo;
 
     private BitmapButton _menuButton;
-    private BitmapButton _buyDurabilityButton;
     private BitmapButton _cardButton;
     private BitmapButton _gearButton;
     private BitmapButton _shopButton;
@@ -54,7 +53,12 @@ public class StateReady extends AbstractGameState {
 
     private Integer _money;
     private Integer _diamond;
-    private Integer _durability;
+
+    private BuyableButton _durabilityPurchase;
+    private BuyableButton _moneyPurchase;
+    private BuyableButton _diamondPurchase;
+    private BuyableButton _levelPurchase;
+    private BuyableButton _energyPurchase;
 
     private boolean _showMenu;
     private boolean _showCard;
@@ -87,10 +91,13 @@ public class StateReady extends AbstractGameState {
         InitializeEnergy();
         InitializeMoney();
         InitializeDiamond();
-        InitializeDurability();
+        InitializeDurabilityPurchaseButton();
+        InitializeMoneyPurchaseButton();
+        InitializeDiamondPurchaseButton();
+        InitializeLevelPurchaseButton();
+        InitializeEnergyPurchaseButton();
         InitializeCards();
         InitializeMenuButton();
-        InitializeBuyDurabilityButton();
         initializeCardButton();
         initializeShopButton();
         initializeGearButton();
@@ -139,9 +146,81 @@ public class StateReady extends AbstractGameState {
         addGameObject(_diamond);
     }
 
-    private void InitializeDurability() {
-        _durability = new Integer(3, 50, 300, 150);
-        addGameObject(_durability);
+    private void InitializeDurabilityPurchaseButton() {
+        _durabilityPurchase = new BuyableButton(new BitmapButton(R.drawable.block1_unbreakable), 50, 300, 90);
+
+        addGameObject(_durabilityPurchase.GetBitmapButton());
+        _durabilityPurchase.GetBitmapButton().addButtonEventHandler(new ButtonEventHandler() {
+            @Override
+            public void perform(BitmapButton button) {
+                _money.add(-10);
+                _durabilityPurchase.GetInteger().add(10);
+                setVisibility();
+            }
+        });
+        addPointerEventHandler(_durabilityPurchase.GetBitmapButton());
+        addGameObject(_durabilityPurchase.GetInteger());
+    }
+
+    private void InitializeMoneyPurchaseButton() {
+        _moneyPurchase = new BuyableButton(new BitmapButton(R.drawable.block5_gold), 25, 150, 90);
+
+        addGameObject(_moneyPurchase.GetBitmapButton());
+        _moneyPurchase.GetBitmapButton().addButtonEventHandler(new ButtonEventHandler() {
+            @Override
+            public void perform(BitmapButton button) {
+                _money.add(25);
+                setVisibility();
+            }
+        });
+        addPointerEventHandler(_moneyPurchase.GetBitmapButton());
+        addGameObject(_moneyPurchase.GetInteger());
+    }
+
+    private void InitializeDiamondPurchaseButton() {
+        _diamondPurchase = new BuyableButton(new BitmapButton(R.drawable.block7_diamond), 5, 250, 90);
+
+        addGameObject(_diamondPurchase.GetBitmapButton());
+        _diamondPurchase.GetBitmapButton().addButtonEventHandler(new ButtonEventHandler() {
+            @Override
+            public void perform(BitmapButton button) {
+                _diamond.add(5);
+                setVisibility();
+            }
+        });
+        addPointerEventHandler(_diamondPurchase.GetBitmapButton());
+        addGameObject(_diamondPurchase.GetInteger());
+    }
+
+    private void InitializeLevelPurchaseButton() {
+        _levelPurchase = new BuyableButton(new BitmapButton(R.drawable.block3_stone), 1, 350, 90);
+
+        addGameObject(_levelPurchase.GetBitmapButton());
+        _levelPurchase.GetBitmapButton().addButtonEventHandler(new ButtonEventHandler() {
+            @Override
+            public void perform(BitmapButton button) {
+                _level.GetInteger().add(1);
+                setVisibility();
+            }
+        });
+        addPointerEventHandler(_levelPurchase.GetBitmapButton());
+        addGameObject(_levelPurchase.GetInteger());
+    }
+
+    private void InitializeEnergyPurchaseButton() {
+        _energyPurchase = new BuyableButton(new BitmapButton(R.drawable.block1_unbreakable), 1, 450, 90);
+
+        addGameObject(_energyPurchase.GetBitmapButton());
+        _energyPurchase.GetBitmapButton().addButtonEventHandler(new ButtonEventHandler() {
+            @Override
+            public void perform(BitmapButton button) {
+                if (_energy.GetInteger().getValue() < 5)
+                    _energy.GetInteger().add(1);
+                setVisibility();
+            }
+        });
+        addPointerEventHandler(_energyPurchase.GetBitmapButton());
+        addGameObject(_energyPurchase.GetInteger());
     }
 
     private void InitializeCards() {
@@ -257,20 +336,6 @@ public class StateReady extends AbstractGameState {
             }
         });
         addPointerEventHandler(_menuButton);
-    }
-
-    private void InitializeBuyDurabilityButton() {
-        addGameObject(_buyDurabilityButton = new BitmapButton(R.drawable.block1_unbreakable, 300, 90));
-        _buyDurabilityButton.addButtonEventHandler(new ButtonEventHandler() {
-            @Override
-            public void perform(BitmapButton button) {
-                _money.add(-10);
-                _durability.add(10);
-                setVisibility();
-            }
-        });
-        addPointerEventHandler(_buyDurabilityButton);
-
     }
 
     private void initializeCardButton() {
@@ -415,7 +480,7 @@ public class StateReady extends AbstractGameState {
     private Map<String, Object> CreateMap() {
         ArrayList<CardAttributes> cardAttributes = new ArrayList<CardAttributes>();
         Map<String, Object> map = new HashMap<String, Object>();
-        int durability = _durability.getValue();
+        int durability = _durabilityPurchase.GetInteger().getValue();
 
         cardAttributes.add(_firstCard.GetCardAttributes());
         cardAttributes.add(_secondCard.GetCardAttributes());
@@ -498,6 +563,25 @@ public class StateReady extends AbstractGameState {
         _shopInfo.setVisible(_showShop);
         _digInfo.setVisible(_showDig);
         _settingInfo.setVisible(_showSetting);
+
+        _level.GetBar().setVisible(showOther);
+        _level.GetInteger().setVisible(showOther);
+        _energy.GetBar().setVisible(showOther);
+        _energy.GetInteger().setVisible(showOther);
+
+        _money.setVisible(showOther);
+        _diamond.setVisible(showOther);
+
+        _durabilityPurchase.GetInteger().setVisible(_showMenu);
+        _durabilityPurchase.GetBitmapButton().setVisible(_showMenu);
+        _moneyPurchase.GetInteger().setVisible(_showShop);
+        _moneyPurchase.GetBitmapButton().setVisible(_showShop);
+        _diamondPurchase.GetInteger().setVisible(_showShop);
+        _diamondPurchase.GetBitmapButton().setVisible(_showShop);
+        _levelPurchase.GetInteger().setVisible(_showShop);
+        _levelPurchase.GetBitmapButton().setVisible(_showShop);
+        _energyPurchase.GetInteger().setVisible(_showShop);
+        _energyPurchase.GetBitmapButton().setVisible(_showShop);
 
         _menuButton.setVisible(showOther);
         _cardButton.setVisible(showOther);
