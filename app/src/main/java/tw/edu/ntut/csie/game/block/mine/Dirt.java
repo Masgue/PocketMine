@@ -14,7 +14,6 @@ public class Dirt extends CommonBlock {
 
     public Dirt(int blockType, int arrayX, int arrayY, int viewHeight) {
         super(blockType, arrayX, arrayY, viewHeight);
-        //_picture = new MovingBitmap(R.drawable.block2_dirt);
         SetAnimation();
     }
 
@@ -32,7 +31,6 @@ public class Dirt extends CommonBlock {
     public void SetAnimation() {
         _blockAnimation = new Animation();
         _blockAnimation.addFrame(R.drawable.block2_dirt);
-        _blockAnimation.addFrame(R.drawable.blue);
-        _blockAnimation.setDelay(2);
+        _blockAnimation.setDelay(1);
     }
 }

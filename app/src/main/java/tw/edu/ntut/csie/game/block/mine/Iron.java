@@ -14,7 +14,6 @@ public class Iron extends CommonBlock {
 
     public Iron(int blockType, int arrayX, int arrayY, int viewHeight) {
         super(blockType, arrayX, arrayY, viewHeight);
-        //_picture = new MovingBitmap(R.drawable.block6_iron);
         SetAnimation();
     }
 
@@ -32,7 +31,6 @@ public class Iron extends CommonBlock {
     public void SetAnimation() {
         _blockAnimation = new Animation();
         _blockAnimation.addFrame(R.drawable.block6_iron);
-        _blockAnimation.addFrame(R.drawable.blue);
-        _blockAnimation.setDelay(2);
+        _blockAnimation.setDelay(1);
     }
 }

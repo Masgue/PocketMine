@@ -14,7 +14,6 @@ public class Unbreakable extends CommonBlock {
 
         public Unbreakable(int blockType, int arrayX, int arrayY, int viewHeight) {
             super(blockType, arrayX, arrayY, viewHeight);
-            //_picture = new MovingBitmap(R.drawable.block1_unbreakable);
             SetAnimation();
         }
 
@@ -32,6 +31,6 @@ public class Unbreakable extends CommonBlock {
     public void SetAnimation() {
         _blockAnimation = new Animation();
         _blockAnimation.addFrame(R.drawable.block1_unbreakable);
-        _blockAnimation.setDelay(2);
+        _blockAnimation.setDelay(1);
     }
 }

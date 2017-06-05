@@ -14,7 +14,6 @@ public class Coal extends CommonBlock {
 
     public Coal(int blockType, int arrayX, int arrayY, int viewHeight) {
         super(blockType, arrayX, arrayY, viewHeight);
-        //_picture = new MovingBitmap(R.drawable.block4_coal);
         SetAnimation();
     }
 
@@ -32,7 +31,6 @@ public class Coal extends CommonBlock {
     public void SetAnimation() {
         _blockAnimation = new Animation();
         _blockAnimation.addFrame(R.drawable.block4_coal);
-        _blockAnimation.addFrame(R.drawable.blue);
         _blockAnimation.setDelay(1);
     }
 }

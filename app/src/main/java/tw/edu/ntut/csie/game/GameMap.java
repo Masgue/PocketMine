@@ -102,6 +102,7 @@ public class GameMap implements GameObject {
                 _generatingBlocks.SetMovingViewHeight(_generatingBlocks.GetMovingViewHeight() +  MOVING_VIEW_SPEED);
             ExplodeTimer();
             CharacterTimer();
+            BlockAnimationMove();
         }
     }
 
@@ -174,7 +175,7 @@ public class GameMap implements GameObject {
                         if (_blockArray[i][j] == DEFAULT_CHARACTER_PATH)
                         {
                             _characterMovingBlock.SetBlock(i, j, _generatingBlocks.GetMovingViewHeight());
-                            _characterMovingBlock.SetRepeating(false);
+//                            _characterMovingBlock.SetRepeating(false);
                             _characterMovingBlock.show();
                             _blockArray[i][j] = DEFAULT_NONE_BLOCK_TYPE;
                         }
@@ -189,9 +190,10 @@ public class GameMap implements GameObject {
                         }
                         else
                         {
-                            _explosion.SetBlock(i, j, _generatingBlocks.GetMovingViewHeight());
-                            _explosion.SetRepeating(true);
-                            _explosion.show();
+                            _generatingBlocks.ShowExplosionBlock(i, j);
+//                            _explosion.SetBlock(i, j, _generatingBlocks.GetMovingViewHeight());
+//                            _explosion.SetRepeating(true);
+//                            _explosion.show();
                         }
                     }
                 }
@@ -319,17 +321,21 @@ public class GameMap implements GameObject {
     }
 
     private void BlockAnimationMove() {
-        for (int j = 0; j < _generatingBlocks.GetActiveBlockList().GetBlockListSize(); j++)
+//        for (int j = 0; j < _generatingBlocks.GetActiveBlockList().GetBlockListSize(); j++)
+//        {
+//            for (int i = 0; i < _generatingBlocks.GetMineBlocksArraySize(); i++)
+//            {
+//                _generatingBlocks.GetMineList()[i].GetAnimation().move();
+//            }
+//
+//            for (int i = 0; i < _generatingBlocks.GetToolBlocksArraySize(); i++)
+//            {
+//                _generatingBlocks.GetToolList()[i].GetAnimation().move();
+//            }
+//        }
+        for (int i = 0; i < _generatingBlocks.GetExplosionList().length; i++)
         {
-            for (int i = 0; i < _generatingBlocks.GetMineBlocksArraySize(); i++)
-            {
-                _generatingBlocks.GetMineList()[i].GetAnimation().move();
-            }
-
-            for (int i = 0; i < _generatingBlocks.GetToolBlocksArraySize(); i++)
-            {
-                _generatingBlocks.GetToolList()[i].GetAnimation().move();
-            }
+            _generatingBlocks.GetExplosionList()[i].GetAnimation().move();
         }
     }
 

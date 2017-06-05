@@ -5,6 +5,18 @@ import java.util.Random;
 
 import tw.edu.ntut.csie.game.block.ActiveBlockList;
 import tw.edu.ntut.csie.game.block.Block;
+import tw.edu.ntut.csie.game.block.BlockExplosion.BlockExplosion;
+import tw.edu.ntut.csie.game.block.BlockExplosion.BombExplosion;
+import tw.edu.ntut.csie.game.block.BlockExplosion.CoalExplosion;
+import tw.edu.ntut.csie.game.block.BlockExplosion.DiamondExplosion;
+import tw.edu.ntut.csie.game.block.BlockExplosion.DirtExplosion;
+import tw.edu.ntut.csie.game.block.BlockExplosion.DrillExplosion;
+import tw.edu.ntut.csie.game.block.BlockExplosion.DynamiteExplosion;
+import tw.edu.ntut.csie.game.block.BlockExplosion.GoldExplosion;
+import tw.edu.ntut.csie.game.block.BlockExplosion.IronExplosion;
+import tw.edu.ntut.csie.game.block.BlockExplosion.NoneBlockExplosion;
+import tw.edu.ntut.csie.game.block.BlockExplosion.RubyExplosion;
+import tw.edu.ntut.csie.game.block.BlockExplosion.StoneExplosion;
 import tw.edu.ntut.csie.game.block.character.CharacterBlock;
 import tw.edu.ntut.csie.game.block.mine.Coal;
 import tw.edu.ntut.csie.game.block.mine.CommonBlock;
@@ -32,12 +44,15 @@ public class GeneratingBlocks {
     private ArrayList<ArrayListBlock> _mineBlockList;
     private ArrayList<ArrayListBlock> _toolBlockList;
     private ArrayList<ArrayListBlock> _characterBlockList;
+    private ArrayList<ArrayListBlock> _explosionBlockList;
     private static int _blockRow;
 
     private int _movingViewHeight;
     private CommonBlock[] _mineList;
     private Tool[] _toolList;
     private CharacterBlock _character;
+    private BlockExplosion[] _explosionList;
+
     private int[][] _blockArray;
     private static ActiveBlockList _activeBlockList;
     private ArrayList<CardAttributes> _cardAttributes  = new ArrayList<CardAttributes>();
@@ -48,16 +63,19 @@ public class GeneratingBlocks {
         _mineBlockList = new ArrayList<ArrayListBlock>();
         _toolBlockList = new ArrayList<ArrayListBlock>();
         _characterBlockList = new ArrayList<ArrayListBlock>();
+        _explosionBlockList = new ArrayList<ArrayListBlock>();
 
         _blockRow = blockRow;
         AddMineBlocks();
         AddToolBlocks();
         AddCharacterBlocks();
+        AddExplosionBlockList();
 
         ChangeBlockSpawningRate();
 
         _mineList = new CommonBlock[_mineBlockList.size()];
         _toolList = new Tool[_toolBlockList.size()];
+        _explosionList = new BlockExplosion[_explosionBlockList.size()];
 
         _movingViewHeight = 0;
         _blockArray = new int[_blockRow][BLOCK_COLUMN];
@@ -79,6 +97,18 @@ public class GeneratingBlocks {
                 new Drill(1,0,0,0),
                 new Dynamite(2,0,0,0)};
         _character = new CharacterBlock(0,0,0,0);
+        _explosionList =  new BlockExplosion[] {
+                new NoneBlockExplosion(0,0,0,0),
+                new DirtExplosion(1,0,0,0),
+                new StoneExplosion(2,0,0,0),
+                new CoalExplosion(3,0,0,0),
+                new GoldExplosion(4,0,0,0),
+                new IronExplosion(5,0,0,0),
+                new DiamondExplosion(6,0,0,0),
+                new RubyExplosion(7,0,0,0),
+                new BombExplosion(8,0,0,0),
+                new DrillExplosion(9,0,0,0),
+                new DynamiteExplosion(10,0,0,0)};
 
         SetToolList();
         SetMineList();
@@ -107,7 +137,21 @@ public class GeneratingBlocks {
         _toolBlockList.add(new ArrayListBlock(2, 5, "Dynamite"));
     }
     private void AddCharacterBlocks() {
-        _characterBlockList.add(new ArrayListBlock(0, 0, "digit_8"));
+        _characterBlockList.add(new ArrayListBlock(0, 0, "character"));
+    }
+
+    private void AddExplosionBlockList() {
+        _explosionBlockList.add(new ArrayListBlock(0, 0, "explosion_noneBlock"));
+        _explosionBlockList.add(new ArrayListBlock(1, 0, "explosion_dirt"));
+        _explosionBlockList.add(new ArrayListBlock(2, 0, "explosion_stone"));
+        _explosionBlockList.add(new ArrayListBlock(3, 0, "explosion_coal"));
+        _explosionBlockList.add(new ArrayListBlock(4, 0, "explosion_gold"));
+        _explosionBlockList.add(new ArrayListBlock(5, 0, "explosion_iron"));
+        _explosionBlockList.add(new ArrayListBlock(6, 0, "explosion_diamand"));
+        _explosionBlockList.add(new ArrayListBlock(7, 0, "explosion_ruby"));
+        _explosionBlockList.add(new ArrayListBlock(8, 0, "explosion_Bomb"));
+        _explosionBlockList.add(new ArrayListBlock(9, 0, "explosion_Drill"));
+        _explosionBlockList.add(new ArrayListBlock(10, 0, "explosion_Dynamite"));
     }
 
     public void GenerateMap() {
@@ -206,6 +250,19 @@ public class GeneratingBlocks {
         _character.show();
     }
 
+    public void ShowExplosionBlock(int i, int j) {
+        if (_blockArray[i][j] == GetMineBlocksArraySize() + GetToolBlocksArraySize() + 1)
+        {
+            _explosionList[0].SetBlock(i,j,_movingViewHeight);
+            _explosionList[0].show();
+        }
+        else
+        {
+            _explosionList[_blockArray[i][j] - GetMineBlocksArraySize() - GetToolBlocksArraySize() - 2].SetBlock(i,j,_movingViewHeight);
+            _explosionList[_blockArray[i][j] - GetMineBlocksArraySize() - GetToolBlocksArraySize() - 2].show();
+        }
+    }
+
     public int GetPoints(int arrayX, int arrayY) {
         return _mineList[_blockArray[arrayX][arrayY]].GetPoints();
     }
@@ -255,6 +312,8 @@ public class GeneratingBlocks {
     public CommonBlock[] GetMineList() {
         return _mineList;
     }
+
+    public BlockExplosion[] GetExplosionList() {return _explosionList;}
 
     public ActiveBlockList GetActiveBlockList() {return _activeBlockList;}
 
