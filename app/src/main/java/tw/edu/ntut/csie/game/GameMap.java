@@ -1,6 +1,7 @@
 package tw.edu.ntut.csie.game;
 
 import tw.edu.ntut.csie.game.block.ActiveBlocks;
+import tw.edu.ntut.csie.game.block.BoxBlock;
 import tw.edu.ntut.csie.game.block.CharacterMovingBlock;
 import tw.edu.ntut.csie.game.block.Explosion;
 import tw.edu.ntut.csie.game.block.Invisible;
@@ -36,6 +37,7 @@ public class GameMap implements GameObject {
     private Invisible _invisible;
     private Explosion _explosion;
     private CharacterMovingBlock _characterMovingBlock;
+    private BoxBlock _box;
     private int _explosionTimer = 0;
     private int _characterTimer = 0;
     private boolean _explosionTimerSwitch = false;
@@ -50,6 +52,7 @@ public class GameMap implements GameObject {
     private int _pathEndType;
     private ArrayList<ActiveBlocks> _pathList;
     private int _recentPathX, _recentPathY;
+    private int _chosenWay = 0;
 
     public GameMap(ArrayList<CardAttributes> cardAttributes) {
         _cardAttributes = cardAttributes;
@@ -68,6 +71,7 @@ public class GameMap implements GameObject {
         _invisible = new Invisible(0,0,0,0);
         _explosion = new Explosion(0,0,0,0);
         _characterMovingBlock = new CharacterMovingBlock(0,0,0,0);
+        _box = new BoxBlock(0,0,0,0);
         _path = new CharacterPath(BLOCK_ROW, _blockArray);
         _pathList = new ArrayList<ActiveBlocks>();
     }
@@ -172,10 +176,15 @@ public class GameMap implements GameObject {
                 if (isVisible(i, j) || _isVisibleControl) {
                     if (_blockArray[i][j] != DEFAULT_NONE_BLOCK_TYPE)
                     {
-                        if (_blockArray[i][j] == DEFAULT_CHARACTER_PATH)
+                        if (_blockArray[i][j] == -2)
+                        {
+                            _box.SetBlock(i, j, _generatingBlocks.GetMovingViewHeight());
+                            _box.show();
+                            _blockArray[i][j] = DEFAULT_NONE_BLOCK_TYPE;
+                        }
+                        else if (_blockArray[i][j] == DEFAULT_CHARACTER_PATH)
                         {
                             _characterMovingBlock.SetBlock(i, j, _generatingBlocks.GetMovingViewHeight());
-//                            _characterMovingBlock.SetRepeating(false);
                             _characterMovingBlock.show();
                             _blockArray[i][j] = DEFAULT_NONE_BLOCK_TYPE;
                         }
@@ -186,6 +195,7 @@ public class GameMap implements GameObject {
                             _generatingBlocks.ShowToolBlock(i, j);
                         }
                         else if (_blockArray[i][j] == _generatingBlocks.GetMineBlocksArraySize() + _generatingBlocks.GetToolBlocksArraySize()){
+                            _generatingBlocks.GetCharacterBlock().ResetAnimation(_chosenWay);
                             _generatingBlocks.ShowCharacterBlock(i, j);
                         }
                         else
@@ -321,23 +331,14 @@ public class GameMap implements GameObject {
     }
 
     private void BlockAnimationMove() {
-//        for (int j = 0; j < _generatingBlocks.GetActiveBlockList().GetBlockListSize(); j++)
-//        {
-//            for (int i = 0; i < _generatingBlocks.GetMineBlocksArraySize(); i++)
-//            {
-//                _generatingBlocks.GetMineList()[i].GetAnimation().move();
-//            }
-//
-//            for (int i = 0; i < _generatingBlocks.GetToolBlocksArraySize(); i++)
-//            {
-//                _generatingBlocks.GetToolList()[i].GetAnimation().move();
-//            }
-//        }
         for (int i = 0; i < _generatingBlocks.GetExplosionList().length; i++)
         {
             _generatingBlocks.GetExplosionList()[i].GetAnimation().move();
         }
+        _characterMovingBlock.GetAnimation().move();
+        _generatingBlocks.GetCharacterBlock().GetAnimation().move();
     }
+
 
     private void ExplodeTimer() {
         if (_explosionTimerSwitch == true)
@@ -442,6 +443,7 @@ public class GameMap implements GameObject {
             }
             else
             {
+                ChooseCharacterWay(_recentPathY, _pathList.get(_characterTimer).GetBlockY());
                 _blockArray[_recentPathX][_recentPathY] = DEFAULT_NONE_BLOCK_TYPE;
                 _recentPathX = _pathList.get(_characterTimer).GetBlockX();
                 _recentPathY = _pathList.get(_characterTimer).GetBlockY();
@@ -500,5 +502,18 @@ public class GameMap implements GameObject {
 
     public int GetFloor() {
         return _floor;
+    }
+
+    private void ChooseCharacterWay(int lastY, int newY) {
+        if (newY > lastY)
+        {
+            _chosenWay = 0;
+            _characterMovingBlock.ResetAnimation(0);
+        }
+        else if (newY < lastY)
+        {
+            _chosenWay = 1;
+            _characterMovingBlock.ResetAnimation(1);
+        }
     }
 }

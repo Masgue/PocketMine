@@ -212,13 +212,16 @@ public class GeneratingBlocks {
         {
             blockArray[_blockRow - 1][i] = 0;
         }
-//        for (int i = 0 ; i < 6; i++)
+
+//        for (int i = 0; i < BLOCK_COLUMN; i++)
 //        {
-//            blockArray[1][i] = _mineBlockList.size();
+//            for (int j = 2; j < 4; j++)
+//            {
+//                blockArray[_blockRow - j][i] = -1;
+//            }
 //        }
-//        blockArray[2][3] = _mineBlockList.size();
-//        blockArray[2][2] = _mineBlockList.size();
-//        blockArray[3][3] =  _mineBlockList.size();
+//        blockArray[_blockRow - 2][2] = -2;
+//        blockArray[_blockRow - 2][3] = -2;
     }
 
     private int ChooseCharacter() {
@@ -318,6 +321,8 @@ public class GeneratingBlocks {
     public ActiveBlockList GetActiveBlockList() {return _activeBlockList;}
 
     public int GetFloor() {return Tool.GetFloor();}
+
+    public CharacterBlock GetCharacterBlock() {return _character;}
 
     public void RemoveActiveArray() {Tool.RemoveActiveArray();}
 

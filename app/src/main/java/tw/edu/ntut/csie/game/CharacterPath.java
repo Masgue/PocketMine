@@ -21,7 +21,6 @@ public class CharacterPath {
     public CharacterPath(int blockRow, int[][] blockArray) {
         _blockRow = blockRow;
         _blockArray = new int[_blockRow][BLOCK_COLUMN];
-//        _blockArray = blockArray;
         _pathList = new ArrayList<ActiveBlocks>();
     }
 
@@ -71,10 +70,7 @@ public class CharacterPath {
         else
         {
             _findPath = true;
-//            for (ActiveBlocks a : _pathList) {
-//                System.out.println(a.GetBlockX() + "  " + a.GetBlockY());
-//            }
-//            System.out.println("Done");
+
         }
     }
 

@@ -24,9 +24,29 @@ public class CharacterMovingBlock extends Block {
 
     public void SetAnimation() {
         _blockAnimation = new Animation();
-//        _blockAnimation.addFrame(R.drawable.blue);
-        _blockAnimation.addFrame(R.drawable.android_green_60x60);
+        _blockAnimation.addFrame(R.drawable.character_right);
         _blockAnimation.setDelay(1);
+    }
+
+    public void ResetAnimation(int way) {
+        switch (way)
+        {
+            case 0:
+                _blockAnimation.release();
+                _blockAnimation = new Animation();
+                _blockAnimation.addFrame(R.drawable.character_left);
+                _blockAnimation.addFrame(R.drawable.character_moving_left);
+                _blockAnimation.setDelay(0);
+                break;
+            case 1:
+                _blockAnimation.release();
+                _blockAnimation = new Animation();
+                _blockAnimation.addFrame(R.drawable.character_right);
+                _blockAnimation.addFrame(R.drawable.character_moving_right);
+                _blockAnimation.setDelay(0);
+            default:
+                break;
+        }
     }
 
     public void SetRepeating(boolean repeat) {

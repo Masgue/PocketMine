@@ -18,6 +18,7 @@ public class DiamondExplosion extends BlockExplosion {
         _blockAnimation = new Animation();
         _blockAnimation.addFrame(R.drawable.block7_diamond);
         _blockAnimation.addFrame(R.drawable.blue);
+        _blockAnimation.addFrame(R.drawable.block0_invisible);
         _blockAnimation.setDelay(1);
         _blockAnimation.setRepeating(true);
     }
