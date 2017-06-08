@@ -31,6 +31,7 @@ public class StateReady extends AbstractGameState {
     private MovingBitmap _museumInfo;
     private MovingBitmap _digInfo;
     private MovingBitmap _settingInfo;
+    private MovingBitmap _about;
 
     private BitmapButton _menuButton;
     private BitmapButton _cardButton;
@@ -87,9 +88,14 @@ public class StateReady extends AbstractGameState {
         addGameObject(_museumInfo = new MovingBitmap(R.drawable.museumbackground));
         addGameObject(_digInfo = new MovingBitmap(R.drawable.digbackground));
         addGameObject(_settingInfo = new MovingBitmap(R.drawable.settingbackground));
+        addGameObject(_about = new MovingBitmap(R.drawable.about));
+        _about.setLocation(150, 8);
         InitializeLevel();
         InitializeEnergy();
-        InitializeMoney();
+        if (data != null)
+            InitializeMoney((int)data.get("Money"));
+        else
+            InitializeMoney(1000);
         InitializeDiamond();
         InitializeDurabilityPurchaseButton();
         InitializeMoneyPurchaseButton();
@@ -121,6 +127,10 @@ public class StateReady extends AbstractGameState {
         _pressFirstCard = false;
         _pressSecondCard = false;
         _pressThirdCard = false;
+        if (data != null) {
+            _money.add((int)data.get("Score"));
+            _level.GetInteger().add((int)data.get("Experience"));
+        }
         setVisibility();
     }
 
@@ -136,8 +146,8 @@ public class StateReady extends AbstractGameState {
         addGameObject(_energy.GetInteger());
     }
 
-    private void InitializeMoney() {
-        _money = new Integer(4, 1000, 10, 140);
+    private void InitializeMoney(int money) {
+        _money = new Integer(4, money, 10, 140);
         addGameObject(_money);
     }
 
@@ -147,8 +157,9 @@ public class StateReady extends AbstractGameState {
     }
 
     private void InitializeDurabilityPurchaseButton() {
-        _durabilityPurchase = new BuyableButton(new BitmapButton(R.drawable.block1_unbreakable), 50, 300, 90);
+        _durabilityPurchase = new BuyableButton(new BitmapButton(R.drawable.purchase), new MovingBitmap(R.drawable.pickaxe), 50, 300, 60);
 
+        addGameObject(_durabilityPurchase.GetMovingBitmap());
         addGameObject(_durabilityPurchase.GetBitmapButton());
         _durabilityPurchase.GetBitmapButton().addButtonEventHandler(new ButtonEventHandler() {
             @Override
@@ -163,8 +174,9 @@ public class StateReady extends AbstractGameState {
     }
 
     private void InitializeMoneyPurchaseButton() {
-        _moneyPurchase = new BuyableButton(new BitmapButton(R.drawable.block5_gold), 25, 150, 90);
+        _moneyPurchase = new BuyableButton(new BitmapButton(R.drawable.purchase), new MovingBitmap(R.drawable.money), 25, 200, 60);
 
+        addGameObject(_moneyPurchase.GetMovingBitmap());
         addGameObject(_moneyPurchase.GetBitmapButton());
         _moneyPurchase.GetBitmapButton().addButtonEventHandler(new ButtonEventHandler() {
             @Override
@@ -178,8 +190,9 @@ public class StateReady extends AbstractGameState {
     }
 
     private void InitializeDiamondPurchaseButton() {
-        _diamondPurchase = new BuyableButton(new BitmapButton(R.drawable.block7_diamond), 5, 250, 90);
+        _diamondPurchase = new BuyableButton(new BitmapButton(R.drawable.purchase), new MovingBitmap(R.drawable.block7_diamond), 5, 300, 60);
 
+        addGameObject(_diamondPurchase.GetMovingBitmap());
         addGameObject(_diamondPurchase.GetBitmapButton());
         _diamondPurchase.GetBitmapButton().addButtonEventHandler(new ButtonEventHandler() {
             @Override
@@ -193,8 +206,9 @@ public class StateReady extends AbstractGameState {
     }
 
     private void InitializeLevelPurchaseButton() {
-        _levelPurchase = new BuyableButton(new BitmapButton(R.drawable.block3_stone), 1, 350, 90);
+        _levelPurchase = new BuyableButton(new BitmapButton(R.drawable.purchase), new MovingBitmap(R.drawable.experience), 1, 400, 60);
 
+        addGameObject(_levelPurchase.GetMovingBitmap());
         addGameObject(_levelPurchase.GetBitmapButton());
         _levelPurchase.GetBitmapButton().addButtonEventHandler(new ButtonEventHandler() {
             @Override
@@ -208,13 +222,14 @@ public class StateReady extends AbstractGameState {
     }
 
     private void InitializeEnergyPurchaseButton() {
-        _energyPurchase = new BuyableButton(new BitmapButton(R.drawable.block1_unbreakable), 1, 450, 90);
+        _energyPurchase = new BuyableButton(new BitmapButton(R.drawable.purchase), new MovingBitmap(R.drawable.energy), 1, 500, 60);
 
+        addGameObject(_energyPurchase.GetMovingBitmap());
         addGameObject(_energyPurchase.GetBitmapButton());
         _energyPurchase.GetBitmapButton().addButtonEventHandler(new ButtonEventHandler() {
             @Override
             public void perform(BitmapButton button) {
-                if (_energy.GetInteger().getValue() < 5)
+                if (_energy.GetInteger().getValue() < 100)
                     _energy.GetInteger().add(1);
                 setVisibility();
             }
@@ -487,6 +502,8 @@ public class StateReady extends AbstractGameState {
         cardAttributes.add(_thirdCard.GetCardAttributes());
         map.put("CardAttributes", cardAttributes);
         map.put("Durability", durability);
+        map.put("Score", _money.getValue());
+        map.put("Experience", _level.GetInteger().getValue());
         return map;
     }
 
@@ -563,6 +580,7 @@ public class StateReady extends AbstractGameState {
         _shopInfo.setVisible(_showShop);
         _digInfo.setVisible(_showDig);
         _settingInfo.setVisible(_showSetting);
+        _about.setVisible(_showSetting);
 
         _level.GetBar().setVisible(showOther);
         _level.GetInteger().setVisible(showOther);
@@ -574,14 +592,19 @@ public class StateReady extends AbstractGameState {
 
         _durabilityPurchase.GetInteger().setVisible(_showMenu);
         _durabilityPurchase.GetBitmapButton().setVisible(_showMenu);
+        _durabilityPurchase.GetMovingBitmap().setVisible(_showMenu);
         _moneyPurchase.GetInteger().setVisible(_showShop);
         _moneyPurchase.GetBitmapButton().setVisible(_showShop);
+        _moneyPurchase.GetMovingBitmap().setVisible(_showShop);
         _diamondPurchase.GetInteger().setVisible(_showShop);
         _diamondPurchase.GetBitmapButton().setVisible(_showShop);
+        _diamondPurchase.GetMovingBitmap().setVisible(_showShop);
         _levelPurchase.GetInteger().setVisible(_showShop);
         _levelPurchase.GetBitmapButton().setVisible(_showShop);
+        _levelPurchase.GetMovingBitmap().setVisible(_showShop);
         _energyPurchase.GetInteger().setVisible(_showShop);
         _energyPurchase.GetBitmapButton().setVisible(_showShop);
+        _energyPurchase.GetMovingBitmap().setVisible(_showShop);
 
         _menuButton.setVisible(showOther);
         _cardButton.setVisible(showOther);

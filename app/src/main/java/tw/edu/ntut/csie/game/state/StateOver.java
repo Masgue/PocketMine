@@ -14,7 +14,9 @@ import tw.edu.ntut.csie.game.extend.Integer;
 public class StateOver extends AbstractGameState {
     private BitmapButton _menuButton;
     private Integer _score;
-    private int _experience;
+    private Integer _experience;
+    private int _money;
+    private int _level;
 
     public StateOver(GameEngine engine) {
         super(engine);
@@ -29,20 +31,30 @@ public class StateOver extends AbstractGameState {
             public void perform(BitmapButton button) {
                 Map<String, Object> map = new HashMap<String, Object>();
                 map.put("Score", _score.getValue());
-                map.put("Experience", _experience);
+                map.put("Experience", _experience.getValue());
+                map.put("Money", _money);
+                map.put("Level", _level);
                 changeState(Game.INITIAL_STATE, map);
             }
         });
         addGameObject(_menuButton);
         addPointerEventHandler(_menuButton);
-        _score = new Integer(4, (int)data.get("Score"), 10, 10);
-        _experience = (int)data.get("Experience");
+        _score = new Integer(3, (int)data.get("Score"), 10, 10);
+        _experience = new Integer(2, (int)data.get("Experience"), 10, 200);
+        _money = (int)data.get("Money");
+        _level = (int)data.get("Level");
         ShowScore();
+        ShowFloor();
     }
 
     private void ShowScore() {
         addGameObject(_score);
         _score.show();
+    }
+
+    private void ShowFloor() {
+        addGameObject(_experience);
+        _experience.show();
     }
 
     @Override

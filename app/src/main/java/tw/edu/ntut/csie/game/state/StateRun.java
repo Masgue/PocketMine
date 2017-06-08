@@ -33,6 +33,9 @@ public class StateRun extends GameState {
     private boolean _isPaused;
     private ArrayList<CardAttributes> _cardAttributes = new ArrayList<CardAttributes>();
 
+    private int _money;
+    private int _level;
+
     private tw.edu.ntut.csie.game.MapObserver _observer;
 
     public StateRun(GameEngine engine) {
@@ -50,6 +53,9 @@ public class StateRun extends GameState {
         _floor = DEFAULT_FLOOR;
         _isPaused = false;
 
+        _money = (int)data.get("Score");
+        _level = (int)data.get("Experience");
+
         _audio.setRepeating(true);
         _audio.play();
 
@@ -61,6 +67,8 @@ public class StateRun extends GameState {
                 _floor = _map.GetFloor();
                 map.put("Score", _score);
                 map.put("Experience", _floor);
+                map.put("Money", _money);
+                map.put("Level", _level);
                 _audio.stop();
                 _audio.release();
                 changeState(Game.OVER_STATE, map);

@@ -16,7 +16,7 @@ public class EnergyBar {
         _x = x;
         _y = y;
         InitializeMovingBitmap();
-        _number = new Integer(1, 0, x, y);
+        _number = new Integer(3, 0, x, y);
     }
 
     public EnergyBar (ArrayList<MovingBitmap> bar, int number, int x, int y) {
@@ -24,7 +24,7 @@ public class EnergyBar {
         _x = x;
         _y = y;
         InitializeMovingBitmap();
-        _number = new Integer(1, number, x, y);
+        _number = new Integer(3, number, x, y);
     }
 
     private void InitializeMovingBitmap() {
@@ -32,7 +32,7 @@ public class EnergyBar {
     }
 
     public MovingBitmap GetBar() {
-        return _bar.get(3);
+        return _bar.get(10);
     }
 
     public Integer GetInteger() {

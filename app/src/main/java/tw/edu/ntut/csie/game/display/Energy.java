@@ -16,10 +16,15 @@ public class Energy {
     public Energy(int x, int y) {
         ArrayList<MovingBitmap> bar = new ArrayList<MovingBitmap>();
         bar.add(new MovingBitmap(R.drawable.exp_0));
+        bar.add(new MovingBitmap(R.drawable.exp_1));
         bar.add(new MovingBitmap(R.drawable.exp_2));
+        bar.add(new MovingBitmap(R.drawable.exp_3));
         bar.add(new MovingBitmap(R.drawable.exp_4));
+        bar.add(new MovingBitmap(R.drawable.exp_5));
         bar.add(new MovingBitmap(R.drawable.exp_6));
+        bar.add(new MovingBitmap(R.drawable.exp_7));
         bar.add(new MovingBitmap(R.drawable.exp_8));
+        bar.add(new MovingBitmap(R.drawable.exp_9));
         bar.add(new MovingBitmap(R.drawable.exp_10));
         _energy = new EnergyBar(bar, 5, x, y);
     }
