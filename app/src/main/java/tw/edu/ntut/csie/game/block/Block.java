@@ -12,6 +12,7 @@ public abstract class Block implements GameObject, BlockObject {
     protected static final int DEFAULT_NONE_BLOCK_TYPE = -1;
     protected static final int BLOCK_HEIGHT = 60;
     protected static final int BLOCK_COLUMN = 6;
+    protected static final int DEFAULT_BOX= -2;
     protected static int _blockRow;
 
 //    protected MovingBitmap _picture;

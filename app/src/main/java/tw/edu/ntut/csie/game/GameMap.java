@@ -23,6 +23,7 @@ public class GameMap implements GameObject {
     private static final int DEFAULT_DURABILITY = 50;
     private static final int DEFAULT_NONE_BLOCK_TYPE = -1;
     private static final int DEFAULT_CHARACTER_PATH = -21;
+    private static final int DEFAULT_BOX = -2;
 
     private MovingBitmap[] _digitNumberList;
     private int[][] _blockArray;
@@ -96,10 +97,25 @@ public class GameMap implements GameObject {
     @Override
     public void move() {
         if (!_isPaused) {
-            if (_durability == 0)
-                _generatingBlocks.SetMovingViewHeight(_generatingBlocks.GetMovingViewHeight() + 3 *  MOVING_VIEW_SPEED);
+//            if (_durability == 0)
+//                _generatingBlocks.SetMovingViewHeight(_generatingBlocks.GetMovingViewHeight() + 3 *  MOVING_VIEW_SPEED);
+//            else
+//                _generatingBlocks.SetMovingViewHeight(_generatingBlocks.GetMovingViewHeight() +  MOVING_VIEW_SPEED);
+            if ( _generatingBlocks.GetMovingViewHeight() < (BLOCK_ROW - 8) * 60)
+            {
+                if (_durability == 0)
+                    _generatingBlocks.SetMovingViewHeight(_generatingBlocks.GetMovingViewHeight() + 3 *  MOVING_VIEW_SPEED);
+                else
+                    _generatingBlocks.SetMovingViewHeight(_generatingBlocks.GetMovingViewHeight() +  MOVING_VIEW_SPEED);
+            }
             else
-                _generatingBlocks.SetMovingViewHeight(_generatingBlocks.GetMovingViewHeight() +  MOVING_VIEW_SPEED);
+            {
+                if (_durability == 0)
+                {
+//                    畫面不再上移，無法達到終點，也無法再挖掘，需要進入stateOver
+                }
+            }
+
             ExplodeTimer();
             CharacterTimer();
             BlockAnimationMove();
@@ -145,7 +161,12 @@ public class GameMap implements GameObject {
     private void DigBlock(int arrayX, int arrayY) {
         if (_explosionTimerSwitch == false)
         {
-            if(_blockArray[arrayX][arrayY] == DEFAULT_NONE_BLOCK_TYPE) {
+            if (_blockArray[arrayX][arrayY] == DEFAULT_BOX)
+            {
+                RestPath();
+                CheckCharacterPathTimer(3, arrayX, arrayY);
+            }
+            else if(_blockArray[arrayX][arrayY] == DEFAULT_NONE_BLOCK_TYPE) {
                 RestPath();
                 CheckCharacterPathTimer(0, arrayX, arrayY);
             }
@@ -173,11 +194,10 @@ public class GameMap implements GameObject {
 //                if (isVisible(i, j) || _isVisibleControl) {
                     if (_blockArray[i][j] != DEFAULT_NONE_BLOCK_TYPE)
                     {
-                        if (_blockArray[i][j] == -2)
+                        if (_blockArray[i][j] == DEFAULT_BOX)
                         {
                             _box.SetBlock(i, j, _generatingBlocks.GetMovingViewHeight());
                             _box.show();
-                            _blockArray[i][j] = DEFAULT_NONE_BLOCK_TYPE;
                         }
                         else if (_blockArray[i][j] == DEFAULT_CHARACTER_PATH)
                         {
@@ -428,6 +448,13 @@ public class GameMap implements GameObject {
                         {
                             _explosionTimerSwitch = false;
                         }
+                        break;
+                    case 3:
+                        arrayX = _pathList.get(_pathList.size() - 2).GetBlockX();
+                        arrayY = _pathList.get(_pathList.size() - 2).GetBlockY();
+                        CharacterX = arrayX;
+                        CharacterY = arrayY;
+//                        點擊寶箱，須進入stateOver
                         break;
                     default:
                         break;

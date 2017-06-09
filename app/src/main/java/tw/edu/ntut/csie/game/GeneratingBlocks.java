@@ -40,6 +40,7 @@ import tw.edu.ntut.csie.game.card.CardAttributes;
 public class GeneratingBlocks {
     private static final int BLOCK_COLUMN = 6;
     private static final int DEFAULT_NONE_BLOCK_TYPE = -1;
+    private static final int DEFAULT_BOX = -2;
 
     private ArrayList<ArrayListBlock> _mineBlockList;
     private ArrayList<ArrayListBlock> _toolBlockList;
@@ -220,8 +221,8 @@ public class GeneratingBlocks {
 //                blockArray[_blockRow - j][i] = -1;
 //            }
 //        }
-//        blockArray[_blockRow - 2][2] = -2;
-//        blockArray[_blockRow - 2][3] = -2;
+        blockArray[_blockRow - 2][1] = DEFAULT_BOX;
+        blockArray[_blockRow - 2][4] = DEFAULT_BOX;
     }
 
     private int ChooseCharacter() {

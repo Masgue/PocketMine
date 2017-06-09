@@ -24,38 +24,65 @@ public class Bomb extends Tool {
         _blockArray[arrayX][arrayY] = DEFAULT_NONE_BLOCK_TYPE;
         if (arrayY == 0)
         {
-            _activeBlockList.AddToList(arrayX - 1, arrayY);
-            _activeBlockList.AddToList(arrayX + 1, arrayY);
-            _activeBlockList.AddToList(arrayX, arrayY + 1);
+            DetectAndAddToList(arrayX - 1, arrayY);
+            DetectAndAddToList(arrayX + 1, arrayY);
+            DetectAndAddToList(arrayX, arrayY + 1);
             if (_blockArray[arrayX - 1][arrayY] != 0 || _blockArray[arrayX][arrayY + 1] != 0)
-                _activeBlockList.AddToList(arrayX - 1, arrayY + 1);
+                DetectAndAddToList(arrayX - 1, arrayY + 1);
             if (_blockArray[arrayX + 1][arrayY] != 0 || _blockArray[arrayX][arrayY + 1] != 0)
-                _activeBlockList.AddToList(arrayX + 1, arrayY + 1);
+                DetectAndAddToList(arrayX + 1, arrayY + 1);
+
+//            _activeBlockList.AddToList(arrayX - 1, arrayY);
+//            _activeBlockList.AddToList(arrayX + 1, arrayY);
+//            _activeBlockList.AddToList(arrayX, arrayY + 1);
+//            if (_blockArray[arrayX - 1][arrayY] != 0 || _blockArray[arrayX][arrayY + 1] != 0)
+//                _activeBlockList.AddToList(arrayX - 1, arrayY + 1);
+//            if (_blockArray[arrayX + 1][arrayY] != 0 || _blockArray[arrayX][arrayY + 1] != 0)
+//                _activeBlockList.AddToList(arrayX + 1, arrayY + 1);
         }
         else if (arrayY == BLOCK_COLUMN - 1)
         {
-            _activeBlockList.AddToList(arrayX - 1, arrayY);
-            _activeBlockList.AddToList(arrayX + 1, arrayY);
-            _activeBlockList.AddToList(arrayX, arrayY - 1);
+            DetectAndAddToList(arrayX - 1, arrayY);
+            DetectAndAddToList(arrayX + 1, arrayY);
+            DetectAndAddToList(arrayX, arrayY - 1);
             if (_blockArray[arrayX - 1][arrayY] != 0 || _blockArray[arrayX][arrayY - 1] != 0)
-                _activeBlockList.AddToList(arrayX - 1, arrayY - 1);
+                DetectAndAddToList(arrayX - 1, arrayY - 1);
             if (_blockArray[arrayX + 1][arrayY] != 0 || _blockArray[arrayX][arrayY - 1] != 0)
-                _activeBlockList.AddToList(arrayX + 1, arrayY - 1);
+                DetectAndAddToList(arrayX + 1, arrayY - 1);
+//            _activeBlockList.AddToList(arrayX - 1, arrayY);
+//            _activeBlockList.AddToList(arrayX + 1, arrayY);
+//            _activeBlockList.AddToList(arrayX, arrayY - 1);
+//            if (_blockArray[arrayX - 1][arrayY] != 0 || _blockArray[arrayX][arrayY - 1] != 0)
+//                _activeBlockList.AddToList(arrayX - 1, arrayY - 1);
+//            if (_blockArray[arrayX + 1][arrayY] != 0 || _blockArray[arrayX][arrayY - 1] != 0)
+//                _activeBlockList.AddToList(arrayX + 1, arrayY - 1);
         }
         else
         {
-            _activeBlockList.AddToList(arrayX - 1, arrayY);
-            _activeBlockList.AddToList(arrayX + 1, arrayY);
-            _activeBlockList.AddToList(arrayX, arrayY - 1);
-            _activeBlockList.AddToList(arrayX, arrayY + 1);
+            DetectAndAddToList(arrayX - 1, arrayY);
+            DetectAndAddToList(arrayX + 1, arrayY);
+            DetectAndAddToList(arrayX, arrayY - 1);
+            DetectAndAddToList(arrayX, arrayY + 1);
             if (_blockArray[arrayX - 1][arrayY] != 0 || _blockArray[arrayX][arrayY - 1] != 0)
-                _activeBlockList.AddToList(arrayX - 1, arrayY - 1);
+                DetectAndAddToList(arrayX - 1, arrayY - 1);
             if (_blockArray[arrayX + 1][arrayY] != 0 || _blockArray[arrayX][arrayY - 1] != 0)
-                _activeBlockList.AddToList(arrayX + 1, arrayY - 1);
+                DetectAndAddToList(arrayX + 1, arrayY - 1);
             if (_blockArray[arrayX - 1][arrayY] != 0 || _blockArray[arrayX][arrayY + 1] != 0)
-                _activeBlockList.AddToList(arrayX - 1, arrayY + 1);
+                DetectAndAddToList(arrayX - 1, arrayY + 1);
             if (_blockArray[arrayX + 1][arrayY] != 0 || _blockArray[arrayX][arrayY + 1] != 0)
-                _activeBlockList.AddToList(arrayX + 1, arrayY + 1);
+                DetectAndAddToList(arrayX + 1, arrayY + 1);
+//            _activeBlockList.AddToList(arrayX - 1, arrayY);
+//            _activeBlockList.AddToList(arrayX + 1, arrayY);
+//            _activeBlockList.AddToList(arrayX, arrayY - 1);
+//            _activeBlockList.AddToList(arrayX, arrayY + 1);
+//            if (_blockArray[arrayX - 1][arrayY] != 0 || _blockArray[arrayX][arrayY - 1] != 0)
+//                _activeBlockList.AddToList(arrayX - 1, arrayY - 1);
+//            if (_blockArray[arrayX + 1][arrayY] != 0 || _blockArray[arrayX][arrayY - 1] != 0)
+//                _activeBlockList.AddToList(arrayX + 1, arrayY - 1);
+//            if (_blockArray[arrayX - 1][arrayY] != 0 || _blockArray[arrayX][arrayY + 1] != 0)
+//                _activeBlockList.AddToList(arrayX - 1, arrayY + 1);
+//            if (_blockArray[arrayX + 1][arrayY] != 0 || _blockArray[arrayX][arrayY + 1] != 0)
+//                _activeBlockList.AddToList(arrayX + 1, arrayY + 1);
         }
     }
 
@@ -110,5 +137,10 @@ public class Bomb extends Tool {
         _blockAnimation = new Animation();
         _blockAnimation.addFrame(R.drawable.bomb);
         _blockAnimation.setDelay(0);
+    }
+
+    private void DetectAndAddToList(int x, int y) {
+        if (_blockArray[x][y] != DEFAULT_BOX)
+            _activeBlockList.AddToList(x, y);
     }
 }

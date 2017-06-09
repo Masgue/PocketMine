@@ -94,6 +94,7 @@ public abstract class Tool extends Block{
         int presentBlockNumber;
         if (x >= 0 && x < _blockRow && y >= 0 && y < BLOCK_COLUMN) {
             presentBlockNumber = _blockArray[x][y];
+
             if (_blockArray[x][y] > 0 &&  _blockArray[x][y] < _mineNum)
             {
                 _blockArray[x][y] = DEFAULT_NONE_BLOCK_TYPE;

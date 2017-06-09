@@ -27,7 +27,7 @@ public class Drill extends Tool {
         _blockArray[arrayX][arrayY] = DEFAULT_NONE_BLOCK_TYPE;
         for (int i = 1; i <= _digPower; i++)
         {
-            if (_blockArray[arrayX + i][arrayY] != 0)
+            if (_blockArray[arrayX + i][arrayY] != 0 && _blockArray[arrayX + i][arrayY] != DEFAULT_BOX)
                 _activeBlockList.AddToList(arrayX + i, arrayY);
             else
                 break;
@@ -40,7 +40,7 @@ public class Drill extends Tool {
         _blockArray[arrayX][arrayY] = DEFAULT_NONE_BLOCK_TYPE;
         for (int i = 1; i <= _digPower; i++)
         {
-            if (_blockArray[arrayX + i][arrayY] != 0)
+            if (_blockArray[arrayX + i][arrayY] != 0 && _blockArray[arrayX + i][arrayY] != DEFAULT_BOX)
                 score += Explode(arrayX + i, arrayY);
             else
                 break;

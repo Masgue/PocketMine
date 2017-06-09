@@ -11,7 +11,6 @@ import tw.edu.ntut.csie.game.extend.Animation;
 public class Dynamite extends Tool {
     public Dynamite(int blockType, int arrayX, int arrayY, int viewHeight) {
         super(blockType, arrayX, arrayY, viewHeight);
-        //_picture = new MovingBitmap(R.drawable.dynamite);
         SetDynamiteAnimation();
     }
 
@@ -25,14 +24,14 @@ public class Dynamite extends Tool {
         _blockArray[arrayX][arrayY] = DEFAULT_NONE_BLOCK_TYPE;
         for (int i = 1; i <= 5; i++)
         {
-            if (arrayY - i >= 0 && _blockArray[arrayX][arrayY - i] != 0)
+            if (arrayY - i >= 0 && _blockArray[arrayX][arrayY - i] != 0 && _blockArray[arrayX][arrayY - i] != DEFAULT_BOX)
                 _activeBlockList.AddToList(arrayX, arrayY - i);
             else
                 break;
         }
         for (int i = 1; i <= 5; i++)
         {
-            if (arrayY + i < BLOCK_COLUMN && _blockArray[arrayX][arrayY + i] != 0)
+            if (arrayY + i < BLOCK_COLUMN && _blockArray[arrayX][arrayY + i] != 0 && _blockArray[arrayX][arrayY + i] != DEFAULT_BOX)
                 _activeBlockList.AddToList(arrayX, arrayY + i);
             else
                 break;
@@ -45,14 +44,14 @@ public class Dynamite extends Tool {
         _blockArray[arrayX][arrayY] = DEFAULT_NONE_BLOCK_TYPE;
         for (int i = 1; i <= 5; i++)
         {
-            if (arrayY - i >= 0 && _blockArray[arrayX][arrayY - i] != 0)
+            if (arrayY - i >= 0 && _blockArray[arrayX][arrayY - i] != 0 && _blockArray[arrayX][arrayY - i] != DEFAULT_BOX)
                 score += Explode(arrayX, arrayY - i);
             else
                 break;
         }
         for (int i = 1; i <= 5; i++)
         {
-            if (arrayY + i < BLOCK_COLUMN && _blockArray[arrayX][arrayY + i] != 0)
+            if (arrayY + i < BLOCK_COLUMN && _blockArray[arrayX][arrayY + i] != 0 && _blockArray[arrayX][arrayY + i] != DEFAULT_BOX)
                 score += Explode(arrayX, arrayY + i);
             else
                 break;
