@@ -35,6 +35,7 @@ public class StateRun extends GameState {
 
     private int _money;
     private int _level;
+    private int _energy;
 
     private tw.edu.ntut.csie.game.MapObserver _observer;
 
@@ -55,6 +56,7 @@ public class StateRun extends GameState {
 
         _money = (int)data.get("Score");
         _level = (int)data.get("Experience");
+        _energy = (int)data.get("Energy");
 
         _audio.setRepeating(true);
         _audio.play();
@@ -69,6 +71,7 @@ public class StateRun extends GameState {
                 map.put("Experience", _floor);
                 map.put("Money", _money);
                 map.put("Level", _level);
+                map.put("Energy", _energy);
                 _audio.stop();
                 _audio.release();
                 changeState(Game.OVER_STATE, map);

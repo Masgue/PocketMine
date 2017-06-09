@@ -12,8 +12,9 @@ import tw.edu.ntut.csie.game.extend.Integer;
 
 public class Energy {
     private EnergyBar _energy;
+    private int _currentEnergy;
 
-    public Energy(int x, int y) {
+    public Energy(int currentEnergy, int x, int y) {
         ArrayList<MovingBitmap> bar = new ArrayList<MovingBitmap>();
         bar.add(new MovingBitmap(R.drawable.exp_0));
         bar.add(new MovingBitmap(R.drawable.exp_1));
@@ -26,11 +27,16 @@ public class Energy {
         bar.add(new MovingBitmap(R.drawable.exp_8));
         bar.add(new MovingBitmap(R.drawable.exp_9));
         bar.add(new MovingBitmap(R.drawable.exp_10));
-        _energy = new EnergyBar(bar, 5, x, y);
+        _currentEnergy = currentEnergy;
+        _energy = new EnergyBar(bar, _currentEnergy, x, y);
+    }
+
+    public void SetMovingBitmap() {
+        _energy.SetMovingBitmap(_energy.GetInteger().getValue());
     }
 
     public MovingBitmap GetBar() {
-        return _energy.GetBar();
+        return _energy.GetMovingBitmap();
     }
 
     public Integer GetInteger() {

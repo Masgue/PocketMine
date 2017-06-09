@@ -17,6 +17,7 @@ public class StateOver extends AbstractGameState {
     private Integer _experience;
     private int _money;
     private int _level;
+    private int _energy;
 
     public StateOver(GameEngine engine) {
         super(engine);
@@ -34,6 +35,7 @@ public class StateOver extends AbstractGameState {
                 map.put("Experience", _experience.getValue());
                 map.put("Money", _money);
                 map.put("Level", _level);
+                map.put("Energy", _energy);
                 changeState(Game.INITIAL_STATE, map);
             }
         });
@@ -43,6 +45,7 @@ public class StateOver extends AbstractGameState {
         _experience = new Integer(2, (int)data.get("Experience"), 10, 200);
         _money = (int)data.get("Money");
         _level = (int)data.get("Level");
+        _energy = (int)data.get("Energy");
         ShowScore();
         ShowFloor();
     }

@@ -81,21 +81,22 @@ public class StateReady extends AbstractGameState {
 
     @Override
     public void initialize(Map<String, Object> data) {
-        addGameObject(_menuInfo = new MovingBitmap(R.drawable.menubackground));
-        addGameObject(_cardInfo = new MovingBitmap(R.drawable.cardbackground));
-        addGameObject(_gearInfo = new MovingBitmap(R.drawable.gearbackground));
-        addGameObject(_shopInfo = new MovingBitmap(R.drawable.shopbackground));
-        addGameObject(_museumInfo = new MovingBitmap(R.drawable.museumbackground));
-        addGameObject(_digInfo = new MovingBitmap(R.drawable.digbackground));
-        addGameObject(_settingInfo = new MovingBitmap(R.drawable.settingbackground));
+        addGameObject(_menuInfo = new MovingBitmap(R.drawable.state_ready_background));
+        addGameObject(_cardInfo = new MovingBitmap(R.drawable.state_ready_background));
+        addGameObject(_gearInfo = new MovingBitmap(R.drawable.state_ready_background));
+        addGameObject(_shopInfo = new MovingBitmap(R.drawable.state_ready_background));
+        addGameObject(_museumInfo = new MovingBitmap(R.drawable.state_ready_background));
+        addGameObject(_digInfo = new MovingBitmap(R.drawable.state_ready_background));
+        addGameObject(_settingInfo = new MovingBitmap(R.drawable.state_ready_background));
         addGameObject(_about = new MovingBitmap(R.drawable.about));
         _about.setLocation(150, 8);
-        InitializeEnergy();
         if (data != null) {
-            InitializeLevel((int)data.get("Experience"));
+            InitializeEnergy((int)data.get("Energy") - 1);
+            InitializeLevel((int)data.get("Level"));
             InitializeMoney((int)data.get("Money"));
         }
         else {
+            InitializeEnergy(5);
             InitializeLevel(0);
             InitializeMoney(1000);
         }
@@ -138,13 +139,14 @@ public class StateReady extends AbstractGameState {
     }
 
     private void InitializeLevel(int experience) {
-        _level = new Level(0, 10, 270);
+        _level = new Level(experience, 10, 270);
         addGameObject(_level.GetBar());
         addGameObject(_level.GetInteger());
     }
 
-    private void InitializeEnergy() {
-        _energy = new Energy(10, 10);
+    private void InitializeEnergy(int energy) {
+        _energy = new Energy(energy, 10, 10);
+        _energy.SetMovingBitmap();
         addGameObject(_energy.GetBar());
         addGameObject(_energy.GetInteger());
     }
@@ -216,7 +218,7 @@ public class StateReady extends AbstractGameState {
         _levelPurchase.GetBitmapButton().addButtonEventHandler(new ButtonEventHandler() {
             @Override
             public void perform(BitmapButton button) {
-                _level.GetInteger().add(1);
+                _level.Add(1);
                 setVisibility();
             }
         });
@@ -232,8 +234,10 @@ public class StateReady extends AbstractGameState {
         _energyPurchase.GetBitmapButton().addButtonEventHandler(new ButtonEventHandler() {
             @Override
             public void perform(BitmapButton button) {
-                if (_energy.GetInteger().getValue() < 100)
+                if (_energy.GetInteger().getValue() < 10) {
                     _energy.GetInteger().add(1);
+                    _energy.SetMovingBitmap();
+                }
                 setVisibility();
             }
         });
@@ -506,7 +510,8 @@ public class StateReady extends AbstractGameState {
         map.put("CardAttributes", cardAttributes);
         map.put("Durability", durability);
         map.put("Score", _money.getValue());
-        map.put("Experience", _level.GetInteger().getValue());
+        map.put("Experience", _level.GetCurrentExperience());
+        map.put("Energy", _energy.GetInteger().getValue());
         return map;
     }
 
@@ -615,7 +620,7 @@ public class StateReady extends AbstractGameState {
         _museumButton.setVisible(showOther);
         _shopButton.setVisible(showOther);
         _playButton.setVisible(_showMenu);
-        _changeCardsButton.setVisible(_pressFirstCard || _pressSecondCard || _pressThirdCard);
+        _changeCardsButton.setVisible(_showDig && (_pressFirstCard || _pressSecondCard || _pressThirdCard));
         _digButton.setVisible(_showDig);
         _settingButton.setVisible(showOther);
         _backButton.setVisible(_showSetting || _showDig);

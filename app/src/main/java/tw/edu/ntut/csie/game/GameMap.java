@@ -3,7 +3,6 @@ package tw.edu.ntut.csie.game;
 import tw.edu.ntut.csie.game.block.ActiveBlocks;
 import tw.edu.ntut.csie.game.block.BoxBlock;
 import tw.edu.ntut.csie.game.block.CharacterMovingBlock;
-import tw.edu.ntut.csie.game.block.Explosion;
 import tw.edu.ntut.csie.game.block.Invisible;
 import tw.edu.ntut.csie.game.card.CardAttributes;
 import tw.edu.ntut.csie.game.core.MovingBitmap;
@@ -35,7 +34,6 @@ public class GameMap implements GameObject {
     private GeneratingBlocks _generatingBlocks;
     private int _characterNum;
     private Invisible _invisible;
-    private Explosion _explosion;
     private CharacterMovingBlock _characterMovingBlock;
     private BoxBlock _box;
     private int _explosionTimer = 0;
@@ -69,7 +67,6 @@ public class GameMap implements GameObject {
 
         _observers = new ArrayList<tw.edu.ntut.csie.game.Observer>();
         _invisible = new Invisible(0,0,0,0);
-        _explosion = new Explosion(0,0,0,0);
         _characterMovingBlock = new CharacterMovingBlock(0,0,0,0);
         _box = new BoxBlock(0,0,0,0);
         _path = new CharacterPath(BLOCK_ROW, _blockArray);
@@ -99,7 +96,6 @@ public class GameMap implements GameObject {
     @Override
     public void move() {
         if (!_isPaused) {
-            _explosion.GetAnimation().move();
             if (_durability == 0)
                 _generatingBlocks.SetMovingViewHeight(_generatingBlocks.GetMovingViewHeight() + 3 *  MOVING_VIEW_SPEED);
             else
@@ -173,7 +169,8 @@ public class GameMap implements GameObject {
         {
             for (int j = 0; j < BLOCK_COLUMN; j++)
             {
-                if (isVisible(i, j) || _isVisibleControl) {
+                if (isVisible(i, j)) {
+//                if (isVisible(i, j) || _isVisibleControl) {
                     if (_blockArray[i][j] != DEFAULT_NONE_BLOCK_TYPE)
                     {
                         if (_blockArray[i][j] == -2)
@@ -344,7 +341,7 @@ public class GameMap implements GameObject {
         if (_explosionTimerSwitch == true)
         {
             _explosionTimer++;
-            if (_explosionTimer >= 3)
+            if (_explosionTimer >= 6)
             {
                 for (int k = 0; k <  _generatingBlocks.GetActiveBlockList().GetBlockListSize(); k++)
                 {
@@ -366,7 +363,6 @@ public class GameMap implements GameObject {
                 {
                     _generatingBlocks.GetActiveBlockList().RemoveBlockList();
                 }
-//                _blockArray[CharacterX][CharacterY] = _characterNum;
             }
         }
     }
@@ -375,7 +371,8 @@ public class GameMap implements GameObject {
         if (_characterTimerSwitch == true)
         {
             _characterTimer++;
-            if (_characterTimer >= _pathList.size() - 1)
+            ChooseCharacterWay(_recentPathY, _pathList.get(_characterTimer - 1).GetBlockY());
+            if (_characterTimer >= _pathList.size())
             {
                 int arrayX = _pathList.get(_pathList.size() - 1).GetBlockX();
                 int arrayY = _pathList.get(_pathList.size() - 1).GetBlockY();
@@ -443,10 +440,9 @@ public class GameMap implements GameObject {
             }
             else
             {
-                ChooseCharacterWay(_recentPathY, _pathList.get(_characterTimer).GetBlockY());
                 _blockArray[_recentPathX][_recentPathY] = DEFAULT_NONE_BLOCK_TYPE;
-                _recentPathX = _pathList.get(_characterTimer).GetBlockX();
-                _recentPathY = _pathList.get(_characterTimer).GetBlockY();
+                _recentPathX = _pathList.get(_characterTimer - 1).GetBlockX();
+                _recentPathY = _pathList.get(_characterTimer - 1).GetBlockY();
                 _blockArray[_recentPathX][_recentPathY] = DEFAULT_CHARACTER_PATH;
             }
         }
