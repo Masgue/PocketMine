@@ -15,7 +15,7 @@ public class Level {
     private int _currentLevel;
     private int _currentExperience;
 
-    public Level(int x, int y) {
+    public Level(int currentLevel, int x, int y) {
         ArrayList<MovingBitmap> bar = new ArrayList<MovingBitmap>();
         bar.add(new MovingBitmap(R.drawable.exp_0));
         bar.add(new MovingBitmap(R.drawable.exp_1));
@@ -28,7 +28,19 @@ public class Level {
         bar.add(new MovingBitmap(R.drawable.exp_8));
         bar.add(new MovingBitmap(R.drawable.exp_9));
         bar.add(new MovingBitmap(R.drawable.exp_10));
-        _level = new EnergyBar(bar, 0, x, y);
+        _currentLevel = currentLevel;
+        _currentExperience = 0;
+        _level = new EnergyBar(bar, _currentLevel, x, y);
+    }
+
+    public void Add(int experience) {
+        _currentExperience += experience;
+        _currentLevel = _currentExperience / 10;
+        _level.SetMovingBitmap(SetMovingBitmap());
+    }
+
+    private SetMovingBitmap() {
+        return bar.get(_currentExperience % 10);
     }
 
     public MovingBitmap GetBar() {

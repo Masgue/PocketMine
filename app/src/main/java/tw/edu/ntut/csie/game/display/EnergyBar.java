@@ -28,11 +28,15 @@ public class EnergyBar {
     }
 
     private void InitializeMovingBitmap() {
-        GetBar().setLocation(_x, _y);
+        GetBar(0).setLocation(_x, _y);
     }
 
-    public MovingBitmap GetBar() {
-        return _bar.get(10);
+    public void SetMovingBitmap(int movingBitmapNumber) {
+        GetBar(movingBitmapNumber).setLocation(_x, _y);
+    }
+
+    public MovingBitmap GetBar(int number) {
+        return _bar.get(number);
     }
 
     public Integer GetInteger() {

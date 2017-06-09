@@ -90,12 +90,15 @@ public class StateReady extends AbstractGameState {
         addGameObject(_settingInfo = new MovingBitmap(R.drawable.settingbackground));
         addGameObject(_about = new MovingBitmap(R.drawable.about));
         _about.setLocation(150, 8);
-        InitializeLevel();
         InitializeEnergy();
-        if (data != null)
+        if (data != null) {
+            InitializeLevel((int)data.get("Experience"));
             InitializeMoney((int)data.get("Money"));
-        else
+        }
+        else {
+            InitializeLevel(0);
             InitializeMoney(1000);
+        }
         InitializeDiamond();
         InitializeDurabilityPurchaseButton();
         InitializeMoneyPurchaseButton();
@@ -129,13 +132,13 @@ public class StateReady extends AbstractGameState {
         _pressThirdCard = false;
         if (data != null) {
             _money.add((int)data.get("Score"));
-            _level.GetInteger().add((int)data.get("Experience"));
+            _level.Add((int)data.get("Experience"));
         }
         setVisibility();
     }
 
-    private void InitializeLevel() {
-        _level = new Level(10, 270);
+    private void InitializeLevel(int experience) {
+        _level = new Level(0, 10, 270);
         addGameObject(_level.GetBar());
         addGameObject(_level.GetInteger());
     }
