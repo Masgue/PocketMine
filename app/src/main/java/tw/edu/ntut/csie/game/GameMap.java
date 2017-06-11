@@ -113,6 +113,7 @@ public class GameMap implements GameObject {
                 if (_durability == 0)
                 {
 //                    畫面不再上移，無法達到終點，也無法再挖掘，需要進入stateOver
+                    notifyAllObservers();
                 }
             }
 
@@ -190,8 +191,8 @@ public class GameMap implements GameObject {
         {
             for (int j = 0; j < BLOCK_COLUMN; j++)
             {
-                if (isVisible(i, j)) {
-//                if (isVisible(i, j) || _isVisibleControl) {
+//                if (isVisible(i, j)) {
+                if (isVisible(i, j) || _isVisibleControl) {
                     if (_blockArray[i][j] != DEFAULT_NONE_BLOCK_TYPE)
                     {
                         if (_blockArray[i][j] == DEFAULT_BOX)
@@ -455,6 +456,7 @@ public class GameMap implements GameObject {
                         CharacterX = arrayX;
                         CharacterY = arrayY;
 //                        點擊寶箱，須進入stateOver
+                        notifyAllObservers();
                         break;
                     default:
                         break;
