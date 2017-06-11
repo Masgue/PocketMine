@@ -6,6 +6,7 @@ import tw.edu.ntut.csie.game.block.CharacterMovingBlock;
 import tw.edu.ntut.csie.game.block.Invisible;
 import tw.edu.ntut.csie.game.card.CardAttributes;
 import tw.edu.ntut.csie.game.core.MovingBitmap;
+import tw.edu.ntut.csie.game.core.SoundEffects;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,14 +18,14 @@ import java.util.List;
 public class GameMap implements GameObject {
     private static final int BLOCK_ROW = 50;
     private static final int BLOCK_COLUMN = 6;
-    private static final int MOVING_VIEW_SPEED = 5;
     private static final int DIGIT_LENGTH = 18;
     private static final int DEFAULT_SCORE = 0;
-    private static final int DEFAULT_DURABILITY = 50;
+    private static final int DEFAULT_DURABILITY = 100;
     private static final int DEFAULT_NONE_BLOCK_TYPE = -1;
     private static final int DEFAULT_CHARACTER_PATH = -21;
     private static final int DEFAULT_BOX = -2;
 
+    private int _movingViewSpeed = 5;
     private MovingBitmap[] _digitNumberList;
     private int[][] _blockArray;
     private int _score;
@@ -52,6 +53,15 @@ public class GameMap implements GameObject {
     private ArrayList<ActiveBlocks> _pathList;
     private int _recentPathX, _recentPathY;
     private int _chosenWay = 0;
+    private SoundEffects _explodeSound = new SoundEffects();
+    private SoundEffects _digSound = new SoundEffects();
+    private MovingBitmap AlmostDone;
+    private MovingBitmap Completed;
+    private MovingBitmap GameOver;
+    private int _almostDoneTimer = 0;
+    private int _completedTimer = 0;
+    private boolean _completedSwitch = false;
+    private boolean _gameOverSwitch = false;
 
     public GameMap(ArrayList<CardAttributes> cardAttributes) {
         _cardAttributes = cardAttributes;
@@ -72,6 +82,11 @@ public class GameMap implements GameObject {
         _box = new BoxBlock(0,0,0,0);
         _path = new CharacterPath(BLOCK_ROW, _blockArray);
         _pathList = new ArrayList<ActiveBlocks>();
+        _explodeSound.addSoundEffect(0, R.raw.explode_sound2);
+        _digSound.addSoundEffect(0, R.raw.dig_sound);
+        AlmostDone = new MovingBitmap(R.drawable.almost_done);
+        Completed = new MovingBitmap(R.drawable.completed);
+        GameOver = new MovingBitmap(R.drawable.game_over);
     }
 
     private void LoadMovingBitMap() {
@@ -98,22 +113,24 @@ public class GameMap implements GameObject {
     public void move() {
         if (!_isPaused) {
 //            if (_durability == 0)
-//                _generatingBlocks.SetMovingViewHeight(_generatingBlocks.GetMovingViewHeight() + 3 *  MOVING_VIEW_SPEED);
+//                _generatingBlocks.SetMovingViewHeight(_generatingBlocks.GetMovingViewHeight() + 3 *  _movingViewSpeed);
 //            else
-//                _generatingBlocks.SetMovingViewHeight(_generatingBlocks.GetMovingViewHeight() +  MOVING_VIEW_SPEED);
+//                _generatingBlocks.SetMovingViewHeight(_generatingBlocks.GetMovingViewHeight() +  _movingViewSpeed);
             if ( _generatingBlocks.GetMovingViewHeight() < (BLOCK_ROW - 8) * 60)
             {
                 if (_durability == 0)
-                    _generatingBlocks.SetMovingViewHeight(_generatingBlocks.GetMovingViewHeight() + 3 *  MOVING_VIEW_SPEED);
+                    _generatingBlocks.SetMovingViewHeight(_generatingBlocks.GetMovingViewHeight() + 3 * _movingViewSpeed);
                 else
-                    _generatingBlocks.SetMovingViewHeight(_generatingBlocks.GetMovingViewHeight() +  MOVING_VIEW_SPEED);
+                    _generatingBlocks.SetMovingViewHeight(_generatingBlocks.GetMovingViewHeight() + _movingViewSpeed);
             }
             else
             {
+                _movingViewSpeed = 0;
                 if (_durability == 0)
                 {
+//                    notifyAllObservers();
 //                    畫面不再上移，無法達到終點，也無法再挖掘，需要進入stateOver
-                    notifyAllObservers();
+                   _gameOverSwitch = true;
                 }
             }
 
@@ -130,6 +147,12 @@ public class GameMap implements GameObject {
         ShowBlocks();
         showScores();
         showDurability();
+        if (_completedSwitch == true)
+            ShowCompleted();
+        else if (_gameOverSwitch == true)
+            ShowGameOver();
+        else if (_movingViewSpeed == 0)
+            ShowAlmostDone();
     }
 
     public void ResetBlock(int touchX, int touchY) {
@@ -407,6 +430,7 @@ public class GameMap implements GameObject {
                         }
                         break;
                     case 1:
+                        _digSound.play(0);
                         _score += _generatingBlocks.GetPoints(arrayX, arrayY);
                         _durability -= _generatingBlocks.GetDurability(arrayX, arrayY);
 
@@ -426,6 +450,7 @@ public class GameMap implements GameObject {
                         }
                         break;
                     case 2:
+                        _explodeSound.play(0);
                         _toolType = _blockArray[arrayX][arrayY] - _generatingBlocks.GetMineBlocksArraySize();
                         _generatingBlocks.ActiveTool(arrayX, arrayY);
                         _durability -= _generatingBlocks.GetToolList()[_toolType].GetDurability();
@@ -456,7 +481,8 @@ public class GameMap implements GameObject {
                         CharacterX = arrayX;
                         CharacterY = arrayY;
 //                        點擊寶箱，須進入stateOver
-                        notifyAllObservers();
+                        _completedSwitch = true;
+//                        notifyAllObservers();
                         break;
                     default:
                         break;
@@ -539,6 +565,48 @@ public class GameMap implements GameObject {
         {
             _chosenWay = 1;
             _characterMovingBlock.ResetAnimation(1);
+        }
+    }
+
+    private void ShowAlmostDone() {
+        if (_almostDoneTimer < 20)
+        {
+            _almostDoneTimer++;
+            AlmostDone.setLocation(200,15);
+            AlmostDone.show();
+        }
+    }
+
+
+    private void ShowCompleted() {
+        if (_completedSwitch == true)
+        {
+            if (_completedTimer < 30)
+            {
+                _completedTimer++;
+                Completed.setLocation(200,35);
+                Completed.show();
+            }
+            else
+            {
+                notifyAllObservers();
+            }
+        }
+    }
+
+    private void ShowGameOver() {
+        if (_gameOverSwitch == true)
+        {
+            if (_completedTimer < 30)
+            {
+                _completedTimer++;
+                GameOver.setLocation(200,35);
+                GameOver.show();
+            }
+            else
+            {
+                notifyAllObservers();
+            }
         }
     }
 }

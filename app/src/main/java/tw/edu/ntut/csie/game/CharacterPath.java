@@ -78,10 +78,10 @@ public class CharacterPath {
         switch (_choice)
         {
             case 1:  //目的地於左下
-                if(j != BLOCK_COLUMN - 1 && _blockArray[i][j+1] == 0 && _findPath == false) //左
-                    visit(i, j+1);
                 if(i != _blockRow - 1 && _blockArray[i+1][j] == 0 && _findPath == false) //下
                     visit(i+1, j);
+                if(j != BLOCK_COLUMN - 1 && _blockArray[i][j+1] == 0 && _findPath == false) //左
+                    visit(i, j+1);
                 if(j != 0 && _blockArray[i][j-1] == 0 && _findPath == false) //右
                     visit(i, j-1);
                 if(i != 0 && _blockArray[i-1][j] == 0 && _findPath == false) //上
@@ -98,10 +98,10 @@ public class CharacterPath {
                     visit(i-1, j);
                 break;
             case 3:  //目的地於右下
-                if(j != 0 && _blockArray[i][j-1] == 0 && _findPath == false) //右
-                    visit(i, j-1);
                 if(i != _blockRow - 1 && _blockArray[i+1][j] == 0 && _findPath == false) //下
                     visit(i+1, j);
+                if(j != 0 && _blockArray[i][j-1] == 0 && _findPath == false) //右
+                    visit(i, j-1);
                 if(j != BLOCK_COLUMN - 1 && _blockArray[i][j+1] == 0 && _findPath == false) //左
                     visit(i, j+1);
                 if(i != 0 && _blockArray[i-1][j] == 0 && _findPath == false) //上
