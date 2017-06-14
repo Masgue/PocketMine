@@ -63,10 +63,12 @@ public class GameMap implements GameObject {
     private boolean _completedSwitch = false;
     private boolean _gameOverSwitch = false;
 
-    public GameMap(ArrayList<CardAttributes> cardAttributes) {
+    private MovingBitmap _pauseTutorial;
+
+    public GameMap(ArrayList<CardAttributes> cardAttributes, int durability) {
         _cardAttributes = cardAttributes;
         _score = DEFAULT_SCORE;
-        SetDurability();
+        SetDurability(durability);
         _generatingBlocks = new GeneratingBlocks(BLOCK_ROW, _cardAttributes);
         _blockArray = _generatingBlocks.GetBlocksArray();
         LoadMovingBitMap();
@@ -87,6 +89,10 @@ public class GameMap implements GameObject {
         AlmostDone = new MovingBitmap(R.drawable.almost_done);
         Completed = new MovingBitmap(R.drawable.completed);
         GameOver = new MovingBitmap(R.drawable.game_over);
+
+        _pauseTutorial = new MovingBitmap(R.drawable.pause_tutorial);
+        _pauseTutorial.setVisible(false);
+        _pauseTutorial.setLocation(100, 21);
     }
 
     private void LoadMovingBitMap() {
@@ -153,6 +159,8 @@ public class GameMap implements GameObject {
             ShowGameOver();
         else if (_movingViewSpeed == 0)
             ShowAlmostDone();
+
+        _pauseTutorial.show();
     }
 
     public void ResetBlock(int touchX, int touchY) {
@@ -336,6 +344,7 @@ public class GameMap implements GameObject {
 
     public void SetPause(boolean isPaused) {
         _isPaused = isPaused;
+        _pauseTutorial.setVisible(_isPaused);
         _isVisibleControl = !_isVisibleControl;
     }
 
@@ -503,8 +512,8 @@ public class GameMap implements GameObject {
         }
     }
 
-    private void SetDurability() {
-        _durability = DEFAULT_DURABILITY;
+    private void SetDurability(int durability) {
+        _durability = durability;
         for (int i = 0; i < _cardAttributes.size(); i++)
         {
             int type = _cardAttributes.get(i).GetBlockType();

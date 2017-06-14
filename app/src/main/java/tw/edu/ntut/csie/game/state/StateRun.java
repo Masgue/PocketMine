@@ -49,7 +49,8 @@ public class StateRun extends GameState {
         _background = new MovingBitmap(R.drawable.background);
         _pause = new MovingBitmap(R.drawable.pause, 0, 0);
         _cardAttributes = (ArrayList<CardAttributes>) data.get("CardAttributes");
-        _map = new GameMap(_cardAttributes);
+        _durabiility = (int)data.get("Durability");
+        _map = new GameMap(_cardAttributes, _durabiility);
         _score = DEFAULT_SCORE;
         _floor = DEFAULT_FLOOR;
         _isPaused = false;
@@ -72,6 +73,7 @@ public class StateRun extends GameState {
                 map.put("Money", _money);
                 map.put("Level", _level);
                 map.put("Energy", _energy);
+                map.put("Durability", _durabiility);
                 _audio.stop();
                 _audio.release();
                 changeState(Game.OVER_STATE, map);
